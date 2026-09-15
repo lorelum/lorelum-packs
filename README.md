@@ -89,6 +89,12 @@ packs/
     SOURCES.md
     practices/
     i18n/
+contrib/
+  README.md
+  dossier-template.yaml
+  examples/
 ```
 
 The `packs/<name>` path is this catalog's organization convention. A project-authored Pack may instead live at `.lorelum/packs/<name>` in its own project; the Pack root format itself is unchanged.
+
+`contrib/` is a review-only staging area for Practice contribution dossiers (see `contrib/README.md`). It is intentionally outside the Registry's install scope and is never installed.

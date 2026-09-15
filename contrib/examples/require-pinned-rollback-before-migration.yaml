@@ -1,0 +1,62 @@
+schema_version: 1
+kind: contrib-dossier
+installable: false
+
+# 示例 dossier：展示一份填写完整的投稿形态。内容为虚构示例，
+# 仓库地址与 commit 均不指向真实团队；实际投稿请复制 dossier-template.yaml。
+id: require-pinned-rollback-before-migration
+
+practice:
+  id: data-platform-coding.delivery.require-pinned-rollback-before-migration
+  title: Require a Pinned, Verified Rollback Before Any Migration
+  source_repository: https://github.com/example-team/data-platform-packs
+  source_ref: 8e1f4c2a9d3b7e6f5a0c8d2e1b4f7a9c3d6e5f8b
+
+origin_event:
+  goal: >-
+    三月初要把订单库两张大表的加列与回填变更放进周一凌晨的低峰窗口完成，
+    约束是整个变更不能影响次日早间跑批的报表任务。
+  decision: >-
+    方案评审时，应用负责人以"出问题可以手动恢复"为由提议跳过回滚脚本的验证，
+    数据库负责人否决了该提议：回滚脚本必须与迁移脚本 pin 进同一个变更版本，
+    并在影子库实际执行、计时通过后才允许上线。评审记录了这个分歧与结论。
+  outcome: >-
+    上线当天回填任务因锁等待超时被中断，团队执行预先验证过的回滚脚本，
+    25 分钟内恢复到变更前状态，次日早间报表未受影响。对比此前一个月的
+    一次类似事故——没有验证过的回滚脚本，手工恢复耗时约 6 小时——团队
+    把"回滚脚本与迁移同版本 pin、影子库验证通过才可上线"沉淀为团队
+    Practice，此后所有走湖仓一体平台的迁移变更单都附带回滚版本号。
+
+usage_examples:
+  - situation: >-
+      新功能要给消息表补一个二级索引，开发同学在迭代评审会上说
+      "失败了把索引删掉就行，不用专门做回滚方案"，当时版本窗口很紧，
+      大家倾向于直接放行赶进度。
+    decision_changed: >-
+      评审会没有接受"手动删索引"的说法，要求把 DROP INDEX 语句与迁移
+      脚本放进同一个变更单并先在预发库执行计时。实际在预发执行时发现
+      加锁时长会超出低峰窗口，改为 ONLINE 模式之后才放行上线。
+  - situation: >-
+      一次跨环境配置漂移引发错误数据订正，需要紧急回退。值班同学接手时
+      的处境是：订正脚本在变更单里，回退脚本只存在于群聊记录中，且没有
+      任何人验证过它能否在当前数据量下跑完。
+    decision_changed: >-
+      值班同学没有直接执行群聊里的回退语句，而是先按这条 Practice 把回退
+      脚本落进变更单、pin 到当时的版本并在影子库验证通过后才执行生产回退，
+      避免把未验证的语句打进生产库。
+
+sanitization:
+  secrets_removed: true
+  internal_hostnames_removed: true
+  customer_identifiers_removed: true
+  notes: >-
+    保留内部术语：湖仓一体平台（内部数据栈统称）、订单库（业务库别名）。
+    脱敏时将真实客户名替换为"某零售客户"场景描述并删除其行业细节；
+    内网主机名与执行账号已删除；变更单编号改为示意写法。
+
+review:
+  status: pending
+  reviewer: ""
+  date: ""
+  summary: ""
+  rejection_reason: ""

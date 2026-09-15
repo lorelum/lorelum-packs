@@ -1,0 +1,46 @@
+schema_version: 1
+kind: contrib-dossier
+installable: false
+
+# 投稿前先阅读 contrib/README.md 的字段要求与评审门禁。
+# 将本文件复制为 contrib/submissions/<dossier-id>.yaml 后填写，
+# 尖括号 <...> 均为占位符，提交前必须全部替换。
+id: <kebab-case 唯一标识，建议沿用 Practice 的 slug>
+
+practice:
+  # id 必须能在 source_repository 的 source_ref 处逐字找到。
+  id: <pack>.<stage>.<slug>
+  title: <Practice 标题，与来源仓库一致>
+  source_repository: <来源团队 Pack 仓库地址，git 可访问>
+  # 必须 pin 到 commit SHA 或 tag；分支名、HEAD 等可变引用不被接受。
+  source_ref: <commit SHA 或 tag>
+
+origin_event:
+  # 沉淀这条经验时的真实上下文，goal / decision / outcome 三要素缺一不可。
+  goal: <当时想达成什么>
+  decision: <当时做了什么决策或判断>
+  outcome: <决策的实际结果，包括代价与后续影响>
+
+usage_examples:
+  # 至少 2 条；situation 描述当时所处的处境，不要复述 Practice 的措辞。
+  # 此字段后续将作为检索查询的素材。
+  - situation: <真实场景：当时面对什么任务、约束或信号>
+    decision_changed: <该 Practice 具体改变了哪个决策，以及怎么改的>
+  - situation: <第二个真实场景>
+    decision_changed: <决策如何被改变>
+
+sanitization:
+  # 逐项确认。contrib/ 不进入运行时，允许保留内部术语。
+  secrets_removed: true
+  internal_hostnames_removed: true
+  customer_identifiers_removed: true
+  notes: <保留的内部术语清单，以及脱敏时改动过的内容>
+
+# review 块：投稿人只将 status 置为 pending，其余字段由维护者填写。
+# status 取值：pending | accepted-for-promotion | rejected
+review:
+  status: pending
+  reviewer: ""
+  date: ""
+  summary: ""
+  rejection_reason: ""
