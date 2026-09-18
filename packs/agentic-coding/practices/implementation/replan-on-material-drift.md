@@ -23,18 +23,24 @@ the whole task.
 
 ## Guidance
 
-Pause the affected implementation. Compare the new fact with the accepted scope, risks, stopping
-condition, and planned checks. Choose one response: narrow the implementation back to the plan,
-update the plan and its checks, or ask for authorization before continuing. Stop with one current
-plan that says what will be built and verified, then resume from it.
+1. Pause the affected implementation; do not code through the discrepancy.
+2. Compare the new fact with the accepted scope, risks, stopping condition, and planned checks, and
+   name what changed — delivery, dependencies, failure modes, or verification needs.
+3. Choose one response: narrow the implementation back to the plan, update the plan and its checks,
+   or ask for authorization before continuing.
+4. Record the updated plan and resume from it.
+
+Stop when one current plan states what will be built and verified and matches the facts coding
+revealed.
 
 ## Anti-pattern
 
 The user asks for a download endpoint that returns an account export. A large fixture exceeds the
 response limit, so the agent adds a temporary file, then a retry queue, then background cleanup.
 Each small addition fixes the next focused test and seems faster than stopping to redesign the
-endpoint. Together they turn a synchronous download into a stateful background job with new failure
-and recovery behavior that the accepted work never covered.
+endpoint. The endpoint quietly grows into a stateful background job with its own queue and cleanup
+storage that the accepted plan never included, bringing new failure and recovery behavior the
+accepted work never covered.
 
 ## Why
 
