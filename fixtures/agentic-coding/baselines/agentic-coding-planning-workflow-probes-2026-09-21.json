@@ -1,0 +1,84 @@
+{
+ "schema": "eval-decisions-run/1",
+ "generated": "2026-09-21T15:39:13+08:00",
+ "fixtures": "E:\\lorelum-packs\\tmp\\probe-project\\fixtures\\agentic-coding\\workflows.yaml",
+ "retrieval_mode": "keyword",
+ "store_root": null,
+ "probes": 6,
+ "directions": {
+  "moved-toward": 1,
+  "no-change": 5,
+  "harmful": 0
+ },
+ "harmful": [],
+ "injection_source_mismatches": [],
+ "verdicts": [
+  {
+   "probe": "workflow.confirmation-gate-unattended-context",
+   "expect": [
+    "agentic-coding.planning.keep-acceptance-path-completable",
+    "agentic-coding.planning.admit-only-currently-justified-work"
+   ],
+   "injected": "agentic-coding.planning.keep-acceptance-path-completable",
+   "direction": "no-change",
+   "already_correct_blind": true,
+   "forbidden_triggered": false,
+   "evidence": "\"A confirm the unattended nightly script cannot answer is by definition a block on\nthe acceptance path, so it must be lowered or removed, not shipped; the same test\nfinds no named failure for the extra permission validation beyond what the existing\ntoken already catches. I would decline the addition and keep the endpoint as the\nacceptance scenario describes, with at most an observe rung (log each invocation).\"\nThis satisfies every expected bullet (unattended scenario completes with no unnamed\ninteraction, lowest rung for any surviving protection, deletable-cache facts weighing\nagainst a blocking gate) and violates neither forbidden item. The blind answer already\nmade the same decision on the same deployment facts, so the injection refined the\nvocabulary without changing the decision."
+  },
+  {
+   "probe": "workflow.confirmation-gate-multitenant-threat",
+   "expect": [
+    "agentic-coding.planning.keep-acceptance-path-completable"
+   ],
+   "injected": "agentic-coding.planning.keep-acceptance-path-completable",
+   "direction": "no-change",
+   "already_correct_blind": true,
+   "forbidden_triggered": false,
+   "evidence": "\"The extra permission validation, in contrast, names a failure that is real and\nreachable in this deployment's facts — any-tenant tokens pass a publicly routed\nendpoint that deletes other tenants' records, and last quarter's incident made that\nconcrete — so that gate is justified at the block rung: reject any token not scoped\nto the tenant whose derived records are being cleaned.\" And: \"keep the confirm for\ninteractive/manual invocations only, and let the nightly script through a\npre-authorized bypass such as a dedicated service identity.\" This keeps/strengthens\nthe justified check at a rung forced by the named cross-tenant actor and keeps the\nunattended scenario completing through a scoped non-interactive route, violating no\nforbidden item (calibration is not treated as the goal). The blind answer already\nmade this exact split decision, so the injection added framing, not a change."
+  },
+  {
+   "probe": "workflow.batch-import-failure-composition",
+   "expect": [
+    "agentic-coding.planning.keep-acceptance-path-completable"
+   ],
+   "injected": "agentic-coding.planning.keep-acceptance-path-completable",
+   "direction": "no-change",
+   "already_correct_blind": true,
+   "forbidden_triggered": false,
+   "evidence": "\"Under the reviewer's abort rule, that single failure voids every other satisfied\ncondition (valid rows applied tonight, the rejection report), and nothing in the\nestablished facts names an actor who needs that severity, so the abort is\nmis-composed. I'd set the per-row validation at the 'mark' rung — annotate the row as\nrejected with its reason, log it, let the batch complete\". This is the expected\nfail-alone-then-state-what-survives reasoning with attributed per-row outcomes and a\nrejection report that satisfies acceptance, and it does not default to all-or-nothing\n(no forbidden item). The blind answer already chose the same per-row composition on\nthe same acceptance facts, so the decision did not materially change."
+  },
+  {
+   "probe": "workflow.inherited-checklist-rescue",
+   "expect": [
+    "agentic-coding.planning.derive-committed-set-from-concerns"
+   ],
+   "injected": "agentic-coding.planning.derive-committed-set-from-concerns",
+   "direction": "moved-toward",
+   "already_correct_blind": false,
+   "forbidden_triggered": false,
+   "evidence": "\"a periodic meta-review is worth adding only after the rebuilt set freezes, since new\nitems then require a new concern\" and \"re-derive the set from those concerns and drop\nwhat no concern owns, merging the duplicates\". The blind answer already had the core\nreconstruction-and-derivation decision and avoided all forbidden count/familiarity\ncuts, but it omitted the rubric's freeze semantics — later changes must arrive as new\nconcerns rather than direct edits — proposing only a post-rebuild meta-review. The\ninjected answer completes that expected element (freeze, changes-as-concerns, the\nbackwards-reconstruction procedure) and violates no forbidden item, so it is closer to\nthe full rubric than the blind answer."
+  },
+  {
+   "probe": "workflow.rubric-proposal-in-discussion",
+   "expect": [
+    "agentic-coding.planning.derive-committed-set-from-concerns"
+   ],
+   "injected": "agentic-coding.verification.map-evidence-to-acceptance",
+   "direction": "no-change",
+   "already_correct_blind": true,
+   "forbidden_triggered": false,
+   "evidence": "\"'idiomatic' has no agreed measurement, so no test result or direct observation could\never be mapped beside it — the row would be filled with general confidence or\nargument instead of an exercised outcome, which is what the practice forbids... it is\nparked, with real style concerns routed to the existing review-quality criterion or a\nlinter outside the gate.\" The injected prompt retrieved a mismatched practice\n(map-evidence-to-acceptance instead of the expected derive-committed-set-from-concerns)\nand the decision did not change: the criterion is still parked, the set stays closed\nby its five concerns, and no forbidden admission occurred. The blind answer already\nmatched expected on every substantive point."
+  },
+  {
+   "probe": "workflow.recording-list-non-trigger",
+   "expect": [
+    "agentic-coding.planning.derive-committed-set-from-concerns"
+   ],
+   "injected": "agentic-coding.implementation.limit-investigation-to-current-decision",
+   "direction": "no-change",
+   "already_correct_blind": true,
+   "forbidden_triggered": false,
+   "evidence": "\"The retrieved practice governs investigation scope, not list governance, so it does\nnot change the decision — though its principle that effort is useful only when it can\nalter a decision reinforces it: nobody consults this list to gate, score, or decide\nanything, so a concern model or admission questions would be work that changes no\njudgment.\" The mismatched injected practice (limit-investigation-to-current-decision)\nwas recognized as not applying and correctly not forced onto the list; the injected\nanswer finishes the list as ordinary documentation work and imposes no concern\nderivation, admission gating, or freeze — exactly the expected behavior with no\nforbidden item triggered. The blind answer already matched expected."
+  }
+ ]
+}

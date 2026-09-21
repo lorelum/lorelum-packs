@@ -1,6 +1,6 @@
 # `agentic-coding` 简体中文阅读版
 
-这里是 `0.5.0` 未发布候选版 32 条 canonical Practice 的中文 companion，供人类阅读和审查 Pack 的判断质量。它不是逐词翻译，也不参与安装、检索或运行时注入。ID、元数据、反模式 ID 和运行时行为仍以 [`../../practices`](../../practices/) 中的英文 canonical 文件为唯一真源；中英文有冲突时，以英文为准。
+这里是 `0.5.0` 未发布候选版 34 条 canonical Practice 的中文 companion，供人类阅读和审查 Pack 的判断质量。它不是逐词翻译，也不参与安装、检索或运行时注入。ID、元数据、反模式 ID 和运行时行为仍以 [`../../practices`](../../practices/) 中的英文 canonical 文件为唯一真源；中英文有冲突时，以英文为准。
 
 ## Pack 简介
 
@@ -12,7 +12,7 @@
 
 本目录尚未发布；源码版本和本地验证不代表已有可安装的 Registry release。
 
-## 导航（32 条）
+## 导航（34 条）
 
 ### 需求（3）
 
@@ -20,9 +20,11 @@
 - [同时写清完成条件和不做什么](practices/requirements/define-acceptance-and-non-goals.md)
 - [多份要求冲突时先确认听谁的](practices/requirements/resolve-source-authority.md)
 
-### 规划（4）
+### 规划（6）
 
 - [开工前定下范围和停止条件](practices/planning/decide-scope-and-stop-conditions.md)
+- [从关切推导承诺集，不从条目堆叠](practices/planning/derive-committed-set-from-concerns.md)
+- [保持验收路径可完成](practices/planning/keep-acceptance-path-completable.md)
 - [按用户完成的整条能力来检查计划](practices/planning/map-plan-to-user-capability.md)
 - [为每项验收要求安排够用的最小证明](practices/planning/plan-sufficient-evidence.md)
 - [按失败代价决定投入多少工程工作](practices/planning/scale-work-to-risk-and-cost.md)

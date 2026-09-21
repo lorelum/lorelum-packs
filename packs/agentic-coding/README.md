@@ -1,6 +1,6 @@
 # Agentic Coding
 
-`agentic-coding@0.5.0` is an unreleased, tool-neutral Knowledge Pack of 32 decision-focused Practices for AI agents doing software engineering: clarifying goals and authority, controlling scope and investigation, making proportionate implementation and validation choices, and handling reviews, delivery, handoffs, and recovery with trustworthy evidence.
+`agentic-coding@0.5.0` is an unreleased, tool-neutral Knowledge Pack of 34 decision-focused Practices for AI agents doing software engineering: clarifying goals and authority, controlling scope and investigation, making proportionate implementation and validation choices, and handling reviews, delivery, handoffs, and recovery with trustworthy evidence.
 
 Canonical English · [简体中文](./i18n/zh-CN/README.md)
 
@@ -35,7 +35,7 @@ This Pack is not a workflow engine, task manager, test framework, compactor, aut
 
 ## Release history
 
-- `0.5.0` is an unreleased candidate rewriting every Practice as a step-style decision procedure with an explicit stop, merging the two pre-work scope Practices into `decide-scope-and-stop-conditions` (33 to 32 entries), tiering severity into critical/warn/info, and retuning `applies_when` against the #17 keyword retrieval baseline. Publishing still requires the immutable release ref (`agentic-coding-v0.5.0`) and the Registry entry, which land separately after this change is merged; this source version is not an installability claim.
+- `0.5.0` is an unreleased candidate rewriting every Practice as a step-style decision procedure with an explicit stop, merging the two pre-work scope Practices into `decide-scope-and-stop-conditions`, adding two planning-calibration Practices (`derive-committed-set-from-concerns`, `keep-acceptance-path-completable`; 33 to 34 entries), tiering severity into critical/warn/info, and retuning `applies_when` against the #17 keyword retrieval baseline. Publishing still requires the immutable release ref (`agentic-coding-v0.5.0`) and the Registry entry, which land separately after this change is merged; this source version is not an installability claim.
 - `0.4.0` adds two independent validation and recovery Practices and refines seven existing entries against unnecessary defensive complexity (tag `agentic-coding-v0.4.0` + Registry entry).
 - `0.3.1` adds a Practice that limits repository investigation to sources that can change the current decision and clarifies source roles without making broad reading a default.
 - `0.3.0` rewrites the Pack for clearer standalone retrieval and adds a Practice for giving delegated Agents the decisions they need to preserve scope and quality.

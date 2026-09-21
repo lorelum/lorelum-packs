@@ -1,6 +1,6 @@
 fixture_set: agentic-coding-practice-catalog
 evaluation_only: true
-description: Atomic retrieval and behavior hypotheses for 32 Practices; not a runtime schema or proof of retrieval quality.
+description: Atomic retrieval and behavior hypotheses for 34 Practices; not a runtime schema or proof of retrieval quality.
 entries:
   - id: agentic-coding.implementation.validate-at-the-owning-boundary
     positive_trigger: An HTTP adapter parses a positive quantity into a typed command, but the service and repository plan to parse and clamp the unchanged value again merely because they are separate layers.
@@ -73,6 +73,22 @@ entries:
     nearest_neighbor: agentic-coding.verification.map-evidence-to-acceptance
     expected_behavior: Choose the cheapest observation that rules out a plausible failure for each must, state its blind spot, and name when to escalate.
     forbidden_behavior: Substitute a long list of convenient checks for evidence at the boundary where the required behavior can fail.
+
+  - id: agentic-coding.planning.derive-committed-set-from-concerns
+    positive_trigger: A team's review standard has grown one entry per incident; a teammate proposes yet another reasonable-sounding dimension, half the existing entries overlap, and nobody has written what the list must actually distinguish.
+    paraphrase: The pass criteria for a migration gate keep swinging — items are added until every change drowns in exception arguments, then purged until a bad change slips through — and each adjustment edited the list directly.
+    near_miss: The list is settled and every entry traces to a stated concern; the open question is whether an attractive future-use capability should enter the committed plan now.
+    nearest_neighbor: agentic-coding.planning.decide-scope-and-stop-conditions
+    expected_behavior: Convert the proposal into a concern first and name the judgment it would change, park it if none, merge overlapping entries, and freeze once every concern has an item and every item changes a judgment.
+    forbidden_behavior: Admit each item on its own local merits without a stated concern list, keep double-counting entries, or fix dilution and unfairness by directly adding or deleting items.
+
+  - id: agentic-coding.planning.keep-acceptance-path-completable
+    positive_trigger: A local tool's new write command is about to ship with a key allowlist, a traversal validator, an ownership permission check, and a confirmation on every write, while the scripts that call the tool cannot answer prompts.
+    paraphrase: A batch import gains a rule that throws away the whole batch when any single row is invalid, and no one has traced the ticket's own scenario through all the added checks.
+    near_miss: Every step of the capability path has an owner and the added checks are already justified; the open question is which single layer should own a rule that several layers repeat.
+    nearest_neighbor: agentic-coding.implementation.validate-at-the-owning-boundary
+    expected_behavior: Walk the acceptance scenario through every added check, give each check the lowest effective rung backed by a named reachable failure, narrow justified checks to the risky subset, and let one failure be attributed instead of voiding all satisfied conditions.
+    forbidden_behavior: Ship checks whose combined effect blocks the task's own scenario, keep a confirmation no caller in this context can answer, retain a check that names no concrete victim, or default to all-or-nothing failure handling without naming who needs that severity.
 
   - id: agentic-coding.implementation.inspect-and-reuse-existing-capability
     positive_trigger: A new link-normalization helper is about to be written even though another importer already uses a dependency that handles encoded paths and host casing.
