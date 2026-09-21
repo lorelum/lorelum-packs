@@ -1,6 +1,6 @@
 # Pack Creator
 
-`pack-creator@0.2.0` is an unreleased, domain-neutral Knowledge Pack for creating Lorelum Packs whose Practices can be retrieved independently, understood by humans, used as repository-local project layers or versioned releases, evaluated without confusing format success with semantic or behavioral quality, and supplemented with safely routed Pack-native resources.
+`pack-creator@0.2.0` is a published, domain-neutral Knowledge Pack for creating Lorelum Packs whose Practices can be retrieved independently, understood by humans, used as repository-local project layers or versioned releases, evaluated without confusing format success with semantic or behavioral quality, and supplemented with safely routed Pack-native resources.
 
 Canonical English · [简体中文 companion](./i18n/zh-CN/README.md)
 
@@ -35,15 +35,16 @@ Read [the project-local Pack guide](resource:references/project-local-packs.md) 
 ## Release history
 
 - `0.1.0` is the published first release.
-- `0.2.0` is an unreleased candidate. Its Registry descriptor names `pack-creator-v0.2.0`, which must be created at the reviewed merge commit after canonical content, localization, fixtures, and local-layer evidence are reviewed. No local validation result authorizes an installability claim.
+- `0.2.0` is the immutable release at `pack-creator-v0.2.0`, available through the official Registry after the canonical content, localization, fixtures, and local-layer evidence were reviewed.
 
-## Candidate evidence status
+## Release evidence status
 
-The following statements intentionally keep evidence layers separate for the local `0.2.0` candidate:
+The following statements keep evidence layers separate for the published `0.2.0` release:
 
 - **Structure:** the current Lorelum source CLI completed `lore validate` for this Pack on September 16, 2026: 27 canonical Practices, 27 current Chinese companions, and no Pack diagnostics. This proves the current directory/link structure only.
 - **Content review:** the new and changed Practices received an authoring review for standalone trigger, action, reason, exception, stop condition, and resource-consumption boundary. Maintainer or domain-expert approval remains a release gate; this is not a claim that the guidance is generally correct.
-- **Installation and resource readback:** not yet run through the public Registry. The candidate Registry descriptor is not an immutable ref or installation result, so it must not be described as installable or resource-preserved remotely.
+- **Official Registry installation and Pack readback:** PASS — on September 21, 2026, `lore pack install pack-creator@0.2.0` resolved `pack-creator-v0.2.0` at commit `f144a5a5e69636a5a6cd97a8b519018d2941bac6`, decoded the Pack without diagnostics, and read back all 27 Practice IDs. This establishes the supported materialization path; resource integrity remains separate evidence.
+- **Resource integrity:** not separately evaluated through a remote installation. The successful Pack install does not prove that a downstream Agent will select, copy, or execute every linked resource correctly.
 - **Retrieval selection:** the fixture catalog and resource-backed workflow state selection hypotheses, but no retrieval run has evaluated them.
 - **Downstream Agent behavior:** not run. No claim is made that an Agent will choose, copy, or execute these resources correctly.
 
