@@ -1,6 +1,6 @@
 # React Web Craft
 
-> **Unreleased local Pack candidate.** Version `0.1.0` is a mutable working marker, not a release. No Registry entry, immutable release ref, or tag exists. The Pack is licensed CC-BY-4.0 (`pack.yaml`, determined 2026-09-15); the remaining open gate is the Registry release.
+> **Published Pack.** Version `0.1.0` is the immutable `react-web-craft-v0.1.0` release in the official Registry. The Pack is licensed CC-BY-4.0 (`pack.yaml`, determined 2026-09-15).
 
 Canonical language is English. A zh-CN review companion lives under [`i18n/zh-CN/`](./i18n/zh-CN/README.md); the English files remain the runtime authority, and the companion is pinned to them via [`i18n/manifest.yaml`](./i18n/manifest.yaml).
 
@@ -91,6 +91,6 @@ Results as of 2026-09-14:
 | Install path | PASS — installed from a rehearsal git registry tag into an isolated store (artifact digest `48362b4b705bbcd4b2f283b10f394dabba6253dfcaef4d46f483ed002db12870`) |
 | Retrieval | PASS — keyword battery 28/28 (24 positive + 4 disambiguation); semantic battery 31/31 (24 positive + 4 disambiguation + 3 paraphrase; embedding needs `LORELUM_BACKEND_REQUEST_TIMEOUT_MS=60000`); battery script kept locally in `drafts/react/retrieval-battery.py` |
 | License | CLOSED (2026-09-15) — determined as CC-BY-4.0 in `pack.yaml`; the Pack's prose and examples are independently authored (no Vercel text or code reproduced), per-practice attribution is recorded in [SOURCES.md](./SOURCES.md), and the pinned sources' MIT declaration is documented there |
-| Registry release | OPEN — the Pack is not committed to the official catalog; no tag exists |
+| Registry release | PASS — `react-web-craft-v0.1.0` is in the official Registry. On September 21, 2026, the documented Registry install resolved commit `293e6b1327b0d9b4c01a711748db14c610908655`, decoded the Pack without diagnostics, and read back all 24 Practice IDs. This verifies materialization, not retrieval or downstream Agent behavior. |
 
 **Content freeze.** The English canonical — `pack.yaml`, `practices/`, [SOURCES.md](./SOURCES.md), and this README's content sections — is frozen as of 2026-09-14. The zh-CN companion under `i18n/zh-CN/` is complete (24/24 entries current per `lore validate`) and pinned to these files by the `source_digest` entries in [`i18n/manifest.yaml`](./i18n/manifest.yaml). Digests are computed by `lore i18n sync` over CLI-canonicalized markdown (Prettier-formatted, not raw file bytes), so any later English edit requires re-running that sync and re-translating the affected entries before the companion is trusted. The `license` field added to `pack.yaml` on 2026-09-15 is release metadata required by gate 6; it does not thaw the content freeze.
