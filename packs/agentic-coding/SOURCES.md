@@ -10,6 +10,7 @@ This Pack generalizes public Lorelum research and sanitized engineering retrospe
 - **Review-workflow synthesis** means the Practice was generalized from a redacted development-review workflow. Private artifacts and tool-specific procedures are intentionally not published.
 - **Delegation/Pack-authoring synthesis** means the Practice was generalized from a sanitized Pack-authoring workflow where delegated work repeated a rejected interpretation because the deciding conversation context was absent. Private prompts, identities, and repository-local operating details are not published.
 - **Defensive-complexity synthesis** means the Practice was generalized from sanitized maintainer feedback about agents adding repeated validation, normalization, authorization, or fallback behavior through ordinary development.
+- **Proportionality synthesis** means the Practice was generalized from sanitized maintainer experience with scheme formation on both sides of agent work — plans and protections proposed by agents, and evaluation standards authored with agent assistance — where locally reasonable additions composed into blocking or brittle wholes. Private evaluation material and tool-specific procedures are not published.
 
 Public issue sources:
 
@@ -29,6 +30,8 @@ Public issue sources:
 | `agentic-coding.planning.scale-work-to-risk-and-cost`                 | Issue-explicit: #35                                          | The issue compares simple, ordinary, and high-risk work and requires engineering effort to follow actual complexity and risk.                                                   |
 | `agentic-coding.planning.map-plan-to-user-capability`                 | Issue-explicit: #28                                          | The issue directly contrasts a list of technical tasks with coverage of the complete user capability.                                                                           |
 | `agentic-coding.planning.plan-sufficient-evidence`                    | Issue-derived synthesis: #28, #35; review-workflow synthesis | The issues require verification of real outcomes; the minimum-sufficient and escalation framing generalizes the redacted workflow's risk-sensitive evidence planning.           |
+| `agentic-coding.planning.derive-committed-set-from-concerns`         | Proportionality synthesis                                    | Generalized from sanitized maintainer experience with decision-bearing sets — evaluation gates, review standards, plan task lists — that grew one locally reasonable entry at a time until size itself failed; see synthesis boundary. |
+| `agentic-coding.planning.keep-acceptance-path-completable`            | Issue-derived synthesis: #35; Proportionality synthesis      | The issue's over-engineering cases include protections that make required behavior unusable; the acceptance-path walk, rung ladder, deletion test, and failure-composition framing generalize proportionality judgment for added checks. |
 | `agentic-coding.implementation.inspect-and-reuse-existing-capability` | Registry/install synthesis                                   | A sanitized retrospective showed that runtime, dependency, or local capabilities should be checked before duplicating behavior.                                                 |
 | `agentic-coding.implementation.limit-investigation-to-current-decision` | Issue-derived synthesis: packs #9; Delegation/Pack-authoring synthesis | #9 identifies context waste from indiscriminate loading; this Practice generalizes the boundary across code, tests, configuration, documents, and logs without prescribing a host or retrieval mechanism. |
 | `agentic-coding.implementation.surface-unconfirmed-assumptions`       | Issue-explicit: #28, #32                                     | Both issues explicitly require distinguishing unconfirmed assumptions from facts before those assumptions steer implementation or recovery.                                     |
@@ -57,7 +60,10 @@ Public issue sources:
 
 ## Synthesis boundary
 
-The `0.5.0` revision (lorelum-packs #19) is editorial: knowledge sources are unchanged. Every
+For the rewritten entries, the `0.5.0` revision (lorelum-packs #19) is editorial: their knowledge
+sources are unchanged. The revision additionally adds two knowledge-bearing Practices
+(`derive-committed-set-from-concerns`, `keep-acceptance-path-completable`) under a new
+Proportionality synthesis label, described below. Every
 Guidance was rewritten as an ordered decision procedure with an explicit stop, `applies_when` was
 reworded to discriminate neighbors using the #17 keyword baseline's confusion matrix, and examples
 were made self-contained for a cold reader. The former `admit-only-currently-justified-work` and
@@ -66,6 +72,18 @@ admission labeling and finish/defer/replan boundaries occur at the same pre-work
 the merged provenance row above preserves both original labels. Severity was tiered for the first
 time — critical for evidence-and-delivery honesty, warn for scope and planning, info for
 conventions — which is author synthesis with no external source.
+
+The 0.5.0 additions `agentic-coding.planning.derive-committed-set-from-concerns` and
+`agentic-coding.planning.keep-acceptance-path-completable` are **Proportionality synthesis**:
+generalized from sanitized maintainer experience on both sides of agent work — schemes the agents
+proposed (plans, validation, permission checks) and evaluation standards the maintainers authored
+with agent assistance (hard-gate criteria, judge rubrics) — where locally reasonable additions
+composed into failure: sets grew until their size became the failure, and protections accumulated
+until the task's own acceptance path could not complete. The concern set, admission questions, rung
+ladder, deletion test, and failure-composition walk are author-constructed decision procedures, not
+quotations from the linked issues; issue #35's over-engineering cases inform the closure Practice's
+subject matter only. The single-tenant/multi-tenant fixture pair and the config-set CLI example are
+author-constructed composite scenarios, not claims of incidents in those systems.
 
 The `0.4.0` additions `agentic-coding.implementation.validate-at-the-owning-boundary` and
 `agentic-coding.implementation.make-recovery-behavior-explicit` are **Defensive-complexity synthesis**:

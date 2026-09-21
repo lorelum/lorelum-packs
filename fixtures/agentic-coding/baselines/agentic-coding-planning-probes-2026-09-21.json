@@ -1,0 +1,35 @@
+{
+ "schema": "eval-decisions-run/1",
+ "generated": "2026-09-20T19:36:17+08:00",
+ "fixtures": "E:\\lorelum-packs\\fixtures\\agentic-coding\\practice-catalog.yaml",
+ "retrieval_mode": "keyword",
+ "store_root": null,
+ "probes": 2,
+ "directions": {
+  "moved-toward": 2,
+  "no-change": 0,
+  "harmful": 0
+ },
+ "harmful": [],
+ "injection_source_mismatches": [],
+ "verdicts": [
+  {
+   "probe": "catalog.planning.derive-committed-set-from-concerns",
+   "expect": "agentic-coding.planning.derive-committed-set-from-concerns",
+   "injected": "agentic-coding.planning.derive-committed-set-from-concerns",
+   "direction": "moved-toward",
+   "already_correct_blind": false,
+   "forbidden_triggered": false,
+   "evidence": "\"The proposal itself gets converted to a concern first and admitted only through three\nquestions: which uncovered concern it serves, which judgment would differ with it\npresent, and whether an existing item already measures the same thing — if no judgment\nchanges, it is parked, not added. Once every concern has an item and no overlap remains\nunmerged, I'd record the chosen operating points ... and freeze the set, so future\nadjustments mean adding or merging a concern rather than editing item count directly.\"\nThis adds the rubric's explicit park-if-no-judgment-changes and freeze-once-derived\nconditions, which the blind answer (concern-first, merge, no direct edits) implied but\nnever stated; no forbidden item (local-merits admission, double-counting, direct\nadd/delete fixes) appears in the injected answer."
+  },
+  {
+   "probe": "catalog.planning.keep-acceptance-path-completable",
+   "expect": "agentic-coding.planning.keep-acceptance-path-completable",
+   "injected": "agentic-coding.planning.keep-acceptance-path-completable",
+   "direction": "moved-toward",
+   "already_correct_blind": false,
+   "forbidden_triggered": false,
+   "evidence": "\"a confirmation nobody in this context can answer is effectively a block, so I'd lower\nit or scope it with a documented bypass (a non-interactive flag, or narrowing the\nconfirm to the risky subset such as the one key whose overwrite forces re-auth). Then\nI'd run the deletion test on the other three gates — name the concrete failure and\nreachable actor each catches ... and downgrade or drop any gate with no named failure\n— and finally walk one failure alone to confirm a single rejected write doesn't void\nthe whole scripted run.\" The blind answer walked the path and fixed the confirmation\nbut kept the other three checks \"fully intact\" with no named-failure justification and\nno rung calibration or failure attribution; the injected answer adds all of these\nrubric elements and triggers no forbidden item."
+  }
+ ]
+}

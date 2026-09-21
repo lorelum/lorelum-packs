@@ -37,6 +37,10 @@ locales:
         source_digest: sha256:856118e7aa6b5f45874a341ac08ad230f04ed2dc93c4a272ef63c457ae9bdb41
       - path: practices/planning/decide-scope-and-stop-conditions.md
         source_digest: sha256:c4c6fe2b281a8751a740c33a0dac5f0a429fd8b75a584dc98d7cbc3eb84b8074
+      - path: practices/planning/derive-committed-set-from-concerns.md
+        source_digest: sha256:c1de63e833d7b8daf57af30f25e22365c4eef706a5571faf7f5f03c5d40e0427
+      - path: practices/planning/keep-acceptance-path-completable.md
+        source_digest: sha256:c147eae61a6df8952c6f6c2b8f1319083fba3f0dccbb2278a8f688e4996ee8a2
       - path: practices/planning/map-plan-to-user-capability.md
         source_digest: sha256:65cecda2dba123da62dbf01aa9bbef6a48737038a6068b5270b6990468bfc41f
       - path: practices/planning/plan-sufficient-evidence.md

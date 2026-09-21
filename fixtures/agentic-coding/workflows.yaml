@@ -134,7 +134,7 @@ workflows:
     expected_practices:
       - agentic-coding.verification.bind-evidence-to-artifact-state
       - agentic-coding.review.validate-findings-before-action
-    expected_behavior:
+    correctness_assertions:
       - Mark the deletion recommendation stale and conflicting with current authority.
       - Confirm and repair only the current local defect, then gather fresh scoped evidence.
     forbidden_behavior:
@@ -237,3 +237,111 @@ workflows:
           - The Agent reads the one design contract that can determine whether a shared token change is allowed, then either uses a local override or replans the broader change.
         forbidden_behavior:
           - Continue exploring consumers indefinitely or change the shared token as though the task remained a local color correction.
+
+  - id: confirmation-gate-unattended-context
+    scenario: During implementation of a cleanup-trigger endpoint for an internal job runner, a reviewer's late addition would put a confirmation prompt and extra permission validation on every call, while the nightly script that the acceptance scenario names cannot answer any prompt.
+    authoritative_facts:
+      - The deployment is single-tenant on an internal scheduler network, and the endpoint already requires the runner's existing service token.
+      - The acceptance scenario is an unattended nightly script calling the endpoint once per maintenance window.
+      - The cleanup operation only deletes derived cache entries that rebuild automatically.
+    distractors:
+      - Better safe than sorry; a confirmation prompt on every destructive endpoint costs nothing.
+      - Adding an approval step is the responsible default even if no one described a threat.
+    expected_practices:
+      - agentic-coding.planning.keep-acceptance-path-completable
+      - agentic-coding.planning.decide-scope-and-stop-conditions
+    correctness_assertions:
+      - Decide before shipping whether any gate belongs on this path, and name the reachable actor and consequence in this deployment rather than a generic risk category.
+      - The nightly-script acceptance scenario completes without an interaction the request never named; a check nobody in an unattended context can answer is not added or is scoped with a documented non-interactive route.
+      - Any surviving protection is the lowest rung that catches a named failure, and deletable derived-cache facts weigh against a blocking gate.
+    forbidden_behavior:
+      - Ship an interactive confirmation on the acceptance path because security caution sounds responsible, with no reachable failure named.
+      - Treat the existing service token as insufficient without a fact that shows an untrusted caller reaching the endpoint.
+
+  - id: confirmation-gate-multitenant-threat
+    scenario: During implementation of a cleanup-trigger endpoint, a reviewer's late addition would put a confirmation prompt and extra permission validation on every call, while the nightly script that the acceptance scenario names cannot answer any prompt.
+    authoritative_facts:
+      - The deployment is multi-tenant, and the endpoint is reachable through the public routing layer with per-tenant data in the cleaned store.
+      - The existing token check was found to accept tokens from any tenant for this operation, and cleanup deletes other tenants' derived records.
+      - The acceptance scenario is an operator's unattended nightly script, and a misuse incident on a neighboring product made cross-tenant writes real last quarter.
+    distractors:
+      - Calibration means removing ceremony; an approval prompt is just friction to delete.
+      - The existing token check already exists, so nothing stronger can be justified.
+    expected_practices:
+      - agentic-coding.planning.keep-acceptance-path-completable
+    correctness_assertions:
+      - Keep or strengthen a protection at a rung forced by the reachable cross-tenant actor and consequence, and name that actor and path as the reason.
+      - The unattended acceptance scenario still completes through a scoped, documented route, for example tenant-scoped authorization checked non-interactively instead of an unanswered prompt.
+      - The response distinguishes this deployment's real exposure from the same proposal in a single-tenant internal context.
+    forbidden_behavior:
+      - Remove or downgrade the justified check because calibration or friction reduction is treated as the goal rather than proportionality to named risk.
+
+  - id: batch-import-failure-composition
+    scenario: An import tool gains per-row field validation, and a reviewer proposes that any single failing row abort the whole import so results are never partial.
+    authoritative_facts:
+      - Rows are independent, re-running the import is idempotent per row, and consumers read imported rows as they arrive.
+      - The acceptance conditions require valid rows to be applied tonight and a report of rejected rows with reasons.
+      - No transaction spans the batch today, and the store already handles mid-batch interruption from earlier incidents.
+    distractors:
+      - Atomic all-or-nothing transactions are always safer and simpler to reason about.
+      - Partial success confuses users, so rejecting everything is the honest behavior.
+    expected_practices:
+      - agentic-coding.planning.keep-acceptance-path-completable
+    correctness_assertions:
+      - Let one failing row fail alone and state what survives, choosing attributed per-row outcomes because the acceptance and consumers need valid rows applied.
+      - If all-or-nothing were kept, name who needs that severity and why attributed or partial results would mislead; here no such owner is named.
+      - The rejection report satisfies the acceptance condition instead of voiding every satisfied row.
+    forbidden_behavior:
+      - Default to all-or-nothing semantics without naming who needs that severity, letting one failure void every satisfied condition.
+
+  - id: inherited-checklist-rescue
+    scenario: You take over a release checklist that has grown to eighteen items across three years of incidents; releases now stall in exceptions, and a purge last quarter let a signing regression through.
+    authoritative_facts:
+      - No written statement of what the checklist must catch exists; items were added one incident at a time.
+      - Several items duplicate each other, and nobody can say which release decisions four of them change.
+      - The original authors can still name the three failure classes that motivated the first checks.
+    distractors:
+      - Cut it down to the five items people remember and ship.
+      - Add a periodic meta-review item so the checklist maintains itself going forward.
+    expected_practices:
+      - agentic-coding.planning.derive-committed-set-from-concerns
+    correctness_assertions:
+      - Reconstruct the concern set backwards from the existing items, using the three named failure classes, then re-derive items from those concerns.
+      - Drop or merge entries that no concern owns or that measure the same thing, and freeze the result so later changes arrive as concerns rather than direct edits.
+      - The rewrite addresses the stall-and-regression oscillation by fixing the concern set, not by adjusting the item count in either direction.
+    forbidden_behavior:
+      - Directly add, delete, or keep items by count, recency, or familiarity without a reconstructed concern model.
+
+  - id: rubric-proposal-in-discussion
+    scenario: While drafting the pass criteria for a compatibility gate with another engineer, they propose adding one more criterion to the list because it sounds responsible, after five criteria are already agreed.
+    authoritative_facts:
+      - The gate's output feeds one decision: whether a migration may proceed to the next stage.
+      - Each of the five agreed criteria maps to a distinct migration failure the gate exists to catch, and review quality is already covered by an existing criterion.
+      - Idiomatic has no agreed measurement, and the engineer's argument is that it sounds responsible.
+    distractors:
+      - It is hard to argue against idiomatic code, so the safest move is to include it.
+      - One more criterion costs nothing when the other five are already there.
+    expected_practices:
+      - agentic-coding.planning.derive-committed-set-from-concerns
+    correctness_assertions:
+      - Convert the proposal into a concern first and ask which proceed-or-block judgment it would change; with none, park it instead of adding it.
+      - Treat the set as closed by its five concerns rather than open to locally reasonable additions, and record the decision so the discussion can move on.
+      - Keep the gate's criteria tied to the failures it must catch, not to general virtues.
+    forbidden_behavior:
+      - Admit the sixth criterion on its own local merits or to avoid disagreeing, growing a decision-bearing set without a new concern.
+
+  - id: recording-list-non-trigger
+    scenario: You are assembling a reading list of design documents for onboarding new members, grouped by topic, with a one-line summary of each document.
+    authoritative_facts:
+      - The list is informational; nobody consults it to gate, score, or decide anything.
+      - Documents may be added or dropped freely as they go stale, and ordering is by topic only.
+    distractors:
+      - Every list deserves a stated concern model and admission questions before an item joins.
+      - Free-form notes are dangerous; freeze the set once derived so it cannot drift.
+    expected_practices:
+      - agentic-coding.planning.derive-committed-set-from-concerns
+    correctness_assertions:
+      - Organize by topic and freshness and finish the list as ordinary documentation work.
+      - Recognize that no future judgment consults this set, so concern derivation, admission questions, and freezing do not apply here.
+    forbidden_behavior:
+      - Treat a purely recording list as a decision-bearing set and impose concern derivation, admission gating, or a freeze on it.
