@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+"""Prepare a self-contained project-local Pack layer for evaluating
+unpublished working-tree content.
+
+Installed Stores verify pack directories against the artifact digest recorded
+at install time, so hand-editing a copied Store (adding files or Practice
+rows) fails with `store.recovery-required`. A project-local layer skips the
+Store entirely: the lore CLI discovers `.lorelum/packs/<pack>` from the
+working directory, and `base: none` keeps the layer self-contained instead of
+merging the user Store. The layer reproduces the exact working-tree content
+with live retrieval (`lore query` / `lore get`).
+
+`scripts/eval-decisions` calls only `query` and `get`, so it runs unchanged
+from the layer directory. `scripts/eval-queries` additionally calls
+`pack list`, which reads the user Store and does not see the layer; measure
+layer retrieval with direct `lore query` loops instead.
+
+Requires lore 0.1.0-alpha.3 or newer (project layers and the `--json`
+protocol flag). The script also writes a `lore-json` wrapper that prepends
+`--json` for harnesses that parse the JSON protocol.
+
+Usage:
+    python scripts/eval-project-layer --pack agentic-coding --dir tmp/probe-project
+
+    # then, from the layer directory:
+    cd tmp/probe-project
+    python ../../scripts/eval-decisions --lore lore-json.cmd \
+        --fixtures fixtures/agentic-coding/practice-catalog.yaml \
+        --emit-dir ../../tmp/probes --retrieval-mode keyword
+"""
+
+from __future__ import annotations
+
+import argparse
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+MIN_TOOL_VERSION = (0, 1, 0, "alpha", 3)
+
+
+def fail(message: str, code: int = 2) -> None:
+    print(f"error: {message}", file=sys.stderr)
+    raise SystemExit(code)
+
+
+def parse_tool_version(raw: str) -> tuple:
+    match = re.match(r"^(\d+)\.(\d+)\.(\d+)(?:-([A-Za-z]+)\.?(\d+))?", raw.strip())
+    if not match:
+        return None
+    major, minor, patch, pre, pre_n = match.groups()
+    return (int(major), int(minor), int(patch), pre or "", int(pre_n or 0))
+
+
+def resolve_lore(explicit: str | None) -> str:
+    candidates: list[str] = []
+    if explicit:
+        candidates.append(explicit)
+    which = shutil.which("lore")
+    if which:
+        candidates.append(which)
+    versions_root = Path.home() / "AppData" / "Local" / "Lorelum" / "versions"
+    if versions_root.is_dir():
+        for exe in sorted(versions_root.glob("*/lore.exe"), reverse=True):
+            candidates.append(str(exe))
+    for candidate in candidates:
+        try:
+            probe = subprocess.run(
+                [candidate, "--json", "--version"],
+                capture_output=True, text=True, encoding="utf-8", timeout=30,
+            )
+            import json
+
+            doc = json.loads(probe.stdout)
+            version = parse_tool_version(doc.get("data", {}).get("toolVersion", ""))
+            if doc.get("ok") and version and version >= MIN_TOOL_VERSION:
+                return unwrap_cmd_shim(candidate)
+        except (OSError, ValueError, subprocess.SubprocessError):
+            continue
+    fail(
+        "no lore >= 0.1.0-alpha.3 found; pass --lore <path to lore.exe/lore> "
+        "(the PATH entry may point at an older version)"
+    )
+
+
+def unwrap_cmd_shim(candidate: str) -> str:
+    """Return the executable behind a .cmd/.bat shim.
+
+    Wrappers must invoke the real executable directly: chaining through a
+    second cmd.exe shim re-parses %* and mangles quoted long arguments.
+    """
+    if not candidate.lower().endswith((".cmd", ".bat")):
+        return candidate
+    import re
+
+    text = Path(candidate).read_text(encoding="utf-8", errors="replace")
+    match = re.search(r'"([^"]+\.(?:exe|EXE))"', text)
+    if match and Path(match.group(1)).exists():
+        return match.group(1)
+    return candidate
+
+
+def write_wrapper(path: Path, lore: str) -> None:
+    if sys.platform == "win32":
+        path = path.with_suffix(".cmd")
+        path.write_text(
+            "@echo off\r\n" + f'"{Path(lore).resolve()}" --json %*\r\n',
+            encoding="ascii", newline="",
+        )
+    else:
+        path.write_text(
+            f'#!/bin/sh\nexec "{Path(lore).resolve()}" --json "$@"\n',
+            encoding="utf-8",
+        )
+        path.chmod(0o755)
+    return path
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(
+        description="Prepare a self-contained project-local Pack layer for evaluation."
+    )
+    ap.add_argument("--pack", default="agentic-coding", help="Pack directory name under packs/")
+    ap.add_argument("--dir", default="tmp/probe-project", help="layer directory to create")
+    ap.add_argument("--lore", default=None, help="lore executable to use (default: search PATH)")
+    args = ap.parse_args()
+
+    source = REPO_ROOT / "packs" / args.pack
+    if not (source / "pack.yaml").is_file():
+        fail(f"pack source not found: {source}")
+
+    layer = Path(args.dir)
+    if not layer.is_absolute():
+        layer = REPO_ROOT / layer
+    (layer / ".lorelum" / "packs").mkdir(parents=True, exist_ok=True)
+    dest = layer / ".lorelum" / "packs" / args.pack
+    if dest.exists():
+        shutil.rmtree(dest)
+    shutil.copytree(source, dest)
+
+    # Deliberately overwritten: the layer is disposable evaluation state.
+    (layer / ".lorelum" / "config.yaml").write_text("base: none\n", encoding="utf-8")
+
+    lore = resolve_lore(args.lore)
+    wrapper = write_wrapper(layer / "lore-json", lore)
+
+    print(f"layer: {dest}")
+    print(f"config: {layer / '.lorelum' / 'config.yaml'} (base: none)")
+    print(f"wrapper: {wrapper} -> {lore} --json")
+    print(
+        "next:\n"
+        f"  cd {layer.relative_to(REPO_ROOT) if layer.is_relative_to(REPO_ROOT) else layer}\n"
+        "  python ../../scripts/eval-decisions --lore lore-json.cmd \\\n"
+        f"      --fixtures fixtures/{args.pack}/practice-catalog.yaml \\\n"
+        "      --emit-dir ../../tmp/probes --retrieval-mode keyword"
+    )
+
+
+if __name__ == "__main__":
+    main()

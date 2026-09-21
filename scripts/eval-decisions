@@ -123,7 +123,7 @@ def load_probes(fixtures_path: Path) -> list:
                         "query_text": (phase["trigger"] if phase else wf["scenario"]),
                         "situation": wf["scenario"],
                         "situation_alt": phase["trigger"] if phase else None,
-                        "facts": (phase.get("authoritative_facts") or []) + wf.get("authoritative_facts", []),
+                        "facts": ((phase or {}).get("authoritative_facts") or []) + wf.get("authoritative_facts", []),
                         "distractors": wf.get("distractors", []),
                         "expected": (phase or wf)["correctness_assertions"],
                         "forbidden": (phase or wf)["forbidden_behavior"],

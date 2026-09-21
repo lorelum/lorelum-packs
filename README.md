@@ -138,6 +138,25 @@ Each probe is scored `moved-toward` (injection moved the decision toward the fix
 
 To compare two pack versions, emit the same fixtures twice (one `--store-root` per version) and have one fresh answering session answer the blind prompts once, then each version's injected prompts, then score both — blind prompts are byte-identical, so the responder drops out of the comparison. Recorded example: `fixtures/agentic-coding/baselines/agentic-coding-probes-paired-delta-2026-09-18.md`. Two calibrations from that run: advisory-mode `0 harmful` is weak evidence (a responder with a correct blind answer rejects even corrupted injections — verify sensitivity with a corrupted-body control), and re-asking with "a team practice you have decided to follow" (compliance framing) scores the content directly; a corrupted body comes out `harmful` only under that framing.
 
+### Evaluating unreleased working-tree content (project-local layer)
+
+Installed Stores verify pack directories against the artifact digest recorded at install time, so copying a Store and inserting Practices (files or database rows) fails with `store.recovery-required`. To evaluate content that has no Registry release yet, build a project-local layer instead — `lore` discovers `.lorelum/packs/<pack>` from the working directory, and the layer is self-contained (`base: none`) rather than merged with the user Store:
+
+```sh
+# One-time setup: copies packs/agentic-coding into the layer and writes a
+# lore-json wrapper (lore 0.1.0-alpha.3+ required for project layers + --json).
+python scripts/eval-project-layer --pack agentic-coding --dir tmp/probe-project
+
+# Decision probes run unchanged from the layer directory (--store-root omitted:
+# lore resolves the layer from the current working directory).
+cd tmp/probe-project
+python ../../scripts/eval-decisions --lore lore-json.cmd \
+  --fixtures fixtures/agentic-coding/practice-catalog.yaml \
+  --emit-dir ../../tmp/probes --retrieval-mode keyword
+```
+
+Boundaries: `eval-decisions` needs only `lore query`/`lore get`, both layer-aware. `eval-queries` additionally calls `pack list`, which reads the user Store and does not see the layer — measure layer retrieval with direct `lore query` loops (top-k hits against declared expectations) until that harness grows layer support.
+
 ## Repository layout
 
 ```text
