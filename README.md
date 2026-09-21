@@ -10,7 +10,7 @@ This repository is the official public catalog for installable Lorelum Knowledge
   - [简体中文本地化](./packs/pack-creator/i18n/zh-CN/README.md) is available as non-runtime companion content.
 - `react-web-craft@0.1.0` — 24 Practices for React web application design and performance across component state, async data flow, code loading, rendering, and component composition.
   - [简体中文本地化](./packs/react-web-craft/i18n/zh-CN/README.md) is available as non-runtime companion content.
-- `agentic-coding@0.5.0` — published release with 34 decision-focused Practices rewritten as step-style decision procedures with severity tiers (critical/warn/info). The official Registry resolves the immutable `agentic-coding-v0.5.0` ref.
+- `agentic-coding@0.5.1` — published release with 34 decision-focused Practices rewritten as step-style decision procedures with severity tiers (critical/warn/info); 0.5.1 retunes the catalog description to name the planning-calibration moments. The official Registry resolves the immutable `agentic-coding-v0.5.1` ref.
   - [简体中文本地化](./packs/agentic-coding/i18n/zh-CN/README.md) is available as non-runtime companion content.
 
 ## Use Packs
@@ -44,10 +44,10 @@ lore pack install agentic-coding
 # Use `@version` to select an exact release.
 lore pack install <pack>
 lore pack install <pack>@<version>
-lore pack install agentic-coding@0.5.0
+lore pack install agentic-coding@0.5.1
 lore pack update <pack>
 lore pack update <pack>@<version>
-lore pack update agentic-coding@0.5.0
+lore pack update agentic-coding@0.5.1
 ```
 
 Omit `@version` to resolve the Registry's latest stable release. `install` is for a new Pack; use
