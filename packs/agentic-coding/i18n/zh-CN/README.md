@@ -10,7 +10,7 @@
 
 本次修订：全部 Guidance 改写为带停止点的步骤式决策程序；`applies_when` 按检索评测的混淆矩阵改写以区分近邻 Practice；示例补强为冷读者可复述的自包含场景；severity 分为三档（critical=证据与交付诚实，warn=范围与规划，info=惯例）。原"只承诺有理由的工作"与"开工前写停止条件"两条同属开工前范围决策，合并为一条。
 
-`agentic-coding-v0.5.0` 已作为不可变 ref 通过官方 Registry 发布。2026 年 9 月 21 日已用官方安装路径解析该 ref、完成 Pack 解码并读回 34 条 Practice；这只证明安装与物化链路，不证明检索效果或下游 Agent 行为。`agentic-coding-v0.5.1` 为仅元数据发布：目录描述改写以点名 0.5.0 新增的两条规划校准 Practice 的触发时刻，Practice 内容不变。
+`agentic-coding-v0.5.0` 已作为不可变 ref 通过官方 Registry 发布。2026 年 9 月 21 日已用官方安装路径解析该 ref、完成 Pack 解码并读回 34 条 Practice；这只证明安装与物化链路，不证明检索效果或下游 Agent 行为。`agentic-coding-v0.5.1` 为仅元数据发布：目录描述改写以点名 0.5.0 新增的两条规划校准 Practice 的触发时刻，Practice 内容不变；2026 年 9 月 21 日已用官方安装路径解析该 ref（`954324c`）、完成解码并回读 34 条 Practice ID。
 
 ## 导航（34 条）
 
