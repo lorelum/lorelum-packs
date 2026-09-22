@@ -1,6 +1,6 @@
 # `agentic-coding` 简体中文阅读版
 
-这里是已发布的 `0.5.1` 版本 34 条 canonical Practice 的中文 companion，供人类阅读和审查 Pack 的判断质量。它不是逐词翻译，也不参与安装、检索或运行时注入。ID、元数据、反模式 ID 和运行时行为仍以 [`../../practices`](../../practices/) 中的英文 canonical 文件为唯一真源；中英文有冲突时，以英文为准。
+这里是未发布的 `0.6.0` 候选版本 34 条 canonical Practice 的中文 companion，供人类阅读和审查 Pack 的判断质量。它不是逐词翻译，也不参与安装、检索或运行时注入。ID、元数据、反模式 ID 和运行时行为仍以 [`../../practices`](../../practices/) 中的英文 canonical 文件为唯一真源；中英文有冲突时，以英文为准。最新已发布版本仍为 `0.5.1`，直到新的不可变 ref 和 Registry 条目存在。
 
 ## Pack 简介
 
@@ -8,9 +8,9 @@
 
 每个文件与 canonical 保持同一相对路径，仅含中文标题和六个正文章节，不含 runtime frontmatter。同步 digest 由 Lorelum 根据格式化后的英文 Markdown 生成，不应手工修改。
 
-本次修订：全部 Guidance 改写为带停止点的步骤式决策程序；`applies_when` 按检索评测的混淆矩阵改写以区分近邻 Practice；示例补强为冷读者可复述的自包含场景；severity 分为三档（critical=证据与交付诚实，warn=范围与规划，info=惯例）。原"只承诺有理由的工作"与"开工前写停止条件"两条同属开工前范围决策，合并为一条。
+本次修订（0.6.0）：`保持验收路径可完成` 扩展到信息隐藏——在一个面上藏起一个事实与加闸门过同一个删除测试，只有指名谁会在那里看到它而受害才成立；脱敏移到材料离开机器的边界（导出打包、外发反馈），不再降级本地面。`applies_when`、反模式与示例补入该形态，fixture 查询集为该 Practice 增加第四条正向查询。
 
-`agentic-coding-v0.5.0` 已作为不可变 ref 通过官方 Registry 发布。2026 年 9 月 21 日已用官方安装路径解析该 ref、完成 Pack 解码并读回 34 条 Practice；这只证明安装与物化链路，不证明检索效果或下游 Agent 行为。`agentic-coding-v0.5.1` 为仅元数据发布：目录描述改写以点名 0.5.0 新增的两条规划校准 Practice 的触发时刻，Practice 内容不变；2026 年 9 月 21 日已用官方安装路径解析该 ref（`954324c`）、完成解码并回读 34 条 Practice ID。
+`agentic-coding-v0.5.0` 已作为不可变 ref 通过官方 Registry 发布。2026 年 9 月 21 日已用官方安装路径解析该 ref、完成 Pack 解码并读回 34 条 Practice；这只证明安装与物化链路，不证明检索效果或下游 Agent 行为。`agentic-coding-v0.5.1` 为仅元数据发布：目录描述改写以点名 0.5.0 新增的两条规划校准 Practice 的触发时刻，Practice 内容不变；2026 年 9 月 21 日已用官方安装路径解析该 ref（`954324c`）、完成解码并回读 34 条 Practice ID。`0.6.0` 为未发布候选，依据为 2026-09-22 脱敏后的内部试用反馈（见 [SOURCES.md](../../SOURCES.md)）；发布与安装验证记录将在 tag 创建后补记。
 
 ## 导航（34 条）
 
