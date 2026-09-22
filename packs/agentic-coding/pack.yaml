@@ -1,5 +1,5 @@
 name: agentic-coding
-version: 0.5.1
+version: 0.6.0
 description: "Decision-focused Practices for AI agents doing software engineering: clarify goals, authority, acceptance, and non-goals; control scope and stop conditions; keep decision-bearing sets (plans, acceptance criteria, checklists, standards) from growing past what they must decide; make proportionate implementation and validation choices; keep validation, permission, and confirmation checks from blocking the acceptance path; review subtractively before commit; and handle handoffs, delegated agents, delivery, recovery, and context loss with trustworthy evidence."
 author:
   name: Lorelum

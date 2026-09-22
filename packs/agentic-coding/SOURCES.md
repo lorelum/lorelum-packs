@@ -31,7 +31,7 @@ Public issue sources:
 | `agentic-coding.planning.map-plan-to-user-capability`                 | Issue-explicit: #28                                          | The issue directly contrasts a list of technical tasks with coverage of the complete user capability.                                                                           |
 | `agentic-coding.planning.plan-sufficient-evidence`                    | Issue-derived synthesis: #28, #35; review-workflow synthesis | The issues require verification of real outcomes; the minimum-sufficient and escalation framing generalizes the redacted workflow's risk-sensitive evidence planning.           |
 | `agentic-coding.planning.derive-committed-set-from-concerns`         | Proportionality synthesis                                    | Generalized from sanitized maintainer experience with decision-bearing sets — evaluation gates, review standards, plan task lists — that grew one locally reasonable entry at a time until size itself failed; see synthesis boundary. |
-| `agentic-coding.planning.keep-acceptance-path-completable`            | Issue-derived synthesis: #35; Proportionality synthesis      | The issue's over-engineering cases include protections that make required behavior unusable; the acceptance-path walk, rung ladder, deletion test, and failure-composition framing generalize proportionality judgment for added checks. |
+| `agentic-coding.planning.keep-acceptance-path-completable`            | Issue-derived synthesis: #35; Proportionality synthesis; trial feedback (2026-09-22) | The issue's over-engineering cases include protections that make required behavior unusable; the acceptance-path walk, rung ladder, deletion test, and failure-composition framing generalize proportionality judgment for added checks. The 0.6.0 withholding calibration generalizes sanitized internal trial feedback in which a local single-user CLI's diagnostics plan blanket-hid real paths, permission bits, log contents, and internal errors. |
 | `agentic-coding.implementation.inspect-and-reuse-existing-capability` | Registry/install synthesis                                   | A sanitized retrospective showed that runtime, dependency, or local capabilities should be checked before duplicating behavior.                                                 |
 | `agentic-coding.implementation.limit-investigation-to-current-decision` | Issue-derived synthesis: packs #9; Delegation/Pack-authoring synthesis | #9 identifies context waste from indiscriminate loading; this Practice generalizes the boundary across code, tests, configuration, documents, and logs without prescribing a host or retrieval mechanism. |
 | `agentic-coding.implementation.surface-unconfirmed-assumptions`       | Issue-explicit: #28, #32                                     | Both issues explicitly require distinguishing unconfirmed assumptions from facts before those assumptions steer implementation or recovery.                                     |
@@ -84,6 +84,14 @@ ladder, deletion test, and failure-composition walk are author-constructed decis
 quotations from the linked issues; issue #35's over-engineering cases inform the closure Practice's
 subject matter only. The single-tenant/multi-tenant fixture pair and the config-set CLI example are
 author-constructed composite scenarios, not claims of incidents in those systems.
+
+The `0.6.0` extension of `keep-acceptance-path-completable` to information withholding is grounded
+in sanitized internal trial feedback from 2026-09-22: while planning a local single-user CLI's
+diagnostics and logs commands, an agent drafted the blanket requirement that text and JSON output
+never expose real paths, permission bits, log contents, or internal errors — conflating the local
+diagnostic surface with material bound for external feedback. The withholding clause, the
+named-harm test, and the export-boundary rule generalize the correction; the doctor/logs scenario
+in the Practice's example is a sanitized composite of that incident, not a quotation.
 
 The `0.4.0` additions `agentic-coding.implementation.validate-at-the-owning-boundary` and
 `agentic-coding.implementation.make-recovery-behavior-explicit` are **Defensive-complexity synthesis**:

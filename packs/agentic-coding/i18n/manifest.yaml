@@ -40,7 +40,7 @@ locales:
       - path: practices/planning/derive-committed-set-from-concerns.md
         source_digest: sha256:c1de63e833d7b8daf57af30f25e22365c4eef706a5571faf7f5f03c5d40e0427
       - path: practices/planning/keep-acceptance-path-completable.md
-        source_digest: sha256:c147eae61a6df8952c6f6c2b8f1319083fba3f0dccbb2278a8f688e4996ee8a2
+        source_digest: sha256:e429b0bc3649cea2d60b9d9c84ad9dcd0339466a9586a2da4d0c8aa19db4969f
       - path: practices/planning/map-plan-to-user-capability.md
         source_digest: sha256:65cecda2dba123da62dbf01aa9bbef6a48737038a6068b5270b6990468bfc41f
       - path: practices/planning/plan-sufficient-evidence.md

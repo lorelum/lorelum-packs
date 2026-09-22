@@ -26,6 +26,9 @@ packs:
       - version: 0.5.1
         ref: agentic-coding-v0.5.1
         path: packs/agentic-coding
+      - version: 0.6.0
+        ref: agentic-coding-v0.6.0
+        path: packs/agentic-coding
   - name: pack-creator
     description: Practices for creating atomic, retrievable, reviewable Lorelum Knowledge Packs, including repository-local project layers and verifiable Registry releases.
     releases:
