@@ -22,7 +22,6 @@ import json
 import os
 import re
 import shutil
-import subprocess
 import sys
 import time
 from collections import defaultdict
@@ -33,6 +32,15 @@ except ImportError:  # pragma: no cover
     print("error: PyYAML is required (pip install pyyaml)", file=sys.stderr)
     sys.exit(1)
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
+
+from eval_queries_baseline import baseline_compatibility_errors, compare_baseline
+from eval_queries_candidate import project_pack_details
+from eval_queries_gates import POSITIVE_GATE_TOP_K, GateFailure, limit_conflicts_with_formal_gates, resolve_run_policy
+from eval_queries_lore import run_lore as _run_lore_impl
+
 SCHEMA = "eval-queries-run/1"
 RUNNING_STATES = {"preparing", "running", "building", "pending"}
 REPORT_NOTE = (
@@ -40,48 +48,20 @@ REPORT_NOTE = (
     "machine and one Pack revision. It is not a claim about content quality, other queries, "
     "other modes that were unavailable, or downstream Agent behavior."
 )
+ACTIVE_QUERY_STATUSES = {"candidate", "reviewed", "frozen"}
+QUERY_STATUSES = ACTIVE_QUERY_STATUSES | {"retired"}
+QUERY_MIGRATION_KINDS = {"reassign", "merge", "replace", "retire"}
+PRACTICE_MIGRATION_KINDS = {"merge", "replace", "retire", "refine"}
+
+
+def run_lore(lore, args, store_root, timeout, project_root=None):
+    # Test and orchestration boundary: candidate loading can be patched independently.
+    return _run_lore_impl(lore, args, store_root, timeout, project_root)
 
 
 def _now() -> str:
     return _dt.datetime.now(_dt.timezone.utc).replace(microsecond=0).isoformat()
 
-
-def run_lore(lore: str, args: list, store_root: str | None, timeout: float) -> dict:
-    """Run one lore CLI invocation and return {"ok", "data"/"error", "exit", "raw"}."""
-    cmd = [lore]
-    if store_root:
-        cmd += ["--store-root", store_root]
-    cmd += args
-    try:
-        proc = subprocess.run(
-            cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout
-        )
-    except subprocess.TimeoutExpired:
-        return {"ok": False, "error": {"code": "harness.timeout", "message": f"lore {' '.join(args[0:2])} timed out"}, "exit": -1, "raw": ""}
-    except OSError as exc:
-        return {"ok": False, "error": {"code": "harness.exec-failed", "message": str(exc)}, "exit": -1, "raw": ""}
-    payload = None
-    start = proc.stdout.find("{")
-    if start >= 0:
-        try:
-            payload = json.loads(proc.stdout[start:])
-        except json.JSONDecodeError:
-            payload = None
-    if payload is None:
-        return {
-            "ok": False,
-            "error": {"code": "harness.no-json", "message": (proc.stderr or proc.stdout).strip()[:400]},
-            "exit": proc.returncode,
-            "raw": proc.stdout,
-        }
-    payload.setdefault("ok", False)
-    return {
-        "ok": bool(payload.get("ok")),
-        "data": payload.get("data"),
-        "error": payload.get("error"),
-        "exit": proc.returncode,
-        "raw": proc.stdout,
-    }
 
 
 def load_fixtures(path: str) -> dict:
@@ -98,12 +78,72 @@ def load_fixtures(path: str) -> dict:
             raise ValueError(f"{path}: kind must be positive|neighbor, got {q['kind']} ({q['id']})")
         if q["kind"] == "neighbor" and not q.get("resembles"):
             raise ValueError(f"{path}: neighbor query missing 'resembles' ({q['id']})")
+        status = q.get("status", "frozen")
+        if status not in QUERY_STATUSES:
+            raise ValueError(f"{path}: invalid query status {status!r} ({q['id']})")
+        if status == "retired" and (not isinstance(q.get("retired_reason"), str) or not q["retired_reason"].strip()):
+            raise ValueError(f"{path}: retired query missing 'retired_reason' ({q['id']})")
+        if q.get("previous_expect"):
+            if q["previous_expect"] == q["expect"]:
+                raise ValueError(f"{path}: previous_expect must differ from expect ({q['id']})")
+            if q.get("migration_kind") not in QUERY_MIGRATION_KINDS:
+                raise ValueError(f"{path}: migrated query needs migration_kind ({q['id']})")
+            if not q.get("migration_reason"):
+                raise ValueError(f"{path}: migrated query needs migration_reason ({q['id']})")
+        if q.get("migration_kind") and q["migration_kind"] not in QUERY_MIGRATION_KINDS:
+            raise ValueError(f"{path}: invalid migration_kind {q['migration_kind']!r} ({q['id']})")
+        if "acceptable" in q or q.get("acceptance") == "multi-valid":
+            raise ValueError(f"{path}: multi-valid Query expectations are not supported ({q['id']})")
+        replacements = q.get("replacement_queries")
+        if replacements is not None and (
+            not isinstance(replacements, list) or not replacements
+            or any(not isinstance(item, str) or not item for item in replacements)
+            or len(replacements) != len(set(replacements))
+        ):
+            raise ValueError(f"{path}: replacement_queries must be a non-empty list of unique Query IDs ({q['id']})")
         if q["id"] in ids:
             raise ValueError(f"{path}: duplicate query id {q['id']}")
         if q["text"].strip().lower() in texts:
             raise ValueError(f"{path}: duplicate query text ({q['id']})")
         ids.add(q["id"])
         texts.add(q["text"].strip().lower())
+    migrations = doc.get("practice_migrations", [])
+    if not isinstance(migrations, list):
+        raise ValueError(f"{path}: practice_migrations must be a list")
+    queries_by_id = {q["id"]: q for q in doc["queries"]}
+    for migration in migrations:
+        for field in ("old_practice", "kind", "reason"):
+            if not migration.get(field):
+                raise ValueError(f"{path}: practice migration missing '{field}': {migration}")
+        if migration["kind"] not in PRACTICE_MIGRATION_KINDS:
+            raise ValueError(f"{path}: invalid practice migration kind {migration['kind']!r}")
+        if migration["kind"] != "retire" and not migration.get("new_practice"):
+            raise ValueError(f"{path}: non-retirement migration missing 'new_practice': {migration}")
+        query_ids = migration.get("query_ids")
+        if not isinstance(query_ids, list) or not query_ids:
+            raise ValueError(f"{path}: practice migration needs non-empty query_ids: {migration}")
+        if any(not isinstance(qid, str) or not qid for qid in query_ids) or len(query_ids) != len(set(query_ids)):
+            raise ValueError(f"{path}: practice migration query_ids must be unique Query IDs: {migration}")
+        missing = [qid for qid in query_ids if qid not in queries_by_id]
+        if missing:
+            raise ValueError(f"{path}: practice migration references unknown Query IDs: {', '.join(missing)}")
+        for qid in query_ids:
+            query = queries_by_id[qid]
+            old = migration["old_practice"]
+            new = migration.get("new_practice")
+            is_retired = query.get("status", "frozen") == "retired"
+            if query.get("previous_expect") != old and (not is_retired or query.get("expect") != old):
+                raise ValueError(
+                    f"{path}: migration Query {qid} must belong to old Practice {old}"
+                )
+            if new and is_retired and query.get("expect") not in (old, new):
+                raise ValueError(f"{path}: retired migration Query {qid} has unrelated expect")
+            if new and not is_retired and query.get("expect") != new:
+                raise ValueError(
+                    f"{path}: migration Query {qid} expect must be {new} or be retired"
+                )
+            if migration["kind"] == "retire" and not is_retired:
+                raise ValueError(f"{path}: retire migration Query {qid} must have status: retired")
     return doc
 
 
@@ -136,6 +176,7 @@ def installed_pack_details(lore: str, name: str, store_root: str | None) -> dict
             for p in data.get("practices", [])
         ],
     }
+
 
 
 DISCIPLINE_STOPWORDS = set(
@@ -173,7 +214,7 @@ def discipline_violations(queries: list, practices: list) -> list:
 
 
 def partition_queries(queries: list, installed_ids: set) -> tuple[list, list]:
-    """Split into runnable and skipped (targets a Practice absent from this Pack version)."""
+    """Split active queries into runnable and skipped (missing Practice targets)."""
     runnable, skipped = [], []
     for q in queries:
         targets = {q["expect"]} if q["kind"] == "positive" else {q["expect"], q["resembles"]}
@@ -183,6 +224,97 @@ def partition_queries(queries: list, installed_ids: set) -> tuple[list, list]:
         else:
             runnable.append(q)
     return runnable, skipped
+
+
+def _active_queries(doc: dict) -> list:
+    return [q for q in doc["queries"] if q.get("status", "frozen") != "retired"]
+
+
+def _practice_migration_exists(
+    doc: dict,
+    old_practice: str,
+    new_practice: str | None = None,
+    query_id: str | None = None,
+) -> bool:
+    for migration in doc.get("practice_migrations", []):
+        if migration.get("old_practice") != old_practice:
+            continue
+        if new_practice is not None and migration.get("new_practice") != new_practice:
+            continue
+        if query_id is not None and query_id not in migration.get("query_ids", []):
+            continue
+        return True
+    return False
+
+
+def validate_migration_coverage(doc: dict, installed_ids: set) -> list:
+    """Validate explicit Query migrations and preserved coverage boundaries.
+
+    A migrated Query no longer counts as coverage for ``previous_expect``. If the
+    old Practice remains active, the fixture must provide an independent positive
+    and an old-vs-new neighbor query. Retired/missing Practices instead require an
+    explicit practice_migrations record or per-query migration metadata.
+    """
+    active = _active_queries(doc)
+    positives = [q for q in active if q["kind"] == "positive"]
+    failures = []
+    checked_pairs = set()
+    for q in doc["queries"]:
+        previous = q.get("previous_expect")
+        if not previous:
+            continue
+        current = q["expect"]
+        if previous not in installed_ids:
+            # Practice migrations list affected Query IDs, not just old/new pairs.
+            if not _practice_migration_exists(doc, previous, current, q["id"]):
+                failures.append({
+                    "query": q["id"],
+                    "old_practice": previous,
+                    "new_practice": current,
+                    "reason": "missing Practice migration record linked to this Query for inactive old Practice",
+                })
+            continue
+
+        pair = (previous, current)
+        if pair in checked_pairs:
+            continue
+        checked_pairs.add(pair)
+        independent_old = any(
+            p["expect"] == previous and not p.get("previous_expect")
+            for p in positives
+        )
+        if not independent_old:
+            failures.append({
+                "query": q["id"],
+                "old_practice": previous,
+                "new_practice": current,
+                "reason": "active old Practice has no independent positive query after migration",
+            })
+        boundary = any(
+            n["kind"] == "neighbor"
+            and n["expect"] == previous
+            and n.get("resembles") == current
+            for n in active
+        )
+        if not boundary:
+            failures.append({
+                "query": q["id"],
+                "old_practice": previous,
+                "new_practice": current,
+                "reason": "active old Practice is missing an old-vs-new neighbor query",
+            })
+    active_ids = {q["id"] for q in active}
+    for q in doc["queries"]:
+        if q.get("status", "frozen") != "retired":
+            continue
+        replacements = q.get("replacement_queries", [])
+        missing = [replacement for replacement in replacements if replacement not in active_ids]
+        if missing:
+            failures.append({
+                "query": q["id"],
+                "reason": f"retired Query references missing replacement_queries: {', '.join(missing)}",
+            })
+    return failures
 
 
 def semantic_readiness(lore: str, store_root: str | None, timeout_s: int) -> dict:
@@ -226,7 +358,7 @@ def semantic_readiness(lore: str, store_root: str | None, timeout_s: int) -> dic
     return {"state": "degraded", "code": err.get("code", "unknown"), "message": err.get("message", ""), "detail": "index status failed after build"}
 
 
-def run_queries(lore: str, mode: str, queries: list, store_root: str | None, fetch_k: int, limit: int | None) -> list:
+def run_queries(lore: str, mode: str, queries: list, store_root: str | None, fetch_k: int, limit: int | None, project_root: str | None = None) -> list:
     selected = queries if limit is None else queries[:limit]
     results = []
     for idx, q in enumerate(selected, 1):
@@ -243,7 +375,7 @@ def run_queries(lore: str, mode: str, queries: list, store_root: str | None, fet
         attempts = 0
         while True:
             attempts += 1
-            res = run_lore(lore, ["query", q["text"], "--mode", mode, "--top-k", str(fetch_k)], store_root, 180)
+            res = run_lore(lore, ["query", q["text"], "--mode", mode, "--top-k", str(fetch_k)], store_root, 180, project_root)
             if res["ok"] and isinstance(res["data"], dict) and "results" in res["data"]:
                 hits = [r["practiceId"] for r in res["data"]["results"]]
                 entry["hits"] = hits[:fetch_k]
@@ -265,29 +397,49 @@ def run_queries(lore: str, mode: str, queries: list, store_root: str | None, fet
     return results
 
 
+def _hit_rate(rows: list, top_k: int) -> float | None:
+    """Count failed queries as misses for both metrics and gates."""
+    if not rows:
+        return None
+    return sum(
+        not r["error"] and r["hit_rank"] is not None and r["hit_rank"] <= top_k
+        for r in rows
+    ) / len(rows)
+
+
 def compute_metrics(results: list, top_k: int) -> dict:
-    positives = [r for r in results if r["kind"] == "positive" and not r["error"]]
-    neighbors = [r for r in results if r["kind"] == "neighbor" and not r["error"]]
+    # Keep errored queries in the metric denominator so a partial run cannot
+    # report an inflated hit rate. A degraded mode is handled separately and
+    # never reaches this function as an evaluated mode.
+    positives = [r for r in results if r["kind"] == "positive"]
+    neighbors = [r for r in results if r["kind"] == "neighbor"]
     errors = [r["id"] for r in results if r["error"]]
 
     def rate(rows, pred):
         return round(len([r for r in rows if pred(r)]) / len(rows), 4) if rows else None
 
-    positive_top1 = rate(positives, lambda r: r["hit_rank"] == 1)
-    positive_topk = rate(positives, lambda r: r["hit_rank"] is not None and r["hit_rank"] <= top_k)
-    neighbor_top1 = rate(neighbors, lambda r: r["hit_rank"] == 1)
-    neighbor_topk = rate(neighbors, lambda r: r["hit_rank"] is not None and r["hit_rank"] <= top_k)
+    def rounded_hit_rate(rows, k):
+        raw = _hit_rate(rows, k)
+        return round(raw, 4) if raw is not None else None
+
+    positive_top1 = rounded_hit_rate(positives, 1)
+    positive_topk = rounded_hit_rate(positives, top_k)
+    neighbor_top1 = rounded_hit_rate(neighbors, 1)
+    neighbor_topk = rounded_hit_rate(neighbors, top_k)
     trap_top1 = rate(neighbors, lambda r: r["hits"] and r["hits"][0] == r["resembles"])
 
     confusion = defaultdict(lambda: defaultdict(int))
+    confused_counts = defaultdict(int)
     for r in neighbors:
         actual = r["hits"][0] if r["hits"] else "(no result)"
-        confusion[r["resembles"]][actual] += 1
-    confused_pairs = []
-    for resembles, cols in confusion.items():
-        for actual, count in cols.items():
-            if actual != r_expect(neighbors, resembles):
-                confused_pairs.append({"resembles": resembles, "actual_top1": actual, "count": count})
+        resembles = r["resembles"]
+        confusion[resembles][actual] += 1
+        if actual != r["expect"]:
+            confused_counts[(resembles, actual)] += 1
+    confused_pairs = [
+        {"resembles": resembles, "actual_top1": actual, "count": count}
+        for (resembles, actual), count in confused_counts.items()
+    ]
     confused_pairs.sort(key=lambda p: -p["count"])
 
     per_practice = {}
@@ -307,45 +459,48 @@ def compute_metrics(results: list, top_k: int) -> dict:
     }
 
 
-def r_expect(neighbors: list, resembles: str) -> str | None:
-    for r in neighbors:
-        if r["resembles"] == resembles:
-            return r["expect"]
-    return None
-
-
-def compare_baseline(current: list, baseline_results: list, top_k: int) -> dict:
-    base = {r["id"]: r for r in baseline_results if not r.get("error")}
-    regressions, improvements = [], []
-    common = 0
-    for r in current:
-        b = base.get(r["id"])
-        if not b or r["error"]:
-            continue
-        common += 1
-        was_hit = b.get("hit_rank") is not None and b["hit_rank"] <= top_k
-        now_hit = r["hit_rank"] is not None and r["hit_rank"] <= top_k
-        if was_hit and not now_hit:
-            regressions.append({"id": r["id"], "baseline_rank": b["hit_rank"], "now": r["hits"][:3]})
-        elif now_hit and not was_hit:
-            improvements.append({"id": r["id"], "now_rank": r["hit_rank"]})
-    return {"common_queries": common, "regressions": regressions, "improvements": improvements}
 
 
 def render_report(run: dict) -> str:
     lines = []
-    modes = run["modes"]
-    ok_modes = [m for m, s in modes.items() if s["state"] == "ok"]
+    modes = run.get("modes") or {}
     lines.append(f"# Retrieval evaluation: {run['fixture_set']} vs {run['pack']['name']}@{run['pack']['version']}")
     lines.append("")
     lines.append(f"- Generated: {run['generated']}  |  lore {run.get('lore_version', '?')}  |  mode(s): {', '.join(run['requested_modes'])}  |  top-k threshold: {run['top_k']}")
-    lines.append(f"- Store: {run.get('store_root') or 'user-level default'}  |  Queries: {run['totals']['runnable']} runnable, {run['totals']['skipped']} skipped")
+    lines.append(
+        f"- Store: {run.get('store_root') or 'user-level default'}  |  Queries: "
+        f"{run['totals']['runnable']} runnable, {run['totals']['skipped']} skipped, "
+        f"{run['totals'].get('retired', 0)} retired"
+    )
+    if run.get("source_kind") == "project":
+        lines.append(f"- Source: project ({run.get('project_root') or '?'} / {run.get('pack_root') or '?'})")
+        checks = run.get("candidate_checks") or {}
+        if checks:
+            lines.append(
+                "- Candidate loading: validate=passed; "
+                f"context={checks.get('context_state', '?')}/base={checks.get('context_base', '?')}; "
+                f"lore get={checks.get('practice_get_verified', 0)}/{checks.get('practice_files', 0)} Practices"
+            )
+    elif run.get("source_kind") == "store":
+        lines.append("- Source: store")
+    if run.get("partial_run"):
+        lines.append(f"- Partial run (--limit {run['limit']}): Top-3 gate NOT EVALUATED; these results cannot pass a formal gate.")
     if run.get("skipped"):
         lines.append(f"- Skipped (Practice not in this Pack version): {len(run['skipped'])}")
+    migration_validation = run.get("migration_validation") or {}
+    if migration_validation.get("failures"):
+        lines.append(f"- Migration validation failures: {len(migration_validation['failures'])}")
     coverage = run.get("coverage") or {}
     if coverage.get("uncovered"):
         lines.append(f"- Coverage gap: {len(coverage['uncovered'])} installed Practice(s) have no positive queries: "
                      + ", ".join(f"`{short(p)}`" for p in coverage["uncovered"]))
+    failures = run.get("gate_failures") or []
+    if failures:
+        lines.append("")
+        lines.append("## Gate failures")
+        lines.append("")
+        for f in failures:
+            lines.append(f"- **{f.get('gate', 'gate')}**: {f.get('message', '')}")
     for mode, section in modes.items():
         lines.append("")
         if section["state"] == "degraded":
@@ -402,6 +557,12 @@ def render_report(run: dict) -> str:
             lines.append("")
             lines.append(f"Regression vs baseline: {reg['common_queries']} common queries, "
                          f"{len(reg['regressions'])} lost hits, {len(reg['improvements'])} gained hits.")
+            if reg.get("migrations"):
+                lines.append(f"- Explicit Query migrations: {len(reg['migrations'])}")
+            if reg.get("migration_failures"):
+                lines.append(f"- Migrated Query target misses: {len(reg['migration_failures'])}")
+            if reg.get("expect_mismatches"):
+                lines.append(f"- Unrecorded expected-Practice changes: {len(reg['expect_mismatches'])}")
     lines.append("")
     lines.append(f"> {REPORT_NOTE}")
     lines.append("")
@@ -416,14 +577,31 @@ def fmt_rate(r) -> str:
     return "n/a" if r is None else f"{r * 100:.1f}%"
 
 
+def write_artifacts(run: dict, args) -> None:
+    if args.out:
+        os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+        with open(args.out, "w", encoding="utf-8", newline="\n") as fh:
+            json.dump(run, fh, indent=1)
+            fh.write("\n")
+        print(f"artifact: {args.out}")
+    if args.report:
+        os.makedirs(os.path.dirname(os.path.abspath(args.report)), exist_ok=True)
+        with open(args.report, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(render_report(run))
+        print(f"report: {args.report}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Evaluate fixture queries against an installed Pack via the lore CLI.")
     ap.add_argument("--fixtures", default=os.path.join("fixtures", "agentic-coding", "queries.yaml"))
     ap.add_argument("--mode", choices=("keyword", "semantic", "both"), default="both")
-    ap.add_argument("--top-k", type=int, default=3, help="hit threshold; ranking is fetched a little deeper")
+    ap.add_argument("--top-k", type=int, default=3, help="metric and baseline-regression Top-k threshold; --min-top3 remains a fixed Top-3 positive gate")
     ap.add_argument("--store-root", default=None, help="isolated LocalStore directory forwarded to lore")
-    ap.add_argument("--ensure-install", default=None, metavar="PACK[@VERSION]", help="lore pack install first if needed")
+    install_group = ap.add_mutually_exclusive_group()
+    install_group.add_argument("--ensure-install", default=None, metavar="PACK[@VERSION]", help="lore pack install first if needed")
+    install_group.add_argument("--project-root", default=None, metavar="DIR", help="candidate mode: evaluate the Pack under DIR/.lorelum/packs/agentic-coding")
     ap.add_argument("--baseline", default=None, help="previous run JSON artifact for regression comparison")
+    ap.add_argument("--fail-on-baseline-regression", action="store_true", help="exit 1 when any evaluated mode loses a previously hit query")
     ap.add_argument("--out", default=None, help="write the JSON run artifact here")
     ap.add_argument("--report", default=None, help="write a Markdown report here")
     ap.add_argument("--report-from", default=None, metavar="RUN.JSON", help="re-render --report from an existing run artifact without querying")
@@ -431,9 +609,18 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=None, help="run only the first N queries (smoke runs)")
     ap.add_argument("--semantic-timeout", type=int, default=600, help="seconds to wait for semantic index readiness")
     ap.add_argument("--require-coverage", action="store_true", help="fail if any installed Practice has no positive queries")
+    ap.add_argument("--require-frozen", action="store_true", help="fail if any active fixture Query is not status: frozen")
     ap.add_argument("--check-discipline", action="store_true", help="fail if any query shares a 4+-word run with an installed Practice's title/applies_when (quotation matches prove nothing)")
-    ap.add_argument("--min-top3", type=float, default=None, metavar="RATE", help="gate: minimum positive top-3 hit rate (0-1) for each evaluated mode; defaults to the fixture's min_top3 when present. Exit 1 below it; degraded modes are reported as not evaluated")
+    ap.add_argument("--min-top3", type=float, default=None, metavar="RATE", help="gate: minimum fixed positive Top-3 hit rate (0-1) for each evaluated mode; defaults to the fixture's min_top3 when present. Exit 1 below it; degraded modes are reported as not evaluated")
     args = ap.parse_args()
+
+    if args.fail_on_baseline_regression and not args.baseline:
+        ap.error("--fail-on-baseline-regression requires --baseline")
+    if args.limit is not None and args.limit <= 0:
+        ap.error("--limit must be positive")
+    if limit_conflicts_with_formal_gates(args):
+        print("error: --limit is only valid for exploratory runs, not formal gates", file=sys.stderr)
+        return 2
 
     if args.report_from:
         if not args.report:
@@ -457,6 +644,12 @@ def main() -> int:
     doc = load_fixtures(args.fixtures)
     print(f"fixtures: {doc['fixture_set']} — {len(doc['queries'])} queries (top_k hint {doc.get('top_k')})")
 
+    requested = ["keyword", "semantic"] if args.mode == "both" else [args.mode]
+    fetch_k = max(args.top_k + 2, 5)
+    policy = resolve_run_policy(args, doc)
+    formal = policy.formal
+    min_top3, min_top3_source = policy.min_top3, policy.min_top3_source
+
     if args.store_root:
         os.makedirs(args.store_root, exist_ok=True)
 
@@ -464,54 +657,123 @@ def main() -> int:
         ensure_installed(lore, args.ensure_install, args.store_root)
 
     pack_name = doc.get("target_pack", "agentic-coding").split("@", 1)[0]
-    pack = installed_pack_details(lore, pack_name, args.store_root)
+    if args.project_root:
+        pack = project_pack_details(lore, args.project_root, pack_name, args.store_root)
+        source_kind = "project"
+    else:
+        pack = installed_pack_details(lore, pack_name, args.store_root)
+        source_kind = "store"
     installed_ids = set(pack["practice_ids"])
-    print(f"pack: {pack['name']}@{pack['version']} — {len(installed_ids)} practices installed")
+    print(f"pack: {pack['name']}@{pack['version']} — {len(installed_ids)} practices ({source_kind})")
 
-    runnable, skipped = partition_queries(doc["queries"], installed_ids)
+    active_queries = _active_queries(doc)
+    retired_queries = [q for q in doc["queries"] if q.get("status", "frozen") == "retired"]
+    runnable, skipped = partition_queries(active_queries, installed_ids)
     if skipped:
         print(f"skipping {len(skipped)} queries whose target Practice is not in this Pack version:")
         for s in skipped:
             print(f"  - {s['id']}: {s['reason']}")
-    if not runnable:
-        print("error: no runnable queries for this Pack", file=sys.stderr)
-        return 1
 
-    queried = {q["expect"] for q in doc["queries"] if q["kind"] == "positive"}
+    run = {
+        "schema": SCHEMA,
+        "note": REPORT_NOTE,
+        "generated": _now(),
+        "fixture_set": doc["fixture_set"],
+        "fixtures_path": os.path.normpath(args.fixtures),
+        "pack": {"name": pack["name"], "version": pack["version"], "practice_count": len(installed_ids)},
+        "source_kind": source_kind,
+        "candidate_checks": pack.get("candidate_checks") if source_kind == "project" else None,
+        "project_root": os.path.normpath(args.project_root) if args.project_root else None,
+        "pack_root": os.path.normpath(os.path.join(args.project_root, ".lorelum", "packs", pack_name)) if args.project_root else None,
+        "lore_version": lore_version,
+        "store_root": os.path.normpath(args.store_root) if args.store_root else None,
+        "requested_modes": requested,
+        "top_k": args.top_k,
+        "fetch_k": fetch_k,
+        "limit": args.limit,
+        "partial_run": args.limit is not None,
+        "totals": {"runnable": len(runnable), "skipped": len(skipped), "retired": len(retired_queries)},
+        "skipped": skipped,
+        "retired": [q["id"] for q in retired_queries],
+        "coverage": None,
+        "discipline": None,
+        "min_top3": {"value": min_top3, "source": min_top3_source},
+        "modes": {},
+        "gate_failures": [],
+    }
+
+    pre_failures: list[GateFailure] = []
+    if formal:
+        unfrozen = [q["id"] for q in active_queries if q.get("status") != "frozen"]
+        if unfrozen:
+            pre_failures.append(GateFailure(
+                "frozen-queries",
+                f"{len(unfrozen)} active Query(s) are not frozen: {', '.join(unfrozen[:8])}",
+            ))
+
+    migration_failures = validate_migration_coverage(doc, installed_ids)
+    run["migration_validation"] = {"checked": True, "failures": migration_failures}
+    if formal and migration_failures:
+        pre_failures.append(GateFailure(
+            "migration-coverage",
+            "; ".join(
+                f"{failure.get('query', '(practice migration)')}: {failure['reason']}"
+                for failure in migration_failures
+            ),
+        ))
+
+    if formal and skipped:
+        pre_failures.append(GateFailure(
+            "missing-query-target",
+            "; ".join(f"{item['id']}: {item['reason']}" for item in skipped),
+        ))
+
+    if not runnable:
+        pre_failures.append(GateFailure("no-runnable-queries", "no runnable queries for this Pack"))
+
+    queried = {
+        q["expect"]
+        for q in active_queries
+        if q["kind"] == "positive" and not q.get("previous_expect")
+    }
     uncovered = sorted(installed_ids - queried)
-    if uncovered:
-        listed = ", ".join(short(p) for p in uncovered)
-        if args.require_coverage:
-            print(f"error: coverage: {len(uncovered)} installed practice(s) have no positive queries: {listed}", file=sys.stderr)
-            print("error: add 3 positive + 2 neighbor queries to the fixture in the Practice's change (issue #17 promotion flow).", file=sys.stderr)
-            return 1
-        print(f"warning: coverage: {len(uncovered)} installed practice(s) have no positive queries: {listed}")
-    coverage = {
+    run["coverage"] = {
         "practices_installed": len(installed_ids),
         "practices_with_positive_queries": len(queried & installed_ids),
         "uncovered": uncovered,
     }
+    if uncovered and args.require_coverage:
+        listed = ", ".join(short(p) for p in uncovered)
+        pre_failures.append(GateFailure(
+            "coverage",
+            f"{len(uncovered)} installed practice(s) have no positive queries: {listed}",
+        ))
 
-    discipline = None
     if args.check_discipline:
-        violations = discipline_violations(doc["queries"], pack.get("practices", []))
-        discipline = {"checked": True, "violations": len(violations)}
+        violations = discipline_violations(active_queries, pack.get("practices", []))
+        run["discipline"] = {"checked": True, "violations": len(violations)}
         if violations:
             print(f"discipline: {len(violations)} query/practice restatement(s):")
             for v in violations:
                 print(f"  - {v['query']} restates {short(v['practice'])} ({v['n']}-word run: \"{v['shared']}\")")
-            print("error: rewrite the flagged queries in situation wording; quotation matches prove nothing about retrieval.", file=sys.stderr)
-            return 1
-        print("discipline: no query restates an installed Practice's title or applies_when text")
+            detail = "; ".join(
+                f"{v['query']} restates {short(v['practice'])} ({v['n']}-word run: \"{v['shared']}\")"
+                for v in violations
+            )
+            pre_failures.append(GateFailure(
+                "discipline",
+                f"{len(violations)} query/practice restatement(s): {detail}",
+            ))
+        else:
+            print("discipline: no query restates an installed Practice's title or applies_when text")
 
-    requested = ["keyword", "semantic"] if args.mode == "both" else [args.mode]
-    fetch_k = max(args.top_k + 2, 5)
-    if args.min_top3 is not None:
-        min_top3, min_top3_source = args.min_top3, "flag"
-    elif doc.get("min_top3") is not None:
-        min_top3, min_top3_source = float(doc["min_top3"]), "fixture"
-    else:
-        min_top3, min_top3_source = None, None
+    if pre_failures:
+        for failure in pre_failures:
+            print(f"error: {failure.gate}: {failure.message}", file=sys.stderr)
+            run["gate_failures"].append({"gate": failure.gate, "message": failure.message})
+        write_artifacts(run, args)
+        return 1
+
     modes_section = {}
     for mode in requested:
         if mode == "semantic":
@@ -528,8 +790,9 @@ def main() -> int:
                 }
                 continue
             print(f"semantic index ready ({ready.get('detail')})")
-        print(f"running {len(runnable)} queries in {mode} mode (fetch top {fetch_k})...")
-        results = run_queries(lore, mode, runnable, args.store_root, fetch_k, args.limit)
+        run_count = min(len(runnable), args.limit) if args.limit else len(runnable)
+        print(f"running {run_count} queries in {mode} mode (fetch top {fetch_k})...")
+        results = run_queries(lore, mode, runnable, args.store_root, fetch_k, args.limit, args.project_root)
         metrics = compute_metrics(results, args.top_k)
         pos, nb = metrics["positive"], metrics["neighbor"]
         print(f"{mode}: positive top-1 {fmt_rate(pos['top1_rate'])}, "
@@ -537,8 +800,8 @@ def main() -> int:
               f"neighbor expected top-1 {fmt_rate(nb['expect_top1_rate'])}, trap top-1 {fmt_rate(nb['trap_top1_rate'])}")
         section = {"state": "ok", "metrics": metrics, "results": results}
         if min_top3 is not None:
-            pos_rows = [r for r in results if r["kind"] == "positive" and not r["error"]]
-            observed = (len([r for r in pos_rows if r["hit_rank"] is not None and r["hit_rank"] <= 3]) / len(pos_rows)) if pos_rows else 0.0
+            pos_rows = [r for r in results if r["kind"] == "positive"]
+            observed = _hit_rate(pos_rows, POSITIVE_GATE_TOP_K) or 0.0
             gate = {"metric": "positive_top3", "min": min_top3, "observed": round(observed, 4), "passed": observed >= min_top3, "source": min_top3_source}
             section["gate"] = gate
             print(f"gate [{mode}]: positive top-3 {fmt_rate(gate['observed'])} >= {fmt_rate(min_top3)} ({min_top3_source}) -> {'PASS' if gate['passed'] else 'FAIL'}")
@@ -547,64 +810,84 @@ def main() -> int:
         if min_top3 is not None and section["state"] == "degraded":
             print(f"gate [{mode}]: NOT EVALUABLE (mode degraded on this machine); gate applies to evaluated modes only")
 
-    run = {
-        "schema": SCHEMA,
-        "note": REPORT_NOTE,
-        "generated": _now(),
-        "fixture_set": doc["fixture_set"],
-        "fixtures_path": os.path.normpath(args.fixtures),
-        "pack": {"name": pack["name"], "version": pack["version"], "practice_count": len(installed_ids)},
-        "lore_version": lore_version,
-        "store_root": os.path.normpath(args.store_root) if args.store_root else None,
-        "requested_modes": requested,
-        "top_k": args.top_k,
-        "fetch_k": fetch_k,
-        "limit": args.limit,
-        "totals": {"runnable": len(runnable), "skipped": len(skipped)},
-        "skipped": skipped,
-        "coverage": coverage,
-        "discipline": discipline,
-        "min_top3": {"value": min_top3, "source": min_top3_source},
-        "modes": modes_section,
-    }
+    run["modes"] = modes_section
 
+    post_failures: list[GateFailure] = []
     if args.baseline:
         try:
             with open(args.baseline, encoding="utf-8") as fh:
                 baseline = json.load(fh)
-            for mode, section in modes_section.items():
-                if section["state"] != "ok":
-                    continue
-                base_mode = (baseline.get("modes") or {}).get(mode) or {}
-                if base_mode.get("results"):
-                    section["regression"] = compare_baseline(section["results"], base_mode["results"], args.top_k)
+            compatibility_errors = baseline_compatibility_errors(
+                baseline, pack_name, doc["fixture_set"], args.top_k, requested
+            )
+            if compatibility_errors:
+                message = "; ".join(compatibility_errors)
+                if args.fail_on_baseline_regression:
+                    post_failures.append(GateFailure("baseline-schema", message))
+                else:
+                    print(f"warning: baseline comparison skipped: {message}", file=sys.stderr)
+            else:
+                for mode, section in modes_section.items():
+                    if section.get("state") != "ok":
+                        continue
+                    base_mode = baseline["modes"][mode]
+                    fixture_queries = {q["id"]: q for q in doc["queries"]}
+                    section["regression"] = compare_baseline(
+                        section["results"], base_mode["results"], args.top_k, fixture_queries
+                    )
                     reg = section["regression"]
                     print(f"baseline [{mode}]: {reg['common_queries']} common, {len(reg['regressions'])} lost, {len(reg['improvements'])} gained")
+                    if not args.fail_on_baseline_regression:
+                        continue
+                    for row in reg["regressions"]:
+                        message = f"[{mode}] {row['id']} lost a hit (baseline rank {row['baseline_rank']}; now {row['now']})"
+                        post_failures.append(GateFailure("baseline-regression", message))
+                    for row in reg["migration_failures"]:
+                        post_failures.append(GateFailure(
+                            "migration-regression",
+                            f"[{mode}] migrated Query {row['id']} does not hit new target {row['expect']}",
+                        ))
+                    for row in reg["expect_mismatches"]:
+                        post_failures.append(GateFailure(
+                            "baseline-query-mismatch",
+                            f"[{mode}] {row['id']}: {row['reason']}",
+                        ))
+                    if reg["unaccounted_baseline_queries"]:
+                        post_failures.append(GateFailure(
+                            "baseline-query-removal",
+                            f"[{mode}] baseline contains unaccounted Query(s): {', '.join(reg['unaccounted_baseline_queries'])}",
+                        ))
         except (OSError, json.JSONDecodeError) as exc:
-            print(f"warning: could not read baseline {args.baseline}: {exc}", file=sys.stderr)
-
-    if args.out:
-        os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
-        with open(args.out, "w", encoding="utf-8", newline="\n") as fh:
-            json.dump(run, fh, indent=1)
-            fh.write("\n")
-        print(f"artifact: {args.out}")
-
-    if args.report:
-        os.makedirs(os.path.dirname(os.path.abspath(args.report)), exist_ok=True)
-        with open(args.report, "w", encoding="utf-8", newline="\n") as fh:
-            fh.write(render_report(run))
-        print(f"report: {args.report}")
+            if args.fail_on_baseline_regression:
+                message = f"could not read baseline {args.baseline}: {exc}"
+                post_failures.append(GateFailure("baseline-read", message))
+            else:
+                print(f"warning: could not read baseline {args.baseline}: {exc}", file=sys.stderr)
 
     if all(s["state"] == "degraded" for s in modes_section.values()):
-        print("error: every requested mode degraded; no evaluation ran", file=sys.stderr)
-        return 1
-    failed_gates = [(m, s["gate"]) for m, s in modes_section.items() if s.get("gate") and not s["gate"]["passed"]]
-    if failed_gates:
-        for mode, gate in failed_gates:
-            print(f"error: gate FAILED [{mode}]: positive top-3 {fmt_rate(gate['observed'])} below minimum {fmt_rate(gate['min'])}", file=sys.stderr)
-        return 1
-    return 0
+        post_failures.append(GateFailure("all-degraded", "every requested mode degraded; no evaluation ran"))
+
+    for mode, section in modes_section.items():
+        gate = section.get("gate")
+        if gate and not gate["passed"]:
+            post_failures.append(GateFailure(
+                "min-top3",
+                f"[{mode}] positive top-3 {fmt_rate(gate['observed'])} below minimum {fmt_rate(gate['min'])}",
+            ))
+        if formal and section.get("state") == "ok":
+            errors = [r["id"] for r in section.get("results", []) if r.get("error")]
+            if errors:
+                post_failures.append(GateFailure(
+                    "query-errors",
+                    f"[{mode}] {len(errors)} Query execution error(s): {', '.join(errors[:8])}",
+                ))
+
+    for failure in post_failures:
+        print(f"error: {failure.gate}: {failure.message}", file=sys.stderr)
+        run["gate_failures"].append({"gate": failure.gate, "message": failure.message})
+
+    write_artifacts(run, args)
+    return 1 if run["gate_failures"] else 0
 
 
 if __name__ == "__main__":

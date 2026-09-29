@@ -1,0 +1,86 @@
+name: agentic-coding retrieval gate
+
+on:
+  pull_request:
+    paths:
+      - "packs/agentic-coding/**"
+      - "fixtures/agentic-coding/**"
+      - "scripts/eval-queries"
+      - "scripts/test_eval_queries.py"
+      - ".github/workflows/agentic-coding-retrieval.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  retrieval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      LORE_VERSION: "0.1.0-alpha.3"
+      LORE_INSTALL_REF: "3c1d7512e280e3b443dd412b820dff4bd0ff4998"
+      LORE_INSTALL_SHA256: "c90b84ccbec2c15b68317c1ee25d579983a6759ecabe004a438f6ffd3ec35f9f"
+      BASELINE: fixtures/agentic-coding/baselines/agentic-coding-0.5.1-keyword-2026-09-28.json
+
+    steps:
+      - name: Checkout PR candidate
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install evaluator dependencies
+        run: python -m pip install --disable-pip-version-check pyyaml
+
+      - name: Run evaluator unit tests
+        run: python -m unittest discover -s scripts -p "test_*.py" -v
+
+      - name: Install pinned lore CLI
+        run: |
+          install_script="$RUNNER_TEMP/lore-install.sh"
+          curl -fsSL "https://raw.githubusercontent.com/lorelum/lorelum/$LORE_INSTALL_REF/install.sh" \
+            -o "$install_script"
+          echo "$LORE_INSTALL_SHA256  $install_script" | sha256sum -c -
+          sh "$install_script" --version "$LORE_VERSION"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Prepare candidate ProjectContext
+        env:
+          PROJECT_ROOT: ${{ runner.temp }}/lorelum-project
+        run: |
+          mkdir -p "$PROJECT_ROOT/.lorelum/packs"
+          printf 'base: none\n' > "$PROJECT_ROOT/.lorelum/config.yaml"
+          cp -R "$GITHUB_WORKSPACE/packs/agentic-coding" \
+            "$PROJECT_ROOT/.lorelum/packs/agentic-coding"
+
+      - name: Validate candidate Pack and run retrieval gate
+        env:
+          PROJECT_ROOT: ${{ runner.temp }}/lorelum-project
+          STORE_ROOT: ${{ runner.temp }}/lorelum-store
+        run: |
+          python scripts/eval-queries \
+            --project-root "$PROJECT_ROOT" \
+            --fixtures fixtures/agentic-coding/queries.yaml \
+            --mode keyword \
+            --min-top3 0.90 \
+            --require-coverage \
+            --require-frozen \
+            --check-discipline \
+            --baseline "$BASELINE" \
+            --fail-on-baseline-regression \
+            --store-root "$STORE_ROOT" \
+            --lore "$HOME/.local/bin/lore" \
+            --out "$RUNNER_TEMP/agentic-retrieval.json" \
+            --report "$RUNNER_TEMP/agentic-retrieval.md"
+
+      - name: Upload retrieval evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-coding-retrieval
+          path: |
+            ${{ runner.temp }}/agentic-retrieval.json
+            ${{ runner.temp }}/agentic-retrieval.md
