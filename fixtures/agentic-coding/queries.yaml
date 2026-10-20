@@ -848,3 +848,21 @@ queries:
     resembles: agentic-coding.recovery.validate-handoff-before-continuation
     expect: agentic-coding.correction.restore-authoritative-baseline
     text: "the requester's new decision invalidates the old route; remove it everywhere rather than re-checking the other agent's summary"
+
+  # October 2026 source refinements: additional hypotheses, not recorded retrieval results.
+  - id: implementation.validate-at-the-owning-boundary.p4
+    kind: positive
+    expect: agentic-coding.implementation.validate-at-the-owning-boundary
+    text: "our local worker returns a record already checked by its producer, but the client walks the entire object again and scans the executable on every status request just because it crossed HTTP"
+  - id: implementation.validate-at-the-owning-boundary.p5
+    kind: positive
+    expect: agentic-coding.implementation.validate-at-the-owning-boundary
+    text: "a mock makes the internal JSON producer return a cycle and the reviewer wants a new production guard; the actual producer only returns decoded validated JSON with no later mutation"
+  - id: implementation.confirm-product-surface-expansion.p4
+    kind: positive
+    expect: agentic-coding.implementation.confirm-product-surface-expansion
+    text: "the supported integration uses the released command and native host hooks, but an old dormant server package is being cited as permission to ship a second local integration transport"
+  - id: planning.plan-sufficient-evidence.p4
+    kind: positive
+    expect: agentic-coding.planning.plan-sufficient-evidence
+    text: "after a small revision we still have applicable integration results and one newly affected failure case; should the plan demand the entire suite and a benchmark again or cover the remaining gap"

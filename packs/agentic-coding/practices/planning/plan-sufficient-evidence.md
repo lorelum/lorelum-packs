@@ -40,6 +40,13 @@ Stop when every must has a sufficient evidence route or a recorded owner decisio
 deferred, de-committed, or accepted as unverifiable with its risk. A declared gap alone is not a
 stop.
 
+When refining the plan after a change, add checks for new risks and unresolved evidence gaps;
+reuse earlier results that still apply to the current artifact and environment. Do not require a
+full rerun, benchmark, or formal risk report for every edit. Extra work in a hot path warrants
+checking its actual cost at a scale that can change the decision; a mandatory benchmark ritual is
+not a substitute for that judgment. Tests for impossible producer outputs do not supply evidence
+about reachable failures. More checks or defensive branches alone do not establish higher quality.
+
 ## Anti-pattern
 
 An export plan lists unit tests, static checks, and manual file inspection. They are convenient and

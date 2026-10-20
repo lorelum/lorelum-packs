@@ -20,7 +20,7 @@ locales:
       - path: practices/implementation/choose-smallest-sufficient-design.md
         source_digest: sha256:d07d0e1257d1c010921d8a0dd4c665058b055f6d8b06c61cad57dc0455492f71
       - path: practices/implementation/confirm-product-surface-expansion.md
-        source_digest: sha256:88fad4bcc8fb3c9d48a2b4c03a2e657d37e73264f17ce146fcac46b417b59c39
+        source_digest: sha256:50ecf046aa1b7b8f9cf1605d1a4d807a692057fed28cc06d9593911570b253f1
       - path: practices/implementation/inspect-and-reuse-existing-capability.md
         source_digest: sha256:83f7dcfc22b19c62fc73a54a69422c687ebbf27003ff9694b3477916cbcf1350
       - path: practices/implementation/limit-investigation-to-current-decision.md
@@ -34,7 +34,7 @@ locales:
       - path: practices/implementation/surface-unconfirmed-assumptions.md
         source_digest: sha256:5a34d678cbc68136611d9d297b4733bfb73507153ff69f5e18c23fbc97249e52
       - path: practices/implementation/validate-at-the-owning-boundary.md
-        source_digest: sha256:856118e7aa6b5f45874a341ac08ad230f04ed2dc93c4a272ef63c457ae9bdb41
+        source_digest: sha256:27ea5a6ede8e0dff071fbb6656452c9de94632a80fc2d8b46ec309c4d6f51d5e
       - path: practices/planning/decide-scope-and-stop-conditions.md
         source_digest: sha256:c4c6fe2b281a8751a740c33a0dac5f0a429fd8b75a584dc98d7cbc3eb84b8074
       - path: practices/planning/derive-committed-set-from-concerns.md
@@ -44,7 +44,7 @@ locales:
       - path: practices/planning/map-plan-to-user-capability.md
         source_digest: sha256:65cecda2dba123da62dbf01aa9bbef6a48737038a6068b5270b6990468bfc41f
       - path: practices/planning/plan-sufficient-evidence.md
-        source_digest: sha256:01b1fa10ac944da35fc4f97788f0e851fae754e79edfb81e385578bf888aafec
+        source_digest: sha256:25326576057c7a030eb7f3046a6842d2a1801f04751aa8cea155e110ba383c25
       - path: practices/planning/scale-work-to-risk-and-cost.md
         source_digest: sha256:162b2c9b390a2bdc5b3c9169ef618f5eb26626e375c505acba573610607790c1
       - path: practices/requirements/define-acceptance-and-non-goals.md

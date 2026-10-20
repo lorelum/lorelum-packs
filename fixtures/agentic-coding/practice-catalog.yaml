@@ -7,8 +7,8 @@ entries:
     paraphrase: An enforced internal gateway establishes caller identity, and unchanged internal helper calls are about to grow independent authentication frameworks without a new caller or permission decision.
     near_miss: The typed request is valid, but the remote status service times out and the caller wants to return stale cache or an empty list.
     nearest_neighbor: agentic-coding.implementation.make-recovery-behavior-explicit
-    expected_behavior: Identify the fact and its owner, pass the established value through ordinary calls, and retain checks only where another input, transformation, state change, policy, or independently justified protection makes them necessary.
-    forbidden_behavior: Treat every function as a fresh trust boundary, silently renormalize accepted data, or delete independent ingress, concurrency, or bypass-path checks just because a previous check exists.
+    expected_behavior: Identify the fact and its owner, pass the established value through ordinary calls, and retain checks only where another input, transformation, state change, policy, or independently justified protection makes them necessary. Trace actual controlled producer postconditions across local HTTP and retain only new conversion, correlation, or trust checks; keep real corruption and external failure coverage.
+    forbidden_behavior: Treat every function as a fresh trust boundary, silently renormalize accepted data, or delete independent ingress, concurrency, or bypass-path checks just because a previous check exists. Use impossible mock outputs to justify recursive production guards, or add validation caches and locks to preserve duplicate work.
 
   - id: agentic-coding.implementation.make-recovery-behavior-explicit
     positive_trigger: A client retries a status request three times, its service repeats the call, and a broad catch substitutes an empty list after any failure.
@@ -71,8 +71,8 @@ entries:
     paraphrase: An exported archive must open in an independent consumer, yet the proposed checks stop at static analysis and manual file inspection.
     near_miss: The implementation and checks already exist; their actual coverage now needs to be compared with each acceptance item.
     nearest_neighbor: agentic-coding.verification.map-evidence-to-acceptance
-    expected_behavior: Choose the cheapest observation that rules out a plausible failure for each must, state its blind spot, and name when to escalate.
-    forbidden_behavior: Substitute a long list of convenient checks for evidence at the boundary where the required behavior can fail.
+    expected_behavior: Choose the cheapest observation that rules out a plausible failure for each must, state its blind spot, and name when to escalate. Reuse evidence still applicable to the artifact and environment, adding checks for changed risks and unresolved gaps.
+    forbidden_behavior: Substitute a long list of convenient checks for evidence at the boundary where the required behavior can fail. Require a full rerun, benchmark, or formal risk report for every edit regardless of what changed.
 
   - id: agentic-coding.planning.derive-committed-set-from-concerns
     positive_trigger: A team's review standard has grown one entry per incident; a teammate proposes yet another reasonable-sounding dimension, half the existing entries overlap, and nobody has written what the list must actually distinguish.
@@ -119,8 +119,8 @@ entries:
     paraphrase: Compact and comfortable display modes are accepted, while the component can also expose unsupported custom spacing tokens.
     near_miss: A background export queue was never part of the accepted download task and would add new failure and recovery behavior.
     nearest_neighbor: agentic-coding.implementation.replan-on-material-drift
-    expected_behavior: Confirm the approved public category and expose only the named values or behavior supported by current authority or evidenced risk.
-    forbidden_behavior: Treat approval of one event, setting, or source as permission for arbitrary extensibility.
+    expected_behavior: Confirm the approved public category and expose only the named values or behavior supported by current authority or evidenced risk. Treat a dormant scaffold as implementation evidence and preserve the accepted integration boundary when removing its stale documentation.
+    forbidden_behavior: Treat approval of one event, setting, or source as permission for arbitrary extensibility. Infer permission to ship a local transport from a scaffold or from approval of a distinct remote boundary.
 
   - id: agentic-coding.implementation.choose-smallest-sufficient-design
     positive_trigger: One discount rule can use a direct rule or a configurable plug-in pipeline, and both would satisfy the current request.

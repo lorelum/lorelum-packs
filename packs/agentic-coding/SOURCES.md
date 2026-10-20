@@ -110,3 +110,21 @@ retrieval quality or measured downstream Agent improvement; those evaluations re
 The mapping records provenance, not empirical proof that retrieval improves task outcomes. The public fixtures provide testable hypotheses for retrieval and behavior evaluation. Benchmark or scoring methods, private artifacts, and unpublished review procedures are outside this repository.
 
 `fixtures/agentic-coding/queries.yaml` turns those hypotheses into a runnable retrieval query set (three positive and two neighbor queries per Practice, expected selections declared before the run, wording held away from Practice text). Recorded runs under `fixtures/agentic-coding/baselines/` report observed selection only — keyword mode plus, where the semantic index builds on that machine, semantic mode; a degraded semantic run is annotated with its failure code rather than reported as a result.
+
+
+## October 20, 2026: validation ownership and integration scope
+
+- https://github.com/lorelum/lorelum/pull/288 — the root `AGENTS.md` addition
+  “验证所有权与简化原则” grounds the refinements to
+  `implementation.validate-at-the-owning-boundary` (controlled internal postconditions,
+  representation-specific checks, reachable test failures, duplicate work, and retained protections)
+  and `planning.plan-sufficient-evidence` (reuse applicable evidence and test added risks).
+- https://github.com/lorelum/lorelum/pull/281 — the root `AGENTS.md` diff removes only
+  the sentence identifying `packages/mcp` as a non-product scaffold. It retains the CLI-first
+  integration restriction and separately approved remote boundary. The refinement to
+  `implementation.confirm-product-surface-expansion` is author synthesis of that narrow change
+  and retained context: scaffold presence or removal does not authorize a new product surface.
+
+These are refinements of existing decisions, not new Practice IDs. The examples generalize the
+source repository's policies; they do not impose its MCP restriction on other products. These
+sources provide rationale and provenance, not evidence of improved retrieval or Agent outcomes.

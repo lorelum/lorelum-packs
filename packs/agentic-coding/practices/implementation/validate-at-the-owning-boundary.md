@@ -37,6 +37,29 @@ Choosing what to do after a known failure is a separate recovery decision.
 Stop with a clear owner per fact and only the checks the actual path needs; a short explanation in
 the existing design or review is enough.
 
+For a controlled internal producer, trust the postconditions its contract and real production path
+establish. A process hop or local HTTP call alone does not make the payload independently
+untrusted. Keep decoding, authentication, protocol matching, and request–response correlation where
+needed; they do not imply repeating the complete business schema. A representation conversion
+justifies checks for failures it introduces, not every failure imaginable for an arbitrary object.
+
+Do not make protection against another internal implementation violating its types and contract a
+default production responsibility. Prefer types, producer contract tests, and necessary development
+assertions. A mock that invents an output the producer cannot emit does not justify a downstream
+guard. Preserve tests for reachable external input, real corruption, and supported recovery.
+
+Ordinary reads, status calls, and encoding should not add whole-store, model, or executable scans,
+repeated hashing, deep copies, or recursive schema walks for states already excluded upstream.
+Once JSON has been decoded and validated without introducing new values, checking for cycles,
+Symbols, or arbitrary object prototypes establishes no new fact. Remove duplicate work before
+adding validation caches, trusted flags, locks, or generic wrappers to make it cheaper. Retain
+adapters that own a real conversion or lifecycle; distinct boundaries need not share one validator.
+
+Preserve external input validation, model/native integration quality checks, publication integrity,
+transaction and snapshot consistency, authentication, process ownership, and regeneration of
+corrupt derived caches. Change an accepted checking contract through its normal change process
+before removing its required checks.
+
 ## Anti-pattern
 
 An HTTP adapter parses a quantity into a positive integer. A service, domain helper, and repository
