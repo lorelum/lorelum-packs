@@ -8,6 +8,19 @@ The release artifact is identified by `agentic-coding-v0.6.0`. It includes
 `agentic-coding.implementation.justify-added-checks`; the immutable `0.5.1` release retains its
 original 34 Practices. Registry installation is verified separately from local content validation.
 
+The official Registry installation and default update from `0.5.1` were verified on October 22,
+2026 using Lorelum `0.1.0-alpha.6`: ref `agentic-coding-v0.6.0` resolved to `68a4be1`, all 35 IDs
+were read back, and the new Practice body matched the reviewed guidance. The installed-release
+keyword gate passed at 97.5% positive top-3; semantic index sync was not configured in the isolated
+environment. See the [release verification record](../../fixtures/agentic-coding/baselines/agentic-coding-0.6.0-release-2026-10-22.md).
+
+```sh
+# New installation:
+lore pack install agentic-coding@0.6.0
+# Existing installation; the Registry currently selects 0.6.0:
+lore pack update agentic-coding
+```
+
 The Practices cover requirements, planning, implementation, testing, verification, review, delivery, correction, and context recovery. Each entry targets one decision point and is intended to remain useful when retrieved alone; consumers should retrieve only the few entries relevant to the current work and moment.
 
 ## Scope

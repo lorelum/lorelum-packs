@@ -207,3 +207,17 @@ successful query/get and pre-decision body reading in one catalog-only and one e
 session, with required protections retained in their stated designs. It provides no no-knowledge
 control, repeated trigger trials, semantic ranking results, or real host deployment, and therefore
 does not establish stable automatic triggering or causal decision improvement.
+
+## October 22, 2026: official 0.6.0 release
+
+PR #38 was merged at `547a13f`; release metadata promotion produced immutable artifact
+`agentic-coding-v0.6.0` at `68a4be166a488166931330f9dfd5afd01d807421`, without changing canonical
+Practice Markdown. The official Registry entry was added only after that tag existed. Unmerged
+PR #36 is not part of this artifact, and old release refs remain unchanged.
+
+The [official release verification](../../fixtures/agentic-coding/baselines/agentic-coding-0.6.0-release-2026-10-22.md)
+records an isolated exact-version installation, default update from `0.5.1`, retention of all 34
+existing IDs plus the new entry, full-body readback, and the installed keyword gate. Installation
+returned success while semantic index sync reported `embedding.not-configured` in the intentionally
+model-free environment. Availability and finite keyword observations do not establish semantic
+quality, repeated automatic triggering, or causal decision improvement.

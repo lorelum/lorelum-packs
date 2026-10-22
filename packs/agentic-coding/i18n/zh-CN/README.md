@@ -16,6 +16,13 @@
 并区分检查归属与组合路径；同时包含 PR #38 的验证、证据与产品表面细化，不包含未合并的 PR #36。
 本地结构有效、Registry 可安装、召回与行为改善是不同证据，不能相互替代。
 
+2026 年 10 月 22 日已用 Lorelum `0.1.0-alpha.6` 走通官方 Registry 安装及从 `0.5.1` 的默认更新：
+`agentic-coding-v0.6.0` 解析到 `68a4be1`，回读全部 35 条 ID，新条目正文与已审阅指导一致。
+已安装发布版的 keyword 正例 top-3 为 97.5%，门禁通过；隔离环境未配置语义索引所需模型。
+详见[发布验证记录](../../../../fixtures/agentic-coding/baselines/agentic-coding-0.6.0-release-2026-10-22.md)。
+新安装执行 `lore pack install agentic-coding@0.6.0`；已有安装执行 `lore pack update agentic-coding`，
+当前 Registry 默认选择 `0.6.0`。这些证据不证明稳定自动触发或决策改善。
+
 ## 校验与恢复决策
 
 **在决定新增或加强检查之前**，先读
