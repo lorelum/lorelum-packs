@@ -23,6 +23,8 @@ locales:
         source_digest: sha256:50ecf046aa1b7b8f9cf1605d1a4d807a692057fed28cc06d9593911570b253f1
       - path: practices/implementation/inspect-and-reuse-existing-capability.md
         source_digest: sha256:83f7dcfc22b19c62fc73a54a69422c687ebbf27003ff9694b3477916cbcf1350
+      - path: practices/implementation/justify-added-checks.md
+        source_digest: sha256:09232a6a4d53c3fb2873cc22acbe0b11a4d5ebb838128085ef20403762dc349b
       - path: practices/implementation/limit-investigation-to-current-decision.md
         source_digest: sha256:ac7adabc18cf4a034e9f903c94b8b8023501df2aa4c55e2ae59ad1cfd266d072
       - path: practices/implementation/make-recovery-behavior-explicit.md
@@ -34,13 +36,13 @@ locales:
       - path: practices/implementation/surface-unconfirmed-assumptions.md
         source_digest: sha256:5a34d678cbc68136611d9d297b4733bfb73507153ff69f5e18c23fbc97249e52
       - path: practices/implementation/validate-at-the-owning-boundary.md
-        source_digest: sha256:27ea5a6ede8e0dff071fbb6656452c9de94632a80fc2d8b46ec309c4d6f51d5e
+        source_digest: sha256:bf05aeee439ac16937053c69ada2f7438eed5549915e0ec70eb8429a2550d2a5
       - path: practices/planning/decide-scope-and-stop-conditions.md
         source_digest: sha256:c4c6fe2b281a8751a740c33a0dac5f0a429fd8b75a584dc98d7cbc3eb84b8074
       - path: practices/planning/derive-committed-set-from-concerns.md
         source_digest: sha256:c1de63e833d7b8daf57af30f25e22365c4eef706a5571faf7f5f03c5d40e0427
       - path: practices/planning/keep-acceptance-path-completable.md
-        source_digest: sha256:c147eae61a6df8952c6f6c2b8f1319083fba3f0dccbb2278a8f688e4996ee8a2
+        source_digest: sha256:97813fe671166e2ca9b5f60beb7d5689a57bd731ff6730b9882778b34df95e25
       - path: practices/planning/map-plan-to-user-capability.md
         source_digest: sha256:65cecda2dba123da62dbf01aa9bbef6a48737038a6068b5270b6990468bfc41f
       - path: practices/planning/plan-sufficient-evidence.md

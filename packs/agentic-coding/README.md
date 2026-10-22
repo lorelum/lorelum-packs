@@ -4,6 +4,10 @@
 
 Canonical English · [简体中文](./i18n/zh-CN/README.md)
 
+The unreleased working-tree candidate has **35 Practices**, adding
+`agentic-coding.implementation.justify-added-checks`. The Pack version remains `0.5.1`;
+the official Registry still resolves the published 34-Practice release, not this candidate.
+
 The Practices cover requirements, planning, implementation, testing, verification, review, delivery, correction, and context recovery. Each entry targets one decision point and is intended to remain useful when retrieved alone; consumers should retrieve only the few entries relevant to the current work and moment.
 
 ## Scope
@@ -12,22 +16,98 @@ Use this Pack to improve engineering judgment around scope, risk, source authori
 
 ## Validation and recovery decisions
 
-Use [Validate at the Boundary That Owns the Fact](./practices/implementation/validate-at-the-owning-boundary.md)
-when the same data is parsed, normalized, authorized, or checked again across layers. It asks what
-new invalid state is possible at each location and keeps external input, business-state, concurrency,
-and independently justified trust checks distinct. An extra layer does not automatically need an
-extra copy of the same rule.
+**Before deciding to add or strengthen a check**, read
+[Justify Added Checks Before Implementing Them](./practices/implementation/justify-added-checks.md)
+(`agentic-coding.implementation.justify-added-checks`). This applies in planning and when an
+agent proposes a check on its own during an ordinary task: validation, preflight, authorization
+or confirmation, integrity scans, and startup/recovery blockers. Do not wait for a post-implementation
+subtractive review.
+
+Keep three decisions distinct:
+
+- **Why add or strengthen it?** `justify-added-checks` identifies a reachable failure or mandatory
+  contract, the guarantee's owner and existing coverage, and the added protection. Weigh the
+  check's own false rejection, delay, I/O, availability, maintenance, and recovery costs before
+  choosing to retain, add, narrow, or omit it.
+- **Where does the check belong?**
+  [Validate at the Boundary That Owns the Fact](./practices/implementation/validate-at-the-owning-boundary.md)
+  (`agentic-coding.implementation.validate-at-the-owning-boundary`) decides ownership, when an
+  established fact can become stale, and whether an internal handoff introduces a new failure.
+- **Can the combined path still complete?**
+  [Keep the Acceptance Path Completable](./practices/planning/keep-acceptance-path-completable.md)
+  (`agentic-coding.planning.keep-acceptance-path-completable`) walks normal use, startup,
+  maintenance, and recovery with the checks combined. Choose the blocking level and preserve a
+  reachable repair/stop path; do not require the healthy state that recovery exists to restore.
 
 Use [Give Recovery One Owner and an Explicit Outcome](./practices/implementation/make-recovery-behavior-explicit.md)
 when a failure is about to gain a retry, empty default, alternate source, or degraded result. It
 requires a known recoverable condition, a bounded owner, and an outcome the caller can understand.
 Validation establishes a fact; recovery responds to a failure. Either decision can arise alone.
 
-The surrounding requirements, planning, implementation, testing, and final-review Practices reinforce
-these choices without requiring a new checklist or risk document for every change. Examples span
-HTTP and CLI ingress, imports, typed domain calls, database constraints, caches, authorization, and
-local lifecycle recovery. These rules preserve required protections and accepted degraded behavior;
-they do not authorize deleting existing guards or changing project contracts without evidence.
+These are general-purpose decisions, not a direction to perform fewer checks. Preserve
+external-input boundaries, authorization, concurrent state consistency, native/model quality,
+release integrity, and recovery identity guarantees. Required protection can justify an expensive
+check. No new checklist, mandatory risk report, or independent approval gate is required.
+
+Overall engineering effort belongs to `scale-work-to-risk-and-cost`; choosing verification
+observations belongs to `plan-sufficient-evidence`. Neither replaces the pre-addition decision.
+The candidate adds one independent ID and refines its two neighbors; it is not a new release
+and does not rewrite the immutable release history below.
+
+## Project routing suggestion
+
+Pack descriptions and `applies_when` help selection after discovery; they do not make an agent
+query Lorelum automatically. An independent Practice ID does not guarantee that its trigger will
+be noticed. A project can adopt the following instruction in its own `AGENTS.md` or in a skill
+that its host is configured to require at this decision point:
+
+> Before deciding to add or strengthen a check, including one you propose on your own during
+> an ordinary task, read the full body of `agentic-coding.implementation.justify-added-checks`.
+> Decide why it is needed before implementing it; a final subtractive review is too late.
+> For ownership, stale facts, or internal handoffs, also read
+> `agentic-coding.implementation.validate-at-the-owning-boundary`.
+> If checks could block normal use, startup, maintenance, repair, or stop, also read
+> `agentic-coding.planning.keep-acceptance-path-completable` before choosing the prerequisites.
+> Reuse the applicable current body if it is already available in this session. Otherwise, use
+> `lore get` with the known full ID; a query or summary hit alone is not the body.
+> An empty search is not evidence that no rule applies: get the known ID directly, or consult the
+> available catalog to resolve it. Do not repeat retrieval for every helper or tool invocation
+> when the same decision and body still apply. If the body cannot be obtained, report that limit
+> rather than claiming it was read.
+
+For example, `lore get agentic-coding.implementation.justify-added-checks` retrieves the known
+entry point without depending on a search match **when the candidate is available in the active
+Pack layer**. The published 34-Practice `0.5.1` release does not contain that ID. If it is
+unavailable there, read the linked working-tree body through an available file-reading tool or
+state that it could not be obtained. This route targets the check decision, not every tool call,
+and does not wrap tools in a new global approval gate.
+
+This is an adoption suggestion in this Pack's documentation only. It has not been deployed to the
+Lorelum product repository, its `AGENTS.md`, plugin, or skill. The official
+[Lorelum `0.1.0-alpha.6` prerelease](https://github.com/lorelum/lorelum/releases/tag/v0.1.0-alpha.6)
+includes an omp plugin and a skill; their availability does not establish that this route fires.
+The real Windows host flow for this suggestion has not been tested.
+
+Keep three kinds of evidence separate: **retrieval** records which IDs a query selects;
+**body provision** records that `get` successfully supplies the relevant full text to the agent
+(or that the current text is already in its session); **decision impact** needs evidence of what
+the agent actually decided with it. None proves the next. The existing `scripts/eval-decisions`
+runner queries and gets text, then forces it into an injected prompt. That can test body-assisted
+decisions, not whether an agent independently notices the trigger and looks up the rule. Fixture
+expectations are hypotheses, not successful retrieval, behavior, or deployed routing.
+
+The [October 22 alpha.6 two-Practice evaluation](../../fixtures/agentic-coding/baselines/agentic-coding-backend-checks-alpha6-2026-10-22.md)
+is a **historical comparison of the earlier two-neighbor refinement**, not a result for the new
+independent entry. It records limited keyword gains alongside existing-query regressions,
+failed semantic preparation, successful body provision, and no observed decision improvement.
+Those observations do not establish stable lookup or carry over as evidence that the new
+35-Practice candidate succeeds.
+
+The [independent-entry alpha.6 evaluation](../../fixtures/agentic-coding/baselines/agentic-coding-independent-check-alpha6-2026-10-22.md)
+records its own query rankings and controlled catalog-only versus explicit-route sessions. Both
+sessions read the new body before their design decisions and retained required safeguards. One
+session per arm, no blind control, and no real host deployment do not establish stable triggering
+or causal decision improvement.
 
 ## Non-goals
 

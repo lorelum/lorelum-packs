@@ -1,14 +1,24 @@
 fixture_set: agentic-coding-practice-catalog
 evaluation_only: true
-description: Atomic retrieval and behavior hypotheses for 34 Practices; not a runtime schema or proof of retrieval quality.
+description: Atomic retrieval and behavior hypotheses for 35 working-tree Practices; the published pack still contains 34. Not a runtime schema, release declaration, or proof of retrieval quality. Semantic expectation migrations require separate scoring from historical baselines.
 entries:
+  - id: agentic-coding.implementation.justify-added-checks
+    positive_trigger: While planning ordinary startup, the agent proposes the first full installation scan even though no duplicate scan or blocked route exists, without identifying what failure the new I/O would prevent.
+    paraphrase: During local HTTP client or authenticated repair work, the agent volunteers another record traversal, executable hash pass, or operator confirmation before deciding what extra protection it provides.
+    near_miss: Required malformed-input rejection is settled; only its owning entry point and fact invalidation remain open (validate-at-the-owning-boundary). When all checks and their owners are settled, walk their combined setup, use, and repair prerequisites with keep-acceptance-path-completable.
+    nearest_neighbor: agentic-coding.implementation.validate-at-the-owning-boundary
+    expected_behavior: Decide before committing or implementing the proposed check, including a spontaneous mid-task addition. Name the reachable failure or mandatory contract, the protection owner, existing guarantees, and any extra protection; compare false rejection, delay, I/O, availability, and recovery costs, then retain, add, narrow, or decline it. A first check can be justified without duplication or a deadlock. Preserve external JSON admission, resource authorization, atomic concurrent-state protection, startup input admission, native/model acceptance, release integrity, and recovery identity where independently required.
+    forbidden_behavior: Add a check merely because caution sounds responsible, wait for a final cleanup pass to ask why it exists, or equate calibration with fewer checks. Infer trust from localhost or use a previous parser to remove authorization, concurrency, native/model, release-integrity, or recovery-identity protections.
+    # Dedicated query baseline is 3 positives + 2 neighbors; all are hypotheses, not results.
+
   - id: agentic-coding.implementation.validate-at-the-owning-boundary
-    positive_trigger: An HTTP adapter parses a positive quantity into a typed command, but the service and repository plan to parse and clamp the unchanged value again merely because they are separate layers.
-    paraphrase: An enforced internal gateway establishes caller identity, and unchanged internal helper calls are about to grow independent authentication frameworks without a new caller or permission decision.
-    near_miss: The typed request is valid, but the remote status service times out and the caller wants to return stale cache or an empty list.
-    nearest_neighbor: agentic-coding.implementation.make-recovery-behavior-explicit
-    expected_behavior: Identify the fact and its owner, pass the established value through ordinary calls, and retain checks only where another input, transformation, state change, policy, or independently justified protection makes them necessary. Trace actual controlled producer postconditions across local HTTP and retain only new conversion, correlation, or trust checks; keep real corruption and external failure coverage.
-    forbidden_behavior: Treat every function as a fresh trust boundary, silently renormalize accepted data, or delete independent ingress, concurrency, or bypass-path checks just because a previous check exists. Use impossible mock outputs to justify recursive production guards, or add validation caches and locks to preserve duplicate work.
+    positive_trigger: HTTP and CSV adapters already reject malformed quantities; the remaining decision is where that parsing belongs and whether any internal caller can bypass the established typed contract.
+    paraphrase: Trace the actual producer postconditions across a controlled local HTTP handoff, and identify whether decoding, mutation, a different caller, or changed concurrent state invalidates a fact before its next use.
+    near_miss: The fact owners are known, but a proposed first scan or extra approval still lacks a reason to exist (justify-added-checks). Once validation is settled, timeout and stale-snapshot choices belong to make-recovery-behavior-explicit, while selecting proving observations belongs to plan-sufficient-evidence.
+    nearest_neighbor: agentic-coding.implementation.justify-added-checks
+    expected_behavior: Assign each established fact to its actual ingress or invariant owner, carry unchanged facts through controlled internal calls, and recheck when a new caller, mutation, conversion, resource, or concurrent state invalidates them. Preserve decoding, session identity, protocol, and request correlation across controlled HTTP; keep independent external JSON, resource authorization, atomic stock, startup-input, native/model, and release-integrity boundaries.
+    forbidden_behavior: Infer trust from localhost, treat every helper as a fresh adversarial ingress, silently renormalize accepted data, or transfer one producer's guarantee to unchecked callers. Delete independent authorization, concurrency, native/model, or release-integrity protections because input parsing already happened; use impossible mock outputs as evidence of a reachable boundary.
+    # Fact ownership is distinct from the proposed-check admission decision; neither is a result.
 
   - id: agentic-coding.implementation.make-recovery-behavior-explicit
     positive_trigger: A client retries a status request three times, its service repeats the call, and a broad catch substitutes an empty list after any failure.
@@ -83,12 +93,13 @@ entries:
     forbidden_behavior: Admit each item on its own local merits without a stated concern list, keep double-counting entries, or fix dilution and unfairness by directly adding or deleting items.
 
   - id: agentic-coding.planning.keep-acceptance-path-completable
-    positive_trigger: A local tool's new write command is about to ship with a key allowlist, a traversal validator, an ownership permission check, and a confirmation on every write, while the scripts that call the tool cannot answer prompts.
-    paraphrase: A batch import gains a rule that throws away the whole batch when any single row is invalid, and no one has traced the ticket's own scenario through all the added checks.
-    near_miss: Every step of the capability path has an owner and the added checks are already justified; the open question is which single layer should own a rule that several layers repeat.
-    nearest_neighbor: agentic-coding.implementation.validate-at-the-owning-boundary
-    expected_behavior: Walk the acceptance scenario through every added check, give each check the lowest effective rung backed by a named reachable failure, narrow justified checks to the risky subset, and let one failure be attributed instead of voiding all satisfied conditions.
-    forbidden_behavior: Ship checks whose combined effect blocks the task's own scenario, keep a confirmation no caller in this context can answer, retain a check that names no concrete victim, or default to all-or-nothing failure handling without naming who needs that severity.
+    positive_trigger: Model admission and inference-readiness checks are required and assigned, but their combined prerequisites leave a fresh installation unable to open setup or a failed initialization unable to enter repair.
+    paraphrase: An unattended script cannot answer a required confirmation, independent batch rows inherit a whole-batch abort, or stopping an identified old process depends on its incompatible business API succeeding.
+    near_miss: All supported routes already complete and the open question is whether a new scan or confirmation provides any needed protection (justify-added-checks). Repeated checks of an unchanged fact need validate-at-the-owning-boundary; agreed recovery behavior and proving observations belong to make-recovery-behavior-explicit and plan-sufficient-evidence.
+    nearest_neighbor: agentic-coding.implementation.justify-added-checks
+    expected_behavior: Walk normal, startup, maintenance, and recovery operations through the combination of accepted checks before wiring their prerequisites. Choose operation-specific blocking levels and keep supported setup, offline repair, and identified-old-process stop reachable. Preserve startup input admission, native/model quality, release integrity, and repair identity and permissions; narrow the business-readiness prerequisite rather than bypassing those protections. Preserve unattended completion and attributed per-row outcomes where accepted.
+    forbidden_behavior: Compose individually justified checks into an impossible supported task, require successful business initialization to repair that initialization or stop an incompatible process, or retain a confirmation with no supported unattended route. Default to whole-batch rejection despite independent accepted outcomes, or make recovery pass by weakening identity, authorization, artifact integrity, or native/model protections.
+    # Combined-path hypotheses do not establish product routing or automatic retrieval.
 
   - id: agentic-coding.implementation.inspect-and-reuse-existing-capability
     positive_trigger: A new link-normalization helper is about to be written even though another importer already uses a dependency that handles encoded paths and host casing.

@@ -4,7 +4,7 @@ anti_patterns:
     id: agentic-coding.planning.acceptance-blocking-protection
     name: Acceptance-blocking protection
     severity: warn
-applies_when: the plan, or a mid-implementation addition, is about to place validation, authorization, confirmation, permission, or other blocking checks on the steps the task's own acceptance scenario must travel, and the combined effect of those checks on completing that scenario has not been walked end to end
+applies_when: proposed validation, authorization, permission, confirmation, readiness, or compatibility checks must be composed into a required user workflow, including backend startup, shutdown, repair, or recovery, and the agent must walk whether the acceptance scenario can complete through their combined effects
 id: agentic-coding.planning.keep-acceptance-path-completable
 severity: warn
 stage: planning
@@ -15,16 +15,17 @@ title: Keep the Acceptance Path Completable
 
 ## When to apply
 
-Apply before committing a plan that adds checks on the task's own delivery path, and again when
-implementation is about to add such a check mid-flight. Completeness covers every acceptance
-condition, including error, repeat, and reopen cases; friction covers the primary path only. For a
-change too small to plan, the Practice reduces to the one question at the end of Guidance.
+Apply while planning or implementing a workflow whose proposed checks must work together. Walk
+normal operations, startup, shutdown, and supported repair or recovery commands, even when the task
+never mentions gates. Completeness and added friction cover the required paths, including error,
+repeat, and reopen cases. A single proposed check's necessity is the `justify-added-checks` decision;
+this Practice decides how checks compose without making the accepted workflow unusable.
 
 ## Guidance
 
 Write each acceptance condition as ordered steps from initiating action to observable result,
 including every check the change adds. Walk all conditions for completeness: a required step with no
-owner is a mapping gap and is resolved before weight. Walk the primary path for friction: every
+owner is a mapping gap and is resolved before weight. Walk the required paths for friction: every
 added check that can reject, delay, or demand intervention is a gate. Give each gate the lowest rung
 that still catches a failure you can name — observe (log), mark (annotate the result), confirm (ask
 once, answerable where it fires), block (reject). A rung above observe is forced only by an actor
@@ -37,8 +38,15 @@ alone, and state what survives; if a single failure voids every other satisfied 
 needs that severity and why attributed or partial results would mislead. Record the rung and the
 named failure beside each gate's plan item. Stop when every acceptance condition completes with no
 intervention beyond those acceptance or governing policy already name, and every gate names the
-failure its rung blocks. For a change too small to plan, ask only: does any check I am adding block
-the acceptance path? If yes, lower the rung or narrow its scope.
+failure its rung blocks. For a change too small to plan, ask: can this added check block or delay a
+required path, and what failure or mandatory policy justifies that effect? Keep justified blocks;
+otherwise lower the rung, narrow the scope, or omit the check.
+
+A repair command must not require the damaged index to be healthy; stopping an identified old
+process need not require its business API to match the new client. Keep operation-specific
+authorization, process identity, activity
+protection, and consistency requirements. If a required safeguard conflicts with the recovery
+contract, surface that conflict rather than bypassing it to make the command pass.
 
 ## Anti-pattern
 
@@ -71,3 +79,10 @@ already enforces file ownership, and the confirmation catches typos acceptance d
 drop or downgrade. One concern survives with evidence: overwriting the security-token key forces
 re-authentication elsewhere. The gate narrows to a single confirm on that key subset; every other
 key writes without interruption, and the change is logged.
+
+A backend's repair command must rebuild a damaged derived index while the service is not ready.
+The proposed shared readiness preflight rejects that exact state before repair begins. The agent
+keeps readiness enforcement for ordinary queries but gives repair its own authorized path with the
+required exclusive mutation protection. Repair can now rebuild the index without first querying it;
+an unauthorized caller or a conflicting writer is still refused. No global "skip checks" switch is
+introduced.

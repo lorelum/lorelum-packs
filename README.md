@@ -11,6 +11,7 @@ This repository is the official public catalog for installable Lorelum Knowledge
 - `react-web-craft@0.1.0` — 24 Practices for React web application design and performance across component state, async data flow, code loading, rendering, and component composition.
   - [简体中文本地化](./packs/react-web-craft/i18n/zh-CN/README.md) is available as non-runtime companion content.
 - `agentic-coding@0.5.1` — published release with 34 decision-focused Practices rewritten as step-style decision procedures with severity tiers (critical/warn/info); 0.5.1 retunes the catalog description to name the planning-calibration moments. The official Registry resolves the immutable `agentic-coding-v0.5.1` ref.
+  - The unreleased working-tree candidate has 35 Practices, with [Justify Added Checks Before Implementing Them](./packs/agentic-coding/practices/implementation/justify-added-checks.md) as the independent entry point before deciding to add or strengthen checks. See the [decision routing and evidence boundaries](./packs/agentic-coding/README.md#validation-and-recovery-decisions); the `0.5.1` version, Registry release, and immutable history are unchanged.
   - [简体中文本地化](./packs/agentic-coding/i18n/zh-CN/README.md) is available as non-runtime companion content.
 
 ## Use Packs

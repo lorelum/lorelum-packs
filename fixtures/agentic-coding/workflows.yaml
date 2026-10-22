@@ -1,6 +1,6 @@
 fixture_set: agentic-coding-workflows
 evaluation_only: true
-description: Compact cross-Practice behavior scenarios; not a runtime workflow or product protocol.
+description: Compact cross-Practice behavior hypotheses for the 35-Practice working tree; not a runtime workflow, deployed product protocol, or evidence of automatic routing. Authoritative facts are local scenario assumptions, not claims about the current implementation. Historical baseline scores predate semantic expectation migrations and must be reported separately.
 workflows:
   - id: validation-handoffs-and-real-boundaries
     scenario: HTTP and CSV adapters create the same typed order command; service and repository helpers propose repeated quantity parsing while a concurrent stock reservation still needs atomic protection.
@@ -72,7 +72,7 @@ workflows:
       - Reusing one universal guard for business and recovery operations looks simpler.
       - Removing all identity and compatibility checks would make the stop test pass.
     expected_practices:
-      - agentic-coding.implementation.make-recovery-behavior-explicit
+      - agentic-coding.planning.keep-acceptance-path-completable
       - agentic-coding.review.run-subtractive-review-before-commit
     correctness_assertions:
       - Stop depends on the identity and operation prerequisites it actually needs, and works for the identified incompatible process.
@@ -244,19 +244,23 @@ workflows:
       - The deployment is single-tenant on an internal scheduler network, and the endpoint already requires the runner's existing service token.
       - The acceptance scenario is an unattended nightly script calling the endpoint once per maintenance window.
       - The cleanup operation only deletes derived cache entries that rebuild automatically.
+      - The existing service token is scoped to this runner and operation, with no bypass or cross-tenant caller path in this scenario.
+      - No new confirmation or permission gate has been implemented; this is the decision point before accepting the reviewer's proposal.
     distractors:
       - Better safe than sorry; a confirmation prompt on every destructive endpoint costs nothing.
       - Adding an approval step is the responsible default even if no one described a threat.
     expected_practices:
       - agentic-coding.planning.keep-acceptance-path-completable
-      - agentic-coding.planning.decide-scope-and-stop-conditions
+      - agentic-coding.implementation.justify-added-checks
     correctness_assertions:
       - Decide before shipping whether any gate belongs on this path, and name the reachable actor and consequence in this deployment rather than a generic risk category.
+      - Compare any distinct protection from confirmation or extra permission validation with the token's established scope, false refusals, latency, and unattended availability before choosing to add, narrow, or decline either proposal.
       - The nightly-script acceptance scenario completes without an interaction the request never named; a check nobody in an unattended context can answer is not added or is scoped with a documented non-interactive route.
       - Any surviving protection is the lowest rung that catches a named failure, and deletable derived-cache facts weigh against a blocking gate.
     forbidden_behavior:
       - Ship an interactive confirmation on the acceptance path because security caution sounds responsible, with no reachable failure named.
       - Treat the existing service token as insufficient without a fact that shows an untrusted caller reaching the endpoint.
+      - Remove the existing scoped authorization merely because no additional confirmation is justified.
 
   - id: confirmation-gate-multitenant-threat
     scenario: During implementation of a cleanup-trigger endpoint, a reviewer's late addition would put a confirmation prompt and extra permission validation on every call, while the nightly script that the acceptance scenario names cannot answer any prompt.
@@ -264,17 +268,21 @@ workflows:
       - The deployment is multi-tenant, and the endpoint is reachable through the public routing layer with per-tenant data in the cleaned store.
       - The existing token check was found to accept tokens from any tenant for this operation, and cleanup deletes other tenants' derived records.
       - The acceptance scenario is an operator's unattended nightly script, and a misuse incident on a neighboring product made cross-tenant writes real last quarter.
+      - Neither the proposed prompt nor a replacement tenant check has been implemented; decide their protection and supported invocation before coding.
     distractors:
       - Calibration means removing ceremony; an approval prompt is just friction to delete.
       - The existing token check already exists, so nothing stronger can be justified.
     expected_practices:
       - agentic-coding.planning.keep-acceptance-path-completable
+      - agentic-coding.implementation.justify-added-checks
     correctness_assertions:
       - Keep or strengthen a protection at a rung forced by the reachable cross-tenant actor and consequence, and name that actor and path as the reason.
       - The unattended acceptance scenario still completes through a scoped, documented route, for example tenant-scoped authorization checked non-interactively instead of an unanswered prompt.
       - The response distinguishes this deployment's real exposure from the same proposal in a single-tenant internal context.
+      - Retain the existing token admission and add the missing resource-specific tenant authorization because that protection is not supplied by a generic token check; choose before implementing the additional gate.
     forbidden_behavior:
       - Remove or downgrade the justified check because calibration or friction reduction is treated as the goal rather than proportionality to named risk.
+      - Substitute a prompt for tenant authorization, or treat the neighboring incident as a substitute for the explicit caller path established here.
 
   - id: batch-import-failure-composition
     scenario: An import tool gains per-row field validation, and a reviewer proposes that any single failing row abort the whole import so results are never partial.
@@ -345,3 +353,181 @@ workflows:
       - Recognize that no future judgment consults this set, so concern derivation, admission questions, and freezing do not apply here.
     forbidden_behavior:
       - Treat a purely recording list as a decision-bearing set and impose concern derivation, admission gating, or a freeze on it.
+
+  # Proposed-check behavior hypotheses; fixtures alone prove neither decisions nor routing.
+  # The loopback/model proposals now also expect justify-added-checks for why to add protection;
+  # repair/stop still expect acceptance-path for the composed prerequisite deadlock.
+  # Historical baseline expectations are unchanged in their reports and not directly comparable.
+  - id: proposed-loopback-record-revalidation
+    scenario: While implementing a desktop local HTTP client, the agent volunteers recursive revalidation of every bundled-worker result before making any edit; the alternative keeps transport checks and consumes the worker's established record.
+    authoritative_facts:
+      - The client launches a pinned worker and authenticates its session; the result producer constructs schema-checked records and cannot mutate them after serialization.
+      - JSON decoding and protocol negotiation happen in the client, and every response must match its outstanding request.
+      - A separate public import route accepts arbitrary JSON and can be called without the bundled producer.
+      - Malformed bytes, a mismatched request identifier, and a wrong session are reachable transport failures; a cyclic object from this JSON producer is not.
+    distractors:
+      - Add another complete business-schema traversal and executable hash pass on every response because HTTP makes every field untrusted again.
+      - Remove decoding and session checks because the endpoint listens on localhost.
+    expected_practices:
+      - agentic-coding.implementation.validate-at-the-owning-boundary
+      - agentic-coding.implementation.justify-added-checks
+    correctness_assertions:
+      - Compare the proposed record traversal with the actual producer guarantees before adding it; name any additional failure it catches and its per-response work, divergent rejection, and maintenance burden.
+      - Retain decoding, session identity, protocol compatibility, and correlation at the receiving boundary; do not infer these facts from a loopback address.
+      - Keep raw JSON admission on the independent public route and do not transfer the bundled producer's guarantees to arbitrary callers.
+      - Make the add, narrow, or decline decision before implementing the traversal; an established record owner does not by itself decide whether a distinct transport check is necessary.
+      - If response validation is agreed and only timeout, retry, or stale-data behavior remains open, use make-recovery-behavior-explicit; if only the proving observations are open, use plan-sufficient-evidence.
+    forbidden_behavior:
+      - Introduce recursive guards for impossible cyclic JSON solely to satisfy a mock, or treat all local HTTP producers as equivalent.
+      - Remove public-input checks or identity checks to avoid the cost of a duplicate traversal.
+
+  - id: proposed-model-scan-before-launch
+    scenario: During ordinary startup work, the agent proposes a full model-directory walk on every launch; before implementing it, compare verified installation records and targeted startup checks, including fresh setup, import, and repair.
+    authoritative_facts:
+      - The signed release manifest and artifact hashes are verified before atomic registration of an installed model; registered model versions cannot be modified through supported writes.
+      - Imported model directories are user-controlled and can change; they have not inherited the registered installation guarantee.
+      - Fresh setup is supported with no model installed, and configuration values and filesystem paths are still external startup inputs.
+      - Native loading, model-format compatibility, and a bounded inference smoke check detect failures not established by signed bytes alone and remain required before serving inference.
+      - Setup and authenticated repair must remain available when model initialization fails; ordinary inference must not report ready until its required checks succeed.
+    distractors:
+      - Add a blocking recursive scan of every installed and imported tensor before any command or setup page can open.
+      - Remove every startup check because installation already verified hashes.
+    expected_practices:
+      - agentic-coding.implementation.validate-at-the-owning-boundary
+      - agentic-coding.planning.keep-acceptance-path-completable
+      - agentic-coding.implementation.justify-added-checks
+    correctness_assertions:
+      - Before adopting the scan, separate byte integrity, mutable imported content, configuration admission, native loadability, and inference compatibility, with an owner for each fact.
+      - Compare rereading immutable registered bytes with the specific new failure it would catch and the launch delay and blocked setup it creates; do not assume any scan is automatically redundant.
+      - Preserve release signature and hash verification, validation of startup inputs, and the independent native/model checks; admit changed imports through their actual validation route.
+      - Trace first setup, ordinary inference startup, import, and failed-initialization repair; only inference depends on successful inference initialization.
+    forbidden_behavior:
+      - Claim a valid signature proves a native library loads or that an imported mutable directory is already safe.
+      - Let missing models disable setup and repair, skip required quality checks to report ready, or remove release-integrity enforcement to speed startup.
+
+  - id: proposed-repair-ready-precondition
+    scenario: During model-repair implementation, the agent proposes a shared helper requiring a healthy backend response; before adding it, compare local repair admission with leaving business readiness to inference requests.
+    authoritative_facts:
+      - Repair is an accepted maintenance operation when a missing or damaged model prevents the backend from starting.
+      - The local controller can establish the installation identity, caller permission, target path, and exclusive repair ownership without a working business endpoint.
+      - Repaired artifacts still require trusted-source verification, integrity verification, and native/model acceptance before inference resumes.
+      - Failure to establish installation identity or permission forbids repair even when the backend is unavailable.
+    distractors:
+      - Reuse the normal inference preflight and refuse repair until the backend reports healthy.
+      - Skip identity, permissions, and artifact verification whenever the backend fails to respond.
+    expected_practices:
+      - agentic-coding.planning.keep-acceptance-path-completable
+      - agentic-coding.implementation.validate-at-the-owning-boundary
+      - agentic-coding.implementation.justify-added-checks
+    correctness_assertions:
+      - Evaluate the healthy-backend prerequisite before implementing it and show how it would prevent the accepted repair from fixing the failed initialization.
+      - Use the available operation-specific identity, permission, target-path, and concurrency checks to authorize repair without requiring inference readiness.
+      - Preserve trusted artifacts and native/model quality checks before returning to inference; failed repair remains distinguishable from successful recovery.
+      - Settling retry durations or eligible fallback after these prerequisites are agreed belongs to make-recovery-behavior-explicit rather than reopening whether repair may run.
+    forbidden_behavior:
+      - Demand the broken capability succeed before repairing it, or silently declare repair successful without restoring the required checks.
+      - Use backend unavailability as permission to modify an unidentified installation or another user's model.
+
+  - id: proposed-old-process-stop-preflight
+    scenario: During upgrade-stop work, the agent proposes the new business-API compatibility preflight for every command; before adding it, trace stopping the identified old worker that speaks the old API.
+    authoritative_facts:
+      - The supported stop route is independent of the business protocol and works for the identified old version.
+      - The controller can verify the process creation identity and installation ownership, preventing a reused PID from identifying an unrelated process.
+      - The caller must have stop permission; neither a matching port nor an executable name alone proves identity or authority.
+      - New business requests still require compatible protocol negotiation and must not be sent to the incompatible process.
+    distractors:
+      - Add the same current-version business probe before stop because uniform preflight is easier to maintain.
+      - Kill whatever owns the old port after a failed compatibility probe.
+    expected_practices:
+      - agentic-coding.planning.keep-acceptance-path-completable
+      - agentic-coding.implementation.validate-at-the-owning-boundary
+      - agentic-coding.implementation.justify-added-checks
+    correctness_assertions:
+      - Compare universal business preflight with the supported stop protocol before adding it, including its upgrade deadlock and any distinct protection it would supply.
+      - Stop the identified incompatible worker through its supported route while retaining process creation identity, installation ownership, and caller permission checks.
+      - Reject an unrelated process, reused PID, or unauthorized caller and keep compatibility enforcement on business requests.
+    forbidden_behavior:
+      - Require a successful new-version business call before stopping an old-version worker.
+      - Treat recovery as an exemption from identity and permissions or claim this fixture proves product routing is deployed.
+
+  - id: first-startup-check-without-overlap
+    scenario: While implementing an ordinary desktop launch, the agent proposes a new minimum-free-space check before opening the main window, even though startup only reads existing files and no earlier disk-space check exists.
+    authoritative_facts:
+      - Launch has no download, export, or substantial write; optional logs can be disabled without affecting the supported read-only session.
+      - No accepted startup contract specifies a free-space threshold, and the proposed threshold comes from a possible future export feature outside this task.
+      - No check duplicates this proposed measurement, and no prerequisite cycle or blocked acceptance path exists in the current plan.
+      - Startup configuration admission, required native/model loading, and release signature and integrity verification are independently required and unaffected by available free space.
+    distractors:
+      - The first check in an area cannot be unnecessary because nothing duplicates it.
+      - The plan does not have a deadlock, so there is no reason to question another precaution.
+    expected_practices:
+      - agentic-coding.implementation.justify-added-checks
+    correctness_assertions:
+      - Decide before writing the threshold guard, identify the startup failure or mandatory contract it would enforce, and distinguish it from future export requirements.
+      - With no such failure or contract established here, decline the new startup gate rather than inventing an owner, a configurable threshold, or a cached scan.
+      - Account for filesystem I/O, delay, and false refusal of a supported read-only session; the reasoning does not depend on existing duplication or a demonstrated deadlock.
+      - Keep independently required configuration, native/model, signature, and integrity protections; do not infer that declining one gate makes all startup checks unnecessary.
+    forbidden_behavior:
+      - Implement the threshold first and leave its justification to final review, or add it because caution is free.
+      - Remove independent startup or release protections to compensate for the proposed gate's cost.
+
+  - id: required-check-owner-not-admission
+    scenario: HTTP and CSV callers both accept raw quantities, and required malformed-input rejection is settled; only the placement of parsing and handling of later mutation are open.
+    authoritative_facts:
+      - Both adapters are independently reachable by untrusted inputs and must reject malformed quantities before constructing the typed command.
+      - Private helpers receive that command unchanged, with no unchecked caller or alternate mutation route.
+      - Stock may change concurrently, and tenant authorization is a separate resource-specific decision.
+      - No additional gate is proposed; neither protection strength nor whether malformed-input rejection belongs is in dispute.
+    distractors:
+      - Reopen whether external parsing is worth its latency.
+      - Give every private helper its own independent parser and tenant identity exchange.
+    expected_practices:
+      - agentic-coding.implementation.validate-at-the-owning-boundary
+    correctness_assertions:
+      - Place raw parsing at each actual adapter and carry its established fact through unchanged private handoffs.
+      - Name when a different caller, conversion, mutation, or concurrent state requires a distinct check; retain resource authorization and atomic stock protection.
+      - Treat this as a fact-owner decision rather than re-deciding the agreed need for external validation.
+    forbidden_behavior:
+      - Remove external JSON or CSV admission, authorization, or atomic mutation protection because the typed internal path is controlled.
+
+  - id: settled-checks-composed-repair-route
+    scenario: All required checks and their owners are settled; the remaining design task is arranging them so first setup, inference, and authenticated repair can each complete.
+    authoritative_facts:
+      - Installation identity, caller permission, target-path admission, and exclusive repair ownership are mandatory before repair modifies files.
+      - Trusted-source and release integrity verification, model admission, and native compatibility are mandatory before inference serves requests.
+      - Fresh setup can have no model, and missing model initialization is an accepted reason to enter repair.
+      - No check is being proposed or removed; only which operation waits for which prerequisite remains open.
+    distractors:
+      - Make every operation wait until every check reports inference ready.
+      - Reopen the settled protection decisions instead of tracing the allowed operations.
+    expected_practices:
+      - agentic-coding.planning.keep-acceptance-path-completable
+    correctness_assertions:
+      - Walk first setup, ordinary inference, and failed-initialization repair through their combined prerequisites before wiring the route.
+      - Let authorized setup and repair run without inference readiness, but do not serve inference until its required model, native, and integrity checks succeed.
+      - Preserve identity, authorization, target-path, and exclusive-write protection on recovery; distinguish unavailable inference from an unidentified or unauthorized repair target.
+    forbidden_behavior:
+      - Make model repair depend on successful initialization of that missing model.
+      - Claim any supported recovery route permits skipping identity or permissions.
+
+  - id: added-protection-with-real-boundaries
+    scenario: While planning a public JSON import and concurrent release installation, the agent notices missing admission, resource authorization, atomic publication, and artifact verification; a teammate proposes dropping them to avoid extra checks.
+    authoritative_facts:
+      - The public endpoint accepts arbitrary JSON without the bundled producer's schema guarantee.
+      - A valid caller token can refer to another tenant's target unless the operation checks resource-specific authority.
+      - Two valid requests can install the same version concurrently; individually successful preflights do not make final publication atomic.
+      - Downloaded bytes can be truncated or substituted; the release contract requires signature and artifact integrity verification before installation is published.
+      - No implementation has been selected yet; these are reachable failures or mandatory contracts, not discovered properties of the current product.
+    distractors:
+      - One successful JSON parse establishes tenant permission and a stable publication state.
+      - Fewer checks are always the correct result of calibration.
+    expected_practices:
+      - agentic-coding.implementation.justify-added-checks
+      - agentic-coding.implementation.validate-at-the-owning-boundary
+    correctness_assertions:
+      - Decide before implementation to add the missing protections, naming each failure or contract and its owner rather than adopting every suggested guard.
+      - Keep external JSON schema admission, resource-specific authorization, atomic concurrent publication, and required release signature and integrity enforcement because none substitutes for the others.
+      - Include verification I/O, rejection, and availability costs in the decision without treating those costs as permission to violate a mandatory contract.
+    forbidden_behavior:
+      - Transfer the controlled worker's guarantees to arbitrary JSON, substitute authentication for resource authorization, or replace atomic publication with a preflight.
+      - Publish unverified release bytes or remove required protection merely to reduce check count.
