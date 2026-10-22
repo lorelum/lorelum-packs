@@ -1,12 +1,12 @@
 # Agentic Coding
 
-`agentic-coding@0.5.1` is a published, tool-neutral Knowledge Pack of 34 decision-focused Practices for AI agents doing software engineering: clarifying goals, authority, acceptance, and non-goals; controlling scope and stop conditions; keeping decision-bearing sets (plans, acceptance criteria, checklists, standards) from growing past what they must decide; making proportionate implementation and validation choices; keeping validation, permission, and confirmation checks from blocking the acceptance path; reviewing subtractively before commit; and handling handoffs, delegated agents, delivery, recovery, and context loss with trustworthy evidence.
+`agentic-coding@0.6.0` is a tool-neutral Knowledge Pack of 35 decision-focused Practices for AI agents doing software engineering. It adds an independent decision before implementing new checks, alongside guidance for requirements, scope, implementation, evidence, delivery, recovery, and context continuity.
 
 Canonical English · [简体中文](./i18n/zh-CN/README.md)
 
-The unreleased working-tree candidate has **35 Practices**, adding
-`agentic-coding.implementation.justify-added-checks`. The Pack version remains `0.5.1`;
-the official Registry still resolves the published 34-Practice release, not this candidate.
+The release artifact is identified by `agentic-coding-v0.6.0`. It includes
+`agentic-coding.implementation.justify-added-checks`; the immutable `0.5.1` release retains its
+original 34 Practices. Registry installation is verified separately from local content validation.
 
 The Practices cover requirements, planning, implementation, testing, verification, review, delivery, correction, and context recovery. Each entry targets one decision point and is intended to remain useful when retrieved alone; consumers should retrieve only the few entries relevant to the current work and moment.
 
@@ -51,8 +51,8 @@ check. No new checklist, mandatory risk report, or independent approval gate is 
 
 Overall engineering effort belongs to `scale-work-to-risk-and-cost`; choosing verification
 observations belongs to `plan-sufficient-evidence`. Neither replaces the pre-addition decision.
-The candidate adds one independent ID and refines its two neighbors; it is not a new release
-and does not rewrite the immutable release history below.
+Version `0.6.0` adds one independent ID and refines its two neighbors without rewriting older
+release content or history.
 
 ## Project routing suggestion
 
@@ -76,11 +76,10 @@ that its host is configured to require at this decision point:
 > rather than claiming it was read.
 
 For example, `lore get agentic-coding.implementation.justify-added-checks` retrieves the known
-entry point without depending on a search match **when the candidate is available in the active
-Pack layer**. The published 34-Practice `0.5.1` release does not contain that ID. If it is
-unavailable there, read the linked working-tree body through an available file-reading tool or
-state that it could not be obtained. This route targets the check decision, not every tool call,
-and does not wrap tools in a new global approval gate.
+entry point when `0.6.0` is installed or its content is available in the active Pack layer.
+The older `0.5.1` release does not contain that ID. Update that installation to `0.6.0`, or read the
+linked working-tree body through an available file-reading tool; report any inability to obtain it.
+This route targets the check decision, not every tool call, and does not add a global approval gate.
 
 This is an adoption suggestion in this Pack's documentation only. It has not been deployed to the
 Lorelum product repository, its `AGENTS.md`, plugin, or skill. The official
@@ -115,6 +114,7 @@ This Pack is not a workflow engine, task manager, test framework, compactor, aut
 
 ## Release history
 
+- `0.6.0` adds `implementation.justify-added-checks` before deciding to add or strengthen safeguards, separates necessity from ownership and combined-path decisions, and carries the validation/evidence/product-surface refinements from PR #38. It contains 35 Practices at `agentic-coding-v0.6.0`. Limited keyword and controlled-session evidence is linked above; semantic quality, stable automatic triggering, and causal decision improvement are not established. Unmerged PR #36 is not included.
 - `0.5.1` is the immutable release at `agentic-coding-v0.5.1`, available through the official Registry. It is a metadata-only retune: the `pack.yaml` description — the routing surface agents see in the session-start pack catalog — now names the two planning-calibration moments added in `0.5.0` (decision-bearing sets growing past what they must decide; validation, permission, or confirmation checks blocking the acceptance path) and tracks the `decide-scope-and-stop-conditions` merge. No Practice content changes. A representative official Registry install on September 21, 2026 resolved this ref (`954324c`), decoded the Pack, and read back all 34 Practice IDs including both planning-calibration entries; that verifies the supported materialization path, not retrieval quality or downstream Agent behavior. It rewrites every Practice as a step-style decision procedure with an explicit stop, merges the two pre-work scope Practices into `decide-scope-and-stop-conditions`, adds two planning-calibration Practices (`derive-committed-set-from-concerns`, `keep-acceptance-path-completable`; 33 to 34 entries), tiers severity into critical/warn/info, and retunes `applies_when` against the #17 keyword retrieval baseline. A representative official Registry install on September 21, 2026 resolved this ref, decoded the Pack, and read back all 34 Practice IDs; that verifies the supported materialization path, not retrieval quality or downstream Agent behavior.
 - `0.4.0` adds two independent validation and recovery Practices and refines seven existing entries against unnecessary defensive complexity (tag `agentic-coding-v0.4.0` + Registry entry).
 - `0.3.1` adds a Practice that limits repository investigation to sources that can change the current decision and clarifies source roles without making broad reading a default.

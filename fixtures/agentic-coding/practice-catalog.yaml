@@ -1,6 +1,6 @@
 fixture_set: agentic-coding-practice-catalog
 evaluation_only: true
-description: Atomic retrieval and behavior hypotheses for 35 working-tree Practices; the published pack still contains 34. Not a runtime schema, release declaration, or proof of retrieval quality. Semantic expectation migrations require separate scoring from historical baselines.
+description: Atomic retrieval and behavior hypotheses for the 35 agentic-coding 0.6.0 Practices. Not a runtime schema or proof of retrieval quality. Semantic expectation migrations require separate scoring from historical baselines.
 entries:
   - id: agentic-coding.implementation.justify-added-checks
     positive_trigger: While planning ordinary startup, the agent proposes the first full installation scan even though no duplicate scan or blocked route exists, without identifying what failure the new I/O would prevent.

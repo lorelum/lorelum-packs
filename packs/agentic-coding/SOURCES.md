@@ -170,9 +170,9 @@ The source boundaries remain narrow:
   product-surface Practice does not turn every backend guard into a product expansion or impose
   general guard approval. The routing suggestion does not add a global tool-approval gate.
 
-The unreleased working-tree candidate now contains **35 Practice IDs**, including the new
-independent entry. The Pack version remains `0.5.1`; the Registry still resolves the published
-34-Practice release, and immutable release history is unchanged. The project `AGENTS.md` /
+Version `0.6.0` contains **35 Practice IDs**, including the new independent entry; the immutable
+`0.5.1` release retains its original 34. Versioning does not establish automatic lookup or behavior
+improvement. The project `AGENTS.md` /
 required-skill routing examples in the English and Chinese Pack READMEs are adoption suggestions
 only; this repository has not deployed them to the Lorelum product repository or its plugin/skill.
 The official [Lorelum `0.1.0-alpha.6` prerelease](https://github.com/lorelum/lorelum/releases/tag/v0.1.0-alpha.6)
@@ -185,8 +185,8 @@ full body to the agent via `get` or reuse of applicable current session text (**
 and observed use in a decision (**decision impact**). A query/summary hit does not prove body
 provision; body provision does not prove changed behavior. An empty query does not establish
 the absence of an applicable rule when a known ID can be fetched directly or resolved through
-the catalog. The new ID requires the candidate content in the active Pack layer; it is not in the
-published `0.5.1` release. Read the working-tree body with an available file-reading tool if needed,
+the catalog. The new ID requires `0.6.0` installed content or a Pack layer containing it; it is not
+in the older `0.5.1` release. Read the working-tree body with an available file-reading tool if needed,
 or state that the text could not be obtained. Repeated lookup per helper or tool call is not required.
 
 The existing `scripts/eval-decisions` runner performs query/get and inserts the retrieved body

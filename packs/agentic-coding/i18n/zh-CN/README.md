@@ -1,6 +1,6 @@
 # `agentic-coding` 简体中文阅读版
 
-这里是 `agentic-coding` 的中文 companion，供人类阅读和审查 Pack 的判断质量。已发布的 `0.5.1` 仍为 34 条 Practice；当前未发布的工作树候选为 **35 条**，新增 `agentic-coding.implementation.justify-added-checks`，Pack 版本仍保留 `0.5.1`，Registry 仍指向已发布的 34 条版本。中文内容不是逐词翻译，也不参与安装、检索或运行时注入。ID、元数据、反模式 ID 和运行时行为仍以 [`../../practices`](../../practices/) 中的英文 canonical 文件为唯一真源；中英文有冲突时，以英文为准。
+这里是 `agentic-coding@0.6.0` 的 35 条 Practice 中文 companion，供人类阅读和审查 Pack 的判断质量；新增 `agentic-coding.implementation.justify-added-checks`。不可变的 `0.5.1` 版本仍保留原有 34 条。中文内容不是逐词翻译，也不参与安装、检索或运行时注入。ID、元数据、反模式 ID 和运行时行为仍以 [`../../practices`](../../practices/) 中的英文 canonical 文件为唯一真源；中英文有冲突时，以英文为准。
 
 ## Pack 简介
 
@@ -11,6 +11,10 @@
 本次修订：全部 Guidance 改写为带停止点的步骤式决策程序；`applies_when` 按检索评测的混淆矩阵改写以区分近邻 Practice；示例补强为冷读者可复述的自包含场景；severity 分为三档（critical=证据与交付诚实，warn=范围与规划，info=惯例）。原"只承诺有理由的工作"与"开工前写停止条件"两条同属开工前范围决策，合并为一条。
 
 `agentic-coding-v0.5.0` 已作为不可变 ref 通过官方 Registry 发布。2026 年 9 月 21 日已用官方安装路径解析该 ref、完成 Pack 解码并读回 34 条 Practice；这只证明安装与物化链路，不证明检索效果或下游 Agent 行为。`agentic-coding-v0.5.1` 为仅元数据发布：目录描述改写以点名 0.5.0 新增的两条规划校准 Practice 的触发时刻，Practice 内容不变；2026 年 9 月 21 日已用官方安装路径解析该 ref（`954324c`）、完成解码并回读 34 条 Practice ID。
+
+`0.6.0` 的发布产物由 `agentic-coding-v0.6.0` 标识，包含 35 条 Practice，新增检查必要性的独立决策，
+并区分检查归属与组合路径；同时包含 PR #38 的验证、证据与产品表面细化，不包含未合并的 PR #36。
+本地结构有效、Registry 可安装、召回与行为改善是不同证据，不能相互替代。
 
 ## 校验与恢复决策
 
@@ -44,8 +48,8 @@
 不要求新增检查单、强制风险报告或独立审批门禁。
 
 整体工程投入由 `scale-work-to-risk-and-cost` 负责，选择验证观察由 `plan-sufficient-evidence`
-负责，都不替代新增检查之前的独立判断。本次候选新增一个独立 ID，并调整两个近邻的职责；
-不代表新发布，也不改写上述不可变发布历史。
+负责，都不替代新增检查之前的独立判断。`0.6.0` 新增一个独立 ID，并调整两个近邻的职责；
+不改写旧版本内容和不可变发布历史。
 
 ## 项目路由建议
 
@@ -65,11 +69,10 @@ Pack description 与 `applies_when` 能帮助发现后的选择，不能让 Agen
 > 或查可用 catalog 确认 ID。同一决策和正文仍适用时，不必每写一个 helper 或每次调用工具都重查。
 > 取不到正文就如实说明限制，不要声称已经读过。
 
-例如，**当前活动 Pack 层已提供候选内容时**，
-`lore get agentic-coding.implementation.justify-added-checks` 可以直接读取已知入口，
-不依赖检索命中。已发布的 34 条 `0.5.1` 不含这个 ID；若该层没有它，可用文件读取工具
-读取上方链接的工作树正文，或说明无法取得。这个路由面向检查决策，不要求每次调用工具都先走一遍，
-也不把工具包装成新的全局审批门禁。
+例如，安装 `0.6.0` 或当前活动 Pack 层提供该版本内容时，
+`lore get agentic-coding.implementation.justify-added-checks` 可以直接读取已知入口，不依赖检索命中。
+旧 `0.5.1` 不含这个 ID，应更新到 `0.6.0`，或用文件读取工具读取上方链接的工作树正文；无法取得时如实说明。
+这个路由面向检查决策，不要求每次工具调用都查询，也不引入新的全局审批门禁。
 
 这只是本 Pack 文档中的采纳建议，尚未部署到 Lorelum 产品仓库、其 `AGENTS.md`、插件或 skill。
 官方 [Lorelum `0.1.0-alpha.6` 预发布](https://github.com/lorelum/lorelum/releases/tag/v0.1.0-alpha.6)
@@ -89,7 +92,7 @@ keyword 改善及旧查询退化、语义准备失败、正文成功提供，但
 另行记录了新方案的排名，以及仅提供目录与明确路由的受控会话。两个会话均在设计决定前读取新正文，
 并保留必要保障；但每组只有一个会话、没有无知识盲测对照、也未部署真实宿主，不证明稳定触发或因果性决策改善。
 
-## 导航（工作树候选 35 条）
+## 导航（35 条）
 
 ### 需求（3）
 

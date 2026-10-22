@@ -1,7 +1,7 @@
 fixture_set: agentic-coding-queries
 evaluation_only: true
-description: Retrieval hypotheses for the 35 working-tree agentic-coding Practices, not the published 34-Practice pack. Every Practice has at least 3 positive and 2 neighbor queries; the merged scope Practice retains both predecessor blocks and secondary neighbors. The added-check decision has 3 dedicated positives and 2 neighbors separating whether protection is justified from its owning boundary and the composition of settled checks. Existing query IDs and wording survive semantic expectation migrations; historical scores using earlier expectations are not directly comparable. Query wording avoids quoting Practice titles, applies_when, or guidance. Not a runtime input or proof of retrieval quality; target_pack remains the historical evaluation target, not a release declaration.
-target_pack: agentic-coding@0.5.0
+description: Retrieval hypotheses for the 35 agentic-coding 0.6.0 Practices. Every Practice has at least 3 positive and 2 neighbor queries; the merged scope Practice retains predecessor blocks. Existing query IDs and wording survive two semantic expectation migrations, so historical scores using earlier expectations are not directly comparable. Situation wording avoids quoting titles or applies_when. Evaluation only, not runtime input or proof of downstream quality.
+target_pack: agentic-coding@0.6.0
 top_k: 3
 min_top3: 0.90
 queries:
