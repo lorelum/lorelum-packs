@@ -1,10 +1,10 @@
 # `agentic-coding` 简体中文阅读版
 
-这里是已发布的 `0.5.1` 版本 34 条 canonical Practice 的中文 companion，供人类阅读和审查 Pack 的判断质量。它不是逐词翻译，也不参与安装、检索或运行时注入。ID、元数据、反模式 ID 和运行时行为仍以 [`../../practices`](../../practices/) 中的英文 canonical 文件为唯一真源；中英文有冲突时，以英文为准。
+这里是 `agentic-coding` 的中文 companion，供人类阅读和审查 Pack 的判断质量。已发布的 `0.5.1` 仍为 34 条 Practice；当前未发布的工作树候选为 **35 条**，新增 `agentic-coding.implementation.justify-added-checks`，Pack 版本仍保留 `0.5.1`，Registry 仍指向已发布的 34 条版本。中文内容不是逐词翻译，也不参与安装、检索或运行时注入。ID、元数据、反模式 ID 和运行时行为仍以 [`../../practices`](../../practices/) 中的英文 canonical 文件为唯一真源；中英文有冲突时，以英文为准。
 
 ## Pack 简介
 
-面向 AI Agent 的软件工程决策指导：澄清目标、权威来源、验收与非目标；控制范围与停止条件；让决策集合（计划、验收标准、检查单、规范）不膨胀到超出它要做的决定；作出与风险相称的实现与验证选择；不让校验、权限、确认类检查挡死验收路径；提交前做减法评审；以可信证据处理交接、委托代理、交付、恢复与上下文重建。
+面向 AI Agent 的软件工程决策指导：澄清目标、权威来源、验收与非目标；控制范围与停止条件；让决策集合（计划、验收标准、检查单、规范）不膨胀到超出它要做的决定；在后端和本地服务新增校验、权限、完整性扫描或启动与恢复前置条件之前，权衡额外保护及其自身成本；在不削弱安全、一致性和契约的前提下保持必需路径可完成；提交前做减法评审；以可信证据处理交接、委托代理、交付、恢复与上下文重建。
 
 每个文件与 canonical 保持同一相对路径，仅含中文标题和六个正文章节，不含 runtime frontmatter。同步 digest 由 Lorelum 根据格式化后的英文 Markdown 生成，不应手工修改。
 
@@ -12,7 +12,84 @@
 
 `agentic-coding-v0.5.0` 已作为不可变 ref 通过官方 Registry 发布。2026 年 9 月 21 日已用官方安装路径解析该 ref、完成 Pack 解码并读回 34 条 Practice；这只证明安装与物化链路，不证明检索效果或下游 Agent 行为。`agentic-coding-v0.5.1` 为仅元数据发布：目录描述改写以点名 0.5.0 新增的两条规划校准 Practice 的触发时刻，Practice 内容不变；2026 年 9 月 21 日已用官方安装路径解析该 ref（`954324c`）、完成解码并回读 34 条 Practice ID。
 
-## 导航（34 条）
+## 校验与恢复决策
+
+**在决定新增或加强检查之前**，先读
+[新增检查前先说明理由](practices/implementation/justify-added-checks.md)
+（`agentic-coding.implementation.justify-added-checks`）完整正文。
+它覆盖规划时刻，也覆盖 Agent 在普通任务中自行提出校验、前置检查、授权或确认、
+完整性扫描、启动/恢复阻断条件的时刻。不要等实现完成后才做删减评审。
+
+区分三个问题：
+
+- **为什么值得新增或加强？** `justify-added-checks` 先确定可达失败或强制契约、
+  保障负责人、已有覆盖及新增保护，再权衡检查自身的误拒绝、延迟、I/O、可用性、
+  维护和恢复成本，决定保留、新增、收窄或不加。
+- **应该在哪里检查？**
+  [在真正负责该事实的边界校验](practices/implementation/validate-at-the-owning-boundary.md)
+  （`agentic-coding.implementation.validate-at-the-owning-boundary`）判断检查归属、
+  既有事实何时会失效，以及内部交接是否引入新的失败。
+- **组合后的路径还能完成吗？**
+  [保持验收路径可完成](practices/planning/keep-acceptance-path-completable.md)
+  （`agentic-coding.planning.keep-acceptance-path-completable`）把检查组合起来，
+  走过正常使用、启动、维护和恢复路径，选择阻断级别，保留可达的修复/停止路径；
+  不能要求先处于恢复本来要重建的健康状态。
+
+[让恢复有明确负责人和可理解的结果](practices/implementation/make-recovery-behavior-explicit.md)
+用于准备给失败增加重试、空默认值、备用来源或降级结果的时刻：明确可恢复条件、有限的负责人和
+调用方能理解的结果。校验负责建立事实，恢复负责应对失败，两者也可能独立发生。
+
+这些是通用决策，不是要求少检查。外部输入边界、授权、并发状态一致性、native/model 质量、
+发布完整性与恢复身份保障仍须保留。必要保护可以支持高成本检查。
+不要求新增检查单、强制风险报告或独立审批门禁。
+
+整体工程投入由 `scale-work-to-risk-and-cost` 负责，选择验证观察由 `plan-sufficient-evidence`
+负责，都不替代新增检查之前的独立判断。本次候选新增一个独立 ID，并调整两个近邻的职责；
+不代表新发布，也不改写上述不可变发布历史。
+
+## 项目路由建议
+
+Pack description 与 `applies_when` 能帮助发现后的选择，不能让 Agent 自动查询 Lorelum；
+独立 Practice ID 也不保证 Agent 会识别触发时机。项目可把下面的指令采纳进自己的 `AGENTS.md`，
+或放进宿主配置为在这个决策点强制读取的 skill：
+
+> 在决定新增或加强检查之前，包括在普通任务中自行提案时，读取
+> `agentic-coding.implementation.justify-added-checks` 完整正文。
+> 实现之前先决定为什么需要它，完工后的删减评审不能替代这个判断。
+> 涉及检查归属、事实失效或内部交接时，再读取
+> `agentic-coding.implementation.validate-at-the-owning-boundary`。
+> 如果检查可能阻断正常使用、启动、维护、修复或停止，再读取
+> `agentic-coding.planning.keep-acceptance-path-completable`，然后才选择前置条件。
+> 当前会话已有适用的当前正文时可以复用；否则用已知完整 ID 执行 `lore get`。
+> query 或 summary 命中不等于拿到正文。检索为空不代表没有规则：直接 get 已知 ID，
+> 或查可用 catalog 确认 ID。同一决策和正文仍适用时，不必每写一个 helper 或每次调用工具都重查。
+> 取不到正文就如实说明限制，不要声称已经读过。
+
+例如，**当前活动 Pack 层已提供候选内容时**，
+`lore get agentic-coding.implementation.justify-added-checks` 可以直接读取已知入口，
+不依赖检索命中。已发布的 34 条 `0.5.1` 不含这个 ID；若该层没有它，可用文件读取工具
+读取上方链接的工作树正文，或说明无法取得。这个路由面向检查决策，不要求每次调用工具都先走一遍，
+也不把工具包装成新的全局审批门禁。
+
+这只是本 Pack 文档中的采纳建议，尚未部署到 Lorelum 产品仓库、其 `AGENTS.md`、插件或 skill。
+官方 [Lorelum `0.1.0-alpha.6` 预发布](https://github.com/lorelum/lorelum/releases/tag/v0.1.0-alpha.6)
+包含 omp 插件和 skill；它们的存在不证明这个路由会触发。此建议的 Windows 真实 host 流尚未测试。
+
+须分别记录三类证据：**召回**记录 query 选中了哪些 ID；**正文提供**记录 get 成功把相关完整正文交给 Agent
+（或当前正文已在会话中）；**决策影响**需要 Agent 实际如何据此决策的证据。前一项不证明后一项。
+现有 `scripts/eval-decisions` 先 query、get，再强制把正文放进 injected prompt，只能测正文辅助后的决策，
+不能测 Agent 是否自主识别触发时机并查规则。Fixture 预期是假设，不是召回成功、行为有效或路由已部署的证据。
+
+[10 月 22 日 alpha.6 两条 Practice 方案评估](../../../../fixtures/agentic-coding/baselines/agentic-coding-backend-checks-alpha6-2026-10-22.md)
+保留为**此前仅补强两个近邻的历史比较**，不是新增独立入口的评估结果。它记录了有限的
+keyword 改善及旧查询退化、语义准备失败、正文成功提供，但未观察到决策改善。
+这些观察既不证明稳定自动查询，也不能继承为新 35 条候选方案成功的证据。
+
+[独立入口 alpha.6 评估](../../../../fixtures/agentic-coding/baselines/agentic-coding-independent-check-alpha6-2026-10-22.md)
+另行记录了新方案的排名，以及仅提供目录与明确路由的受控会话。两个会话均在设计决定前读取新正文，
+并保留必要保障；但每组只有一个会话、没有无知识盲测对照、也未部署真实宿主，不证明稳定触发或因果性决策改善。
+
+## 导航（工作树候选 35 条）
 
 ### 需求（3）
 
@@ -29,11 +106,12 @@
 - [为每项验收要求安排够用的最小证明](practices/planning/plan-sufficient-evidence.md)
 - [按失败代价决定投入多少工程工作](practices/planning/scale-work-to-risk-and-cost.md)
 
-### 实现（9）
+### 实现（10）
 
 - [在能完整工作的方案里选最不复杂的](practices/implementation/choose-smallest-sufficient-design.md)
 - [暴露新能力前确认用户能依赖什么](practices/implementation/confirm-product-surface-expansion.md)
 - [新写代码前先查仓库里有没有](practices/implementation/inspect-and-reuse-existing-capability.md)
+- [新增检查前先说明理由](practices/implementation/justify-added-checks.md)
 - [没有未决判断，就不要扩大调查范围](practices/implementation/limit-investigation-to-current-decision.md)
 - [让负责数据或规则的组件统一作决定](practices/implementation/preserve-responsibility-boundaries.md)
 - [在真正负责该事实的边界校验](practices/implementation/validate-at-the-owning-boundary.md)

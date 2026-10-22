@@ -35,6 +35,14 @@ exposes nothing new is only a design choice.
 Stop with one explicit list of the public values or behaviors admitted now. Approval of one event,
 setting, or source type never authorizes arbitrary extensibility.
 
+An internal scaffold, dormant package, or available transport is implementation evidence, not
+authorization to ship a new integration. Follow the accepted product entry point: for example,
+a CLI-first integration using released commands and host-native skills does not acquire a local
+server or protocol wrapper merely because a scaffold exists. A separately approved remote boundary
+does not authorize a local one. When a scaffold is removed, remove stale guidance describing it;
+preserve the still-current product constraint. This example generalizes the source repository's
+policy; it does not prescribe CLI-first integration for every product.
+
 ## Anti-pattern
 
 The user asks integrations to receive one order-shipped webhook. The repository's event dispatcher

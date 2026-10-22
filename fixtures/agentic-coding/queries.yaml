@@ -1,6 +1,6 @@
 fixture_set: agentic-coding-queries
 evaluation_only: true
-description: Retrieval query hypotheses for the 34 agentic-coding Practices; each Practice contributes 3 positive queries and 2 neighbor queries that are worded near that Practice but expected to select its nearest neighbor (per agentic-coding-practice-catalog). The merged planning.decide-scope-and-stop-conditions carries the query blocks of both predecessors plus one fixed-scope-entry positive (7 positive, 4 neighbor; two neighbors anchor its secondary neighbor implementation.confirm-product-surface-expansion). The two new planning-calibration Practices (derive-committed-set-from-concerns, keep-acceptance-path-completable) contribute 3 positive and 2 neighbor queries each; their neighbor expectations follow decide-scope-and-stop-conditions and implementation.validate-at-the-owning-boundary. Query wording avoids restating Practice titles, applies_when, or guidance so keyword hits are not quotation matches. Not a runtime input or proof of retrieval quality.
+description: Retrieval hypotheses for the 35 working-tree agentic-coding Practices, not the published 34-Practice pack. Every Practice has at least 3 positive and 2 neighbor queries; the merged scope Practice retains both predecessor blocks and secondary neighbors. The added-check decision has 3 dedicated positives and 2 neighbors separating whether protection is justified from its owning boundary and the composition of settled checks. Existing query IDs and wording survive semantic expectation migrations; historical scores using earlier expectations are not directly comparable. Query wording avoids quoting Practice titles, applies_when, or guidance. Not a runtime input or proof of retrieval quality; target_pack remains the historical evaluation target, not a release declaration.
 target_pack: agentic-coding@0.5.0
 top_k: 3
 min_top3: 0.90
@@ -249,6 +249,18 @@ queries:
     expect: agentic-coding.implementation.validate-at-the-owning-boundary
     text: "the data was already validated where it entered; downstream modules want their own copy of the same check just because they are separate layers"
 
+  # Secondary ownership neighbors above remain; these isolate why a new gate should exist.
+  - id: planning.keep-acceptance-path-completable.n5
+    kind: neighbor
+    resembles: agentic-coding.planning.keep-acceptance-path-completable
+    expect: agentic-coding.implementation.justify-added-checks
+    text: "the supported launch and repair routes all finish today; while planning a startup audit I have not yet established a failure that reading every installed file would catch"
+  - id: planning.keep-acceptance-path-completable.n6
+    kind: neighbor
+    resembles: agentic-coding.planning.keep-acceptance-path-completable
+    expect: agentic-coding.implementation.justify-added-checks
+    text: "nothing is blocked and there are no overlapping guards; during implementation I want a new confirmation before a local preview, although I cannot say what mistake it would prevent"
+
   # implementation.inspect-and-reuse-existing-capability
   - id: implementation.inspect-and-reuse-existing-capability.p1
     kind: positive
@@ -392,6 +404,18 @@ queries:
     resembles: agentic-coding.implementation.validate-at-the-owning-boundary
     expect: agentic-coding.implementation.make-recovery-behavior-explicit
     text: "input checks are settled; the open question is what the caller should receive when the downstream dependency is unavailable"
+
+  # Additional neighbors distinguish an unsettled protection decision from fact ownership.
+  - id: implementation.validate-at-the-owning-boundary.n5
+    kind: neighbor
+    resembles: agentic-coding.implementation.validate-at-the-owning-boundary
+    expect: agentic-coding.implementation.justify-added-checks
+    text: "the client already knows which component owns each fact; I am considering the first full installation sweep on every status refresh, and have not identified what it would prevent"
+  - id: implementation.validate-at-the-owning-boundary.n6
+    kind: neighbor
+    resembles: agentic-coding.implementation.validate-at-the-owning-boundary
+    expect: agentic-coding.implementation.justify-added-checks
+    text: "the token verifier is in the right place and no handoff is disputed; I want to add a separate operator approval to a read-only report, but have not shown which unauthorized action that approval stops"
 
   # implementation.make-recovery-behavior-explicit
   - id: implementation.make-recovery-behavior-explicit.p1
@@ -848,3 +872,100 @@ queries:
     resembles: agentic-coding.recovery.validate-handoff-before-continuation
     expect: agentic-coding.correction.restore-authoritative-baseline
     text: "the requester's new decision invalidates the old route; remove it everywhere rather than re-checking the other agent's summary"
+
+  # October 2026 source refinements: additional hypotheses, not recorded retrieval results.
+  - id: implementation.validate-at-the-owning-boundary.p4
+    kind: positive
+    expect: agentic-coding.implementation.validate-at-the-owning-boundary
+    text: "our local worker returns a record already checked by its producer, but the client walks the entire object again and scans the executable on every status request just because it crossed HTTP"
+  - id: implementation.validate-at-the-owning-boundary.p5
+    kind: positive
+    expect: agentic-coding.implementation.validate-at-the-owning-boundary
+    text: "a mock makes the internal JSON producer return a cycle and the reviewer wants a new production guard; the actual producer only returns decoded validated JSON with no later mutation"
+  - id: implementation.confirm-product-surface-expansion.p4
+    kind: positive
+    expect: agentic-coding.implementation.confirm-product-surface-expansion
+    text: "the supported integration uses the released command and native host hooks, but an old dormant server package is being cited as permission to ship a second local integration transport"
+  - id: planning.plan-sufficient-evidence.p4
+    kind: positive
+    expect: agentic-coding.planning.plan-sufficient-evidence
+    text: "after a small revision we still have applicable integration results and one newly affected failure case; should the plan demand the entire suite and a benchmark again or cover the remaining gap"
+
+  # Proposed-check retrieval hypotheses; limited observations are recorded separately in baselines.
+  # Semantic migration: p6 and p7 below now ask whether proposed extra protection is warranted.
+  # IDs/text are retained; old baseline scores used different expectations and cannot be mixed
+  # directly with current scores. p4/p5/p8/p9 retain fact-owner/safety work; acceptance-path
+  # p4/p5/p6 retain setup/repair/stop deadlock work. These remain unverified hypotheses.
+  - id: implementation.validate-at-the-owning-boundary.p6
+    kind: positive
+    expect: agentic-coding.implementation.justify-added-checks
+    text: "before changing the desktop client, should I add a second full record walk after our pinned worker has emitted checked results over loopback, or just handle decoding and matching the reply to its request"
+  - id: implementation.validate-at-the-owning-boundary.p7
+    kind: positive
+    expect: agentic-coding.implementation.justify-added-checks
+    text: "the installer verifies signed model bytes and registers an immutable version; a proposal would reread every tensor at each launch, although imported directories still need their own admission checks"
+  - id: implementation.validate-at-the-owning-boundary.p8
+    kind: positive
+    expect: agentic-coding.implementation.validate-at-the-owning-boundary
+    text: "the public endpoint receives arbitrary JSON and someone suggests accepting it straight into the typed command because a private worker sends similar records; where should malformed values be rejected"
+  - id: implementation.validate-at-the-owning-boundary.p9
+    kind: positive
+    expect: agentic-coding.implementation.validate-at-the-owning-boundary
+    text: "a valid login reaches another customer's document and two buyers can reserve the last item together; does parsing the request once really replace document permissions or the atomic stock update"
+  - id: implementation.validate-at-the-owning-boundary.n3
+    kind: neighbor
+    resembles: agentic-coding.implementation.validate-at-the-owning-boundary
+    expect: agentic-coding.implementation.make-recovery-behavior-explicit
+    text: "we have already agreed the worker response must be checked; now I need to choose a timeout, whether a retry is safe, and when yesterday's snapshot may be shown"
+  - id: implementation.validate-at-the-owning-boundary.n4
+    kind: neighbor
+    resembles: agentic-coding.implementation.validate-at-the-owning-boundary
+    expect: agentic-coding.planning.plan-sufficient-evidence
+    text: "the launch verifier and its behavior are agreed and will stay; to demonstrate it rejects a damaged model, should I use a tiny corrupted artifact, an end-to-end launch, or both"
+  - id: planning.keep-acceptance-path-completable.p4
+    kind: positive
+    expect: agentic-coding.planning.keep-acceptance-path-completable
+    text: "before adding a full model-directory walk to every launch, can we trace a fresh install with no model yet and a user importing one, rather than making both fail before setup opens"
+  - id: planning.keep-acceptance-path-completable.p5
+    kind: positive
+    expect: agentic-coding.planning.keep-acceptance-path-completable
+    text: "the proposed repair command first asks the broken backend for a healthy response, but repair is how users are supposed to replace its missing model; what has to change before we implement that prerequisite"
+  - id: planning.keep-acceptance-path-completable.p6
+    kind: positive
+    expect: agentic-coding.planning.keep-acceptance-path-completable
+    text: "after an upgrade we must stop our identified old worker, yet the suggested shared preflight refuses to send stop unless its business API speaks the new version; I still need process ownership and permission checks"
+  - id: planning.keep-acceptance-path-completable.n3
+    kind: neighbor
+    resembles: agentic-coding.planning.keep-acceptance-path-completable
+    expect: agentic-coding.implementation.make-recovery-behavior-explicit
+    text: "repair can already run while the backend is down and its prerequisites are settled; how long should reconnect wait and which failures may use a saved snapshot"
+  - id: planning.keep-acceptance-path-completable.n4
+    kind: neighbor
+    resembles: agentic-coding.planning.keep-acceptance-path-completable
+    expect: agentic-coding.planning.plan-sufficient-evidence
+    text: "first launch, model import, and offline repair all have agreed working routes; which observations should the test plan collect to prove each result without repeating equivalent runs"
+
+  # implementation.justify-added-checks: dedicated 3-positive / 2-neighbor specification.
+  # The first proposal need not duplicate anything or block a supported route.
+  - id: implementation.justify-added-checks.p1
+    kind: positive
+    expect: agentic-coding.implementation.justify-added-checks
+    text: "while building ordinary desktop startup I am considering the first scan of every installed settings file before showing the window; nothing is duplicated or blocked, but the extra disk reads and possible rejection of usable installations need a reason"
+  - id: implementation.justify-added-checks.p2
+    kind: positive
+    expect: agentic-coding.implementation.justify-added-checks
+    text: "I am implementing a local HTTP status client and thought of recursively checking the bundled worker's whole reply plus hashing its binary on every poll; the producer contract is known, but I have not shown what new bad result this would stop"
+  - id: implementation.justify-added-checks.p3
+    kind: positive
+    expect: agentic-coding.implementation.justify-added-checks
+    text: "during work on authenticated local repair I am about to add an operator confirmation on my own initiative; the repair target and exclusive write permission are already established, and I need to decide whether the additional prompt protects anything before coding it"
+  - id: implementation.justify-added-checks.n1
+    kind: neighbor
+    resembles: agentic-coding.implementation.justify-added-checks
+    expect: agentic-coding.implementation.validate-at-the-owning-boundary
+    text: "malformed quantities must be rejected and that decision is settled; HTTP and CSV callers feed private typed helpers, so the only open choice is which entry point parses and when a later mutation would require another check"
+  - id: implementation.justify-added-checks.n2
+    kind: neighbor
+    resembles: agentic-coding.implementation.justify-added-checks
+    expect: agentic-coding.planning.keep-acceptance-path-completable
+    text: "identity, model admission, and inference readiness checks are all required and already assigned; I only need to walk setup, ordinary use, and repair through their combined prerequisites so a missing model cannot lock users out of fixing it"
