@@ -279,3 +279,17 @@ benefit, stable generalization, autonomous retrieval, or superiority over an ext
 The canonical English and Chinese Practices organize that method into the Pack's six-section
 format with applicability, stop, neighbor boundaries, and an illustrative example; they are not
 byte-identical to the evaluated candidate, and its results are not a fresh test of the final bodies.
+
+## October 30, 2026: official 0.7.0 release
+
+PR #39 merged at `4efd8b82d20ed6d873216056bc7fb74060715d5e`. Documentation promotion
+created the artifact commit `6715efa7cc152a4e222cca508ee6789a843854b0`, tagged immutably as
+`agentic-coding-v0.7.0`; canonical Practice content was not changed. Registry promotion followed
+in `0d74cbe41b74c19b8a5cd85b2537b9426cd218b5`, after the tag existed remotely.
+
+The [official release verification](../../fixtures/agentic-coding/baselines/agentic-coding-0.7.0-release-2026-10-30.md)
+records 37-ID installation, matching new bodies, and default update from `0.6.0` preserving all
+35 original IDs with exactly two additions and no changed or invalidated IDs. Initial download
+failure and GitHub API transport failures remain disclosed. Runtime artifact identity binds the
+existing keyword results without duplicating the full evaluation. Index readiness and finite
+keyword selection do not establish semantic quality, stable host triggering, or causal benefit.

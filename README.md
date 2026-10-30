@@ -12,6 +12,7 @@ This repository is the official public catalog for installable Lorelum Knowledge
   - [简体中文本地化](./packs/react-web-craft/i18n/zh-CN/README.md) is available as non-runtime companion content.
 - `agentic-coding@0.7.0` — 37 decision-focused Practices, adding [useful session handoffs](./packs/agentic-coding/practices/context/recommend-session-handoff.md) and [solution-oriented work](./packs/agentic-coding/practices/planning/organize-work-around-the-solution.md). Immutable release ref: `agentic-coding-v0.7.0`; the older `0.6.0` artifact retains 35.
   - [Content adoption and retrieval observations](./fixtures/agentic-coding/baselines/agentic-coding-0.7.0-content-2026-10-30.md) include known misses and distinguish finite evidence from stable triggering or comparative superiority.
+  - [Official 0.7.0 release verification](./fixtures/agentic-coding/baselines/agentic-coding-0.7.0-release-2026-10-30.md) records exact-version installation, default update from `0.6.0`, 37-ID readback, and unchanged evidence limits.
   - [简体中文本地化](./packs/agentic-coding/i18n/zh-CN/README.md) is available as non-runtime companion content.
 
 ## Use Packs

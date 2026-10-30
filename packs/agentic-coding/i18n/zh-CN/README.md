@@ -22,7 +22,7 @@
 [内容采用记录](../../../../fixtures/agentic-coding/baselines/agentic-coding-0.7.0-content-2026-10-30.md)区分维护者经验、作者综合和实际验证。有限实现与报告探针可用，但未测出优于对照指导或公开 Skill 的效果。不宣称市场范围的新颖性、模型更新后的频率增长、无损交接、稳定自动触发或普遍领先。
 
 新安装执行 `lore pack install agentic-coding@0.7.0`，已有安装执行 `lore pack update agentic-coding`，Registry 默认选择最新稳定版本。
-`0.6.0` 的[历史发布验证](../../../../fixtures/agentic-coding/baselines/agentic-coding-0.6.0-release-2026-10-22.md)只证明该旧版本曾走通官方安装，不能替代新版本的分发验证。
+[0.7.0 正式发布验证](../../../../fixtures/agentic-coding/baselines/agentic-coding-0.7.0-release-2026-10-30.md)记录官方 Registry 精确安装、从 `0.6.0` 的默认更新、37 条 ID 回读和两条新正文一致性；首次下载失败也保留记录。分发成功不证明稳定触发或下游效果改善。
 
 ## 校验与恢复决策
 

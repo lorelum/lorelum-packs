@@ -11,9 +11,9 @@ retains its original 35 Practices; no older artifact is replaced.
 
 The [content adoption record](../../fixtures/agentic-coding/baselines/agentic-coding-0.7.0-content-2026-10-30.md)
 explains the maintainer observations, concrete decisions, and limited evaluation evidence behind
-the additions. Registry installation is a separate check; the
-[previous release record](../../fixtures/agentic-coding/baselines/agentic-coding-0.6.0-release-2026-10-22.md)
-belongs to `0.6.0` and is not installation evidence for `0.7.0`.
+the additions. The [official release verification](../../fixtures/agentic-coding/baselines/agentic-coding-0.7.0-release-2026-10-30.md)
+records exact-version installation, default update from `0.6.0`, all 37 IDs, and matching new bodies.
+Distribution success does not establish stable triggering or downstream improvement.
 
 ```sh
 # New installation:
