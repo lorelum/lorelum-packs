@@ -1,6 +1,6 @@
 # `agentic-coding` 简体中文阅读版
 
-这里是 `agentic-coding@0.6.0` 的 35 条 Practice 中文 companion，供人类阅读和审查 Pack 的判断质量；新增 `agentic-coding.implementation.justify-added-checks`。不可变的 `0.5.1` 版本仍保留原有 34 条。中文内容不是逐词翻译，也不参与安装、检索或运行时注入。ID、元数据、反模式 ID 和运行时行为仍以 [`../../practices`](../../practices/) 中的英文 canonical 文件为唯一真源；中英文有冲突时，以英文为准。
+这里是 `agentic-coding@0.7.0` 候选的 37 条 Practice 中文 companion，供人类阅读和审查 Pack 的判断质量；新增会话迁移与围绕可行解法组织工作的经验指导。当前已发布的 `0.6.0` 仍保留原有 35 条，本 PR 不创建 tag 或提升 Registry。中文内容不参与安装、检索或运行时注入。ID、元数据、反模式 ID 和运行时行为仍以 [`../../practices`](../../practices/) 中的英文 canonical 文件为唯一真源；中英文有冲突时，以英文为准。
 
 ## Pack 简介
 
@@ -12,16 +12,17 @@
 
 `agentic-coding-v0.5.0` 已作为不可变 ref 通过官方 Registry 发布。2026 年 9 月 21 日已用官方安装路径解析该 ref、完成 Pack 解码并读回 34 条 Practice；这只证明安装与物化链路，不证明检索效果或下游 Agent 行为。`agentic-coding-v0.5.1` 为仅元数据发布：目录描述改写以点名 0.5.0 新增的两条规划校准 Practice 的触发时刻，Practice 内容不变；2026 年 9 月 21 日已用官方安装路径解析该 ref（`954324c`）、完成解码并回读 34 条 Practice ID。
 
-`0.6.0` 的发布产物由 `agentic-coding-v0.6.0` 标识，包含 35 条 Practice，新增检查必要性的独立决策，
-并区分检查归属与组合路径；同时包含 PR #38 的验证、证据与产品表面细化，不包含未合并的 PR #36。
-本地结构有效、Registry 可安装、召回与行为改善是不同证据，不能相互替代。
+## 0.7.0：把工作经验落到具体判断
 
-2026 年 10 月 22 日已用 Lorelum `0.1.0-alpha.6` 走通官方 Registry 安装及从 `0.5.1` 的默认更新：
-`agentic-coding-v0.6.0` 解析到 `68a4be1`，回读全部 35 条 ID，新条目正文与已审阅指导一致。
-已安装发布版的 keyword 正例 top-3 为 97.5%，门禁通过；隔离环境未配置语义索引所需模型。
-详见[发布验证记录](../../../../fixtures/agentic-coding/baselines/agentic-coding-0.6.0-release-2026-10-22.md)。
-新安装执行 `lore pack install agentic-coding@0.6.0`；已有安装执行 `lore pack update agentic-coding`，
-当前 Registry 默认选择 `0.6.0`。这些证据不证明稳定自动触发或决策改善。
+本版新增两条，而不是改写已有不可变发布产物：
+
+- [当历史上下文价值降低时建议换新对话](practices/context/recommend-session-handoff.md)：不必等到错误发生才处理历史干扰；保留会改变接续行为的最小完整条款、决策状态和可用来源。当前折中方法在两个开发样本保住此前追踪的边界，比大附录版缩短约 30%/36%。此前目录提示的两个正例观察到自行检索正文并提供可用交接，两个阴例没有无谓迁移；触发证据属于当时的正文快照，不自动迁移为当前版本的稳定触发证明。
+- [围绕能成立的解法组织工作](practices/planning/organize-work-around-the-solution.md)：目标已知后，Agent 应承担选择并推进实际办法的判断，避免用保护机制、任务控制或内部指标替代解题。经验包括 TPM 估算漏掉正常内容、提前限制设计者发挥、用内部分类代替整体效果判断；正文不固定为这些案例的流水线，也不要求额外自查工件。
+
+[内容采用记录](../../../../fixtures/agentic-coding/baselines/agentic-coding-0.7.0-content-2026-10-30.md)区分维护者经验、作者综合和实际验证。有限实现与报告探针可用，但未测出优于对照指导或公开 Skill 的效果。不宣称市场范围的新颖性、模型更新后的频率增长、无损交接、稳定自动触发或普遍领先。
+
+发布并提升 Registry 后，新安装执行 `lore pack install agentic-coding@0.7.0`，已有安装执行 `lore pack update agentic-coding`。当前公开安装仍使用 `0.6.0`。
+`0.6.0` 的[历史发布验证](../../../../fixtures/agentic-coding/baselines/agentic-coding-0.6.0-release-2026-10-22.md)只证明该旧版本曾走通官方安装，不能替代新版本的分发验证。
 
 ## 校验与恢复决策
 
@@ -99,7 +100,7 @@ keyword 改善及旧查询退化、语义准备失败、正文成功提供，但
 另行记录了新方案的排名，以及仅提供目录与明确路由的受控会话。两个会话均在设计决定前读取新正文，
 并保留必要保障；但每组只有一个会话、没有无知识盲测对照、也未部署真实宿主，不证明稳定触发或因果性决策改善。
 
-## 导航（35 条）
+## 导航（37 条）
 
 ### 需求（3）
 
@@ -107,7 +108,7 @@ keyword 改善及旧查询退化、语义准备失败、正文成功提供，但
 - [同时写清完成条件和不做什么](practices/requirements/define-acceptance-and-non-goals.md)
 - [多份要求冲突时先确认听谁的](practices/requirements/resolve-source-authority.md)
 
-### 规划（6）
+### 规划（7）
 
 - [开工前定下范围和停止条件](practices/planning/decide-scope-and-stop-conditions.md)
 - [从关切推导承诺集，不从条目堆叠](practices/planning/derive-committed-set-from-concerns.md)
@@ -115,6 +116,7 @@ keyword 改善及旧查询退化、语义准备失败、正文成功提供，但
 - [按用户完成的整条能力来检查计划](practices/planning/map-plan-to-user-capability.md)
 - [为每项验收要求安排够用的最小证明](practices/planning/plan-sufficient-evidence.md)
 - [按失败代价决定投入多少工程工作](practices/planning/scale-work-to-risk-and-cost.md)
+- [围绕能成立的解法组织工作](practices/planning/organize-work-around-the-solution.md)
 
 ### 实现（10）
 
@@ -156,9 +158,10 @@ keyword 改善及旧查询退化、语义准备失败、正文成功提供，但
 
 - [确认纠正后把工作复位到权威基线](practices/correction/restore-authoritative-baseline.md)
 
-### 上下文与委派（4）
+### 上下文与委派（5）
 
 - [委派前给被委派的 Agent 足够的决策上下文](practices/context/give-delegated-agents-decision-context.md)
+- [当历史上下文价值降低时建议换新对话](practices/context/recommend-session-handoff.md)
 - [上下文丢失后先重新落地](practices/context/reground-after-context-loss.md)
 - [继续之前先验证交接内容](practices/context/validate-handoff-before-continuation.md)
 - [写下能保住决策的检查点](practices/context/write-decision-dense-checkpoint.md)

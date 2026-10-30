@@ -1,23 +1,24 @@
 # Agentic Coding
 
-`agentic-coding@0.6.0` is a tool-neutral Knowledge Pack of 35 decision-focused Practices for AI agents doing software engineering. It adds an independent decision before implementing new checks, alongside guidance for requirements, scope, implementation, evidence, delivery, recovery, and context continuity.
+The `agentic-coding@0.7.0` candidate is a tool-neutral Knowledge Pack of 37 decision-focused Practices for AI agents doing software engineering. It adds experience-derived guidance for recommending useful session handoffs and organizing work around a working solution instead of a controllable proxy.
 
 Canonical English · [简体中文](./i18n/zh-CN/README.md)
 
-The release artifact is identified by `agentic-coding-v0.6.0`. It includes
-`agentic-coding.implementation.justify-added-checks`; the immutable `0.5.1` release retains its
-original 34 Practices. Registry installation is verified separately from local content validation.
+The proposed release ref is `agentic-coding-v0.7.0`; this content PR does not create it or promote the Registry. Its two additions are
+`agentic-coding.context.recommend-session-handoff` and
+`agentic-coding.planning.organize-work-around-the-solution`. The immutable `0.6.0` release
+retains its original 35 Practices; no older artifact is replaced.
 
-The official Registry installation and default update from `0.5.1` were verified on October 22,
-2026 using Lorelum `0.1.0-alpha.6`: ref `agentic-coding-v0.6.0` resolved to `68a4be1`, all 35 IDs
-were read back, and the new Practice body matched the reviewed guidance. The installed-release
-keyword gate passed at 97.5% positive top-3; semantic index sync was not configured in the isolated
-environment. See the [release verification record](../../fixtures/agentic-coding/baselines/agentic-coding-0.6.0-release-2026-10-22.md).
+The [content adoption record](../../fixtures/agentic-coding/baselines/agentic-coding-0.7.0-content-2026-10-30.md)
+explains the maintainer observations, concrete decisions, and limited evaluation evidence behind
+the additions. Registry installation is a separate check; the
+[previous release record](../../fixtures/agentic-coding/baselines/agentic-coding-0.6.0-release-2026-10-22.md)
+belongs to `0.6.0` and is not installation evidence for `0.7.0`.
 
 ```sh
-# New installation:
-lore pack install agentic-coding@0.6.0
-# Existing installation; the Registry currently selects 0.6.0:
+# After release promotion; the currently published version is 0.6.0:
+lore pack install agentic-coding@0.7.0
+# Existing installation; update after the new version is promoted in the Registry:
 lore pack update agentic-coding
 ```
 
@@ -26,6 +27,31 @@ The Practices cover requirements, planning, implementation, testing, verificatio
 ## Scope
 
 Use this Pack to improve engineering judgment around scope, risk, source authority, investigation boundaries, evidence, implementation drift, review findings, completion claims, corrections, long-session checkpoints, delegation context, and handoffs. Combine it with the domain Practices and project requirements that define what the system itself must do.
+
+### Experience-derived additions
+
+[Recommend a Fresh Session When History Adds Little Value](./practices/context/recommend-session-handoff.md)
+addresses long work where obsolete investigations compete with the next task before an obvious
+mistake occurs. It combines a relevance-based migration decision with minimal complete clauses,
+decision status, and usable source pointers. The current handoff method retained the tracked
+constraints in two development samples while reducing their records by about 30% and 36% from
+the larger appendix-based variant. Earlier catalog-cue runs observed autonomous lookup and useful
+handoffs in two positive cases, with no unnecessary migration in two negative cases. Those trigger
+observations belong to the earlier body snapshot, not a claim of stable triggering for every revision.
+
+[Organize Work Around a Working Solution](./practices/planning/organize-work-around-the-solution.md)
+addresses a different choice: the user goal is known, but safeguards, coordination, or internal
+standards are replacing the actual solution. Maintainer examples include silently dropping normal
+request content during token estimation, predetermining a delegated designer's choices, and
+reporting internal classifications instead of the overall result. The guidance keeps the agent
+responsible for a concrete, feasible next action without weakening safety or requiring another
+checklist. It is not a universal replacement for domain knowledge or specialized Skills.
+
+Adoption is based on the observed need, explicit decision method, bounded scope, and limited usable
+outputs. Controlled implementation and reporting probes, including state and performance tasks,
+did not show an advantage over the compared guidance or public Skill. We do not claim market-wide
+novelty, a measured increase in failure frequency after model updates, stable automatic triggering,
+lossless handoffs, or demonstrated superiority.
 
 ## Validation and recovery decisions
 
@@ -127,6 +153,7 @@ This Pack is not a workflow engine, task manager, test framework, compactor, aut
 
 ## Release history
 
+- `0.7.0` adds `context.recommend-session-handoff` and `planning.organize-work-around-the-solution`, with Chinese companions, source attribution, and retrieval fixtures. It preserves the 35-Practice `0.6.0` artifact and separates experience-derived content value from unproven causal gains.
 - `0.6.0` adds `implementation.justify-added-checks` before deciding to add or strengthen safeguards, separates necessity from ownership and combined-path decisions, and carries the validation/evidence/product-surface refinements from PR #38. It contains 35 Practices at `agentic-coding-v0.6.0`. Limited keyword and controlled-session evidence is linked above; semantic quality, stable automatic triggering, and causal decision improvement are not established. Unmerged PR #36 is not included.
 - `0.5.1` is the immutable release at `agentic-coding-v0.5.1`, available through the official Registry. It is a metadata-only retune: the `pack.yaml` description — the routing surface agents see in the session-start pack catalog — now names the two planning-calibration moments added in `0.5.0` (decision-bearing sets growing past what they must decide; validation, permission, or confirmation checks blocking the acceptance path) and tracks the `decide-scope-and-stop-conditions` merge. No Practice content changes. A representative official Registry install on September 21, 2026 resolved this ref (`954324c`), decoded the Pack, and read back all 34 Practice IDs including both planning-calibration entries; that verifies the supported materialization path, not retrieval quality or downstream Agent behavior. It rewrites every Practice as a step-style decision procedure with an explicit stop, merges the two pre-work scope Practices into `decide-scope-and-stop-conditions`, adds two planning-calibration Practices (`derive-committed-set-from-concerns`, `keep-acceptance-path-completable`; 33 to 34 entries), tiers severity into critical/warn/info, and retunes `applies_when` against the #17 keyword retrieval baseline. A representative official Registry install on September 21, 2026 resolved this ref, decoded the Pack, and read back all 34 Practice IDs; that verifies the supported materialization path, not retrieval quality or downstream Agent behavior.
 - `0.4.0` adds two independent validation and recovery Practices and refines seven existing entries against unnecessary defensive complexity (tag `agentic-coding-v0.4.0` + Registry entry).

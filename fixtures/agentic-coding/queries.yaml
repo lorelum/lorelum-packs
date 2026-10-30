@@ -1,7 +1,7 @@
 fixture_set: agentic-coding-queries
 evaluation_only: true
-description: Retrieval hypotheses for the 35 agentic-coding 0.6.0 Practices. Every Practice has at least 3 positive and 2 neighbor queries; the merged scope Practice retains predecessor blocks. Existing query IDs and wording survive two semantic expectation migrations, so historical scores using earlier expectations are not directly comparable. Situation wording avoids quoting titles or applies_when. Evaluation only, not runtime input or proof of downstream quality.
-target_pack: agentic-coding@0.6.0
+description: Retrieval hypotheses for the 37 agentic-coding 0.7.0 Practices. Every Practice has at least 3 positive and 2 neighbor queries; the merged scope Practice retains predecessor blocks. Existing query IDs and wording survive two semantic expectation migrations, so historical scores using earlier expectations are not directly comparable. Situation wording avoids quoting titles or applies_when. Evaluation only, not runtime input or proof of downstream quality.
+target_pack: agentic-coding@0.7.0
 top_k: 3
 min_top3: 0.90
 queries:
@@ -969,3 +969,51 @@ queries:
     resembles: agentic-coding.implementation.justify-added-checks
     expect: agentic-coding.planning.keep-acceptance-path-completable
     text: "identity, model admission, and inference readiness checks are all required and already assigned; I only need to walk setup, ordinary use, and repair through their combined prerequisites so a missing model cannot lock users out of fixing it"
+
+  # context.recommend-session-handoff
+  - id: context.recommend-session-handoff.p1
+    kind: positive
+    expect: agentic-coding.context.recommend-session-handoff
+    text: "gateway design is settled and implementation is next; most of this conversation is abandoned tokenizer experiments, nothing has gone wrong yet, and I need to decide whether starting elsewhere with the few live constraints would help"
+  - id: context.recommend-session-handoff.p2
+    kind: positive
+    expect: agentic-coding.context.recommend-session-handoff
+    text: "we finished the investigation and will begin rollout planning; old rejected options keep distracting the discussion, but the accepted conditions could fit in one transfer note with exact source sections"
+  - id: context.recommend-session-handoff.p3
+    kind: positive
+    expect: agentic-coding.context.recommend-session-handoff
+    text: "I am weighing a conversation change because nearly all earlier exchanges no longer affect the remaining work; the transfer must keep the hash-only credential rule and the separate cache restriction, not merge both into a vague privacy label"
+  - id: context.recommend-session-handoff.n1
+    kind: neighbor
+    resembles: agentic-coding.context.recommend-session-handoff
+    expect: agentic-coding.context.write-decision-dense-checkpoint
+    text: "the session will definitely pause now and that choice is not open; I only need to save the accepted decisions, untested rollback, and first unfinished action before compaction"
+  - id: context.recommend-session-handoff.n2
+    kind: neighbor
+    resembles: agentic-coding.context.recommend-session-handoff
+    expect: agentic-coding.recovery.reground-after-context-loss
+    text: "I have already resumed after losing the conversation; the summary says remote installation worked, but I need to reopen the request and actual run record before trusting that claim"
+
+  # planning.organize-work-around-the-solution
+  - id: planning.organize-work-around-the-solution.p1
+    kind: positive
+    expect: agentic-coding.planning.organize-work-around-the-solution
+    text: "we know autosave must leave later edits pending after an older acknowledgment; my plan only lists race risks and disables typing, instead of deciding how revision numbers should determine what was actually stored"
+  - id: planning.organize-work-around-the-solution.p2
+    kind: positive
+    expect: agentic-coding.planning.organize-work-around-the-solution
+    text: "the required outcome is clear: open the notes and every usable preview even when one derived cache entry is broken; I keep restating it without using the existing viewer contract to choose and implement a recovery approach"
+  - id: planning.organize-work-around-the-solution.p3
+    kind: positive
+    expect: agentic-coding.planning.organize-work-around-the-solution
+    text: "I must brief a designer to turn interview material into an editable outline; I have supplied generic warnings and an unapproved fixed screen layout, but still have not decided which material and decisions the designer actually needs to do that work"
+  - id: planning.organize-work-around-the-solution.n1
+    kind: neighbor
+    resembles: agentic-coding.planning.organize-work-around-the-solution
+    expect: agentic-coding.requirements.ground-user-goal
+    text: "the request just says improve the upload experience; I cannot yet tell whether people need faster transfers, recovery of one failed file, or clearer progress, so I should settle the intended change before choosing a fix"
+  - id: planning.organize-work-around-the-solution.n2
+    kind: neighbor
+    resembles: agentic-coding.planning.organize-work-around-the-solution
+    expect: agentic-coding.implementation.choose-smallest-sufficient-design
+    text: "both the direct discount rule and the plugin pipeline already meet every agreed behavior, including edge cases; the remaining decision is only which carries less new state and indirection"

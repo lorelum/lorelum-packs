@@ -10,11 +10,16 @@ This repository is the official public catalog for installable Lorelum Knowledge
   - [简体中文本地化](./packs/pack-creator/i18n/zh-CN/README.md) is available as non-runtime companion content.
 - `react-web-craft@0.1.0` — 24 Practices for React web application design and performance across component state, async data flow, code loading, rendering, and component composition.
   - [简体中文本地化](./packs/react-web-craft/i18n/zh-CN/README.md) is available as non-runtime companion content.
-- `agentic-coding@0.6.0` — published release with 35 decision-focused Practices, including [Justify Added Checks Before Implementing Them](./packs/agentic-coding/practices/implementation/justify-added-checks.md). The official Registry resolves the immutable `agentic-coding-v0.6.0` ref.
-  - [Official installation, upgrade, and keyword evidence](./fixtures/agentic-coding/baselines/agentic-coding-0.6.0-release-2026-10-22.md) verifies availability, not stable automatic triggering or decision improvement. The older `0.5.1` artifact is unchanged.
+- `agentic-coding@0.6.0` — current published release with 35 decision-focused Practices. The working-tree **`0.7.0` candidate** has 37, adding [useful session handoffs](./packs/agentic-coding/practices/context/recommend-session-handoff.md) and [solution-oriented work](./packs/agentic-coding/practices/planning/organize-work-around-the-solution.md).
+  - [Content adoption, candidate installation, and retrieval observations](./fixtures/agentic-coding/baselines/agentic-coding-0.7.0-content-2026-10-30.md) include known misses. The proposed `agentic-coding-v0.7.0` tag and Registry promotion are not part of this content PR.
   - [简体中文本地化](./packs/agentic-coding/i18n/zh-CN/README.md) is available as non-runtime companion content.
 
 ## Use Packs
+
+`agentic-coding@0.7.0` commands below describe the candidate's future Registry installation after
+release promotion; the currently published version is `0.6.0`. To review the local candidate,
+install `--path ./packs/agentic-coding` into an isolated `--store-root`, then run evaluation
+against that Store without `--ensure-install`. Do not modify an existing installed Pack's files.
 
 Pack commands use the user-level LocalStore by default. Use `--store-root <path>` only when a
 worktree, test, or other isolated environment needs its own Pack and derived-index data; it does not
@@ -45,7 +50,7 @@ lore pack install agentic-coding
 # Use `@version` to select an exact release.
 lore pack install <pack>
 lore pack install <pack>@<version>
-lore pack install agentic-coding@0.6.0
+lore pack install agentic-coding@0.7.0
 lore pack update <pack>
 lore pack update <pack>@<version>
 lore pack update agentic-coding@0.6.0
@@ -67,7 +72,7 @@ lore pack remove agentic-coding
 Another public GitHub repository can expose the same layout and be selected explicitly:
 
 ```sh
-lore pack install agentic-coding@0.6.0 --registry owner/repository
+lore pack install agentic-coding@0.7.0 --registry owner/repository
 lore pack update agentic-coding --registry owner/repository
 
 # The global --store-root option can appear before or after the Pack command.
@@ -85,7 +90,7 @@ Custom registries must expose `.lorelum/registry.yaml` from a supported public G
 
 ```sh
 # Isolated-store run against a registry release, writing a JSON artifact and Markdown report.
-python scripts/eval-queries --mode both --ensure-install agentic-coding@0.6.0 \
+python scripts/eval-queries --mode both --ensure-install agentic-coding@0.7.0 \
   --store-root tmp/eval-store --out run.json --report run.md
 
 # Compare a later run (for example a rewritten Practice set) against a recorded baseline.
@@ -94,7 +99,7 @@ python scripts/eval-queries --mode keyword --baseline fixtures/agentic-coding/ba
 # Promotion gate for a future release: every installed Practice must have fixture queries,
 # and the positive top-3 hit rate must clear the team's bar. Exits non-zero otherwise.
 python scripts/eval-queries --mode keyword --require-coverage --min-top3 0.90 \
-  --ensure-install agentic-coding@0.6.0 --store-root tmp/eval-store \
+  --ensure-install agentic-coding@0.7.0 --store-root tmp/eval-store \
   --baseline fixtures/agentic-coding/baselines/<previous-release>.json
 ```
 
@@ -110,7 +115,7 @@ The query set is a maintained fixture, not a generated one: it grows with the ca
 ```sh
 # Preflight for a change that touches Practices or queries.
 python scripts/eval-queries --mode keyword --require-coverage --check-discipline \
-  --ensure-install agentic-coding@0.6.0 --store-root tmp/eval-store \
+  --ensure-install agentic-coding@0.7.0 --store-root tmp/eval-store \
   --baseline fixtures/agentic-coding/baselines/<previous-release>.json
 ```
 

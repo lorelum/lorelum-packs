@@ -5,6 +5,8 @@ locales:
     entries:
       - path: practices/context/give-delegated-agents-decision-context.md
         source_digest: sha256:8dc26e311950b13f68d12e11c3c8c9f306bdb3bd6e20de12e843e0a88df8c15c
+      - path: practices/context/recommend-session-handoff.md
+        source_digest: sha256:e1ec5c4ec5e081b331c92350514eae2f574657c2cbdc0d55e0d01a7fe824b1a3
       - path: practices/context/reground-after-context-loss.md
         source_digest: sha256:2036b321dd7fab146640650715c942d45dc77615b981425de57437213203e48f
       - path: practices/context/validate-handoff-before-continuation.md
@@ -45,6 +47,8 @@ locales:
         source_digest: sha256:97813fe671166e2ca9b5f60beb7d5689a57bd731ff6730b9882778b34df95e25
       - path: practices/planning/map-plan-to-user-capability.md
         source_digest: sha256:65cecda2dba123da62dbf01aa9bbef6a48737038a6068b5270b6990468bfc41f
+      - path: practices/planning/organize-work-around-the-solution.md
+        source_digest: sha256:f00be8e903a62b1bab32071cafcc95b7b8832f3e570a95f964202adeba715970
       - path: practices/planning/plan-sufficient-evidence.md
         source_digest: sha256:25326576057c7a030eb7f3046a6842d2a1801f04751aa8cea155e110ba383c25
       - path: practices/planning/scale-work-to-risk-and-cost.md
