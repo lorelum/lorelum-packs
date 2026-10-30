@@ -1,6 +1,6 @@
 fixture_set: agentic-coding-practice-catalog
 evaluation_only: true
-description: Atomic retrieval and behavior hypotheses for the 35 agentic-coding 0.6.0 Practices. Not a runtime schema or proof of retrieval quality. Semantic expectation migrations require separate scoring from historical baselines.
+description: Atomic retrieval and behavior hypotheses for the 37 agentic-coding 0.7.0 Practices. Not a runtime schema or proof of retrieval quality. Semantic expectation migrations require separate scoring from historical baselines.
 entries:
   - id: agentic-coding.implementation.justify-added-checks
     positive_trigger: While planning ordinary startup, the agent proposes the first full installation scan even though no duplicate scan or blocked route exists, without identifying what failure the new I/O would prevent.
@@ -284,3 +284,21 @@ entries:
     nearest_neighbor: agentic-coding.correction.restore-authoritative-baseline
     expected_behavior: Check the current request, branch or commit, changed files, and cited result only far enough to support the receiver's next decision.
     forbidden_behavior: Trust another Agent's completion, scope, or test summary because the sender is capable or rerunning the important case is costly.
+
+  - id: agentic-coding.context.recommend-session-handoff
+    positive_trigger: Gateway design is accepted and implementation is next; most conversation concerns abandoned tokenizer trials, although no mistake has occurred yet.
+    paraphrase: Old investigations now outweigh the few decisions needed for continuation, and the agent must judge whether a compact transfer would remove irrelevant reading without losing accepted conditions.
+    near_miss: The session boundary is already fixed and only the checkpoint contents remain open (write-decision-dense-checkpoint). If context was already lost, reground-after-context-loss owns reopening current sources rather than deciding whether to move.
+    nearest_neighbor: agentic-coding.context.write-decision-dense-checkpoint
+    expected_behavior: Decide from relevance to remaining work and the next phase, not turn count or an observed error. Recommend a move only when a compact record replaces irrelevant history or interference. Map controlling clauses to inline text or precise accessible required-reading locations; preserve independent obligations, conditional outcomes, decision status, and evidence controls. Correct known drift, redact sensitive values, retain historical relative paths when their root is unknown, and provide one usable handoff with a short opener. Continue if the user stays.
+    forbidden_behavior: Wait for a mistake, restart solely because a conversation is long, or move when useful history outweighs transfer cost. Replace requirements with topic labels, revive rejected options as accepted work, repeat the history in multiple summaries, invent historical project roots from the current environment, or remove a controlling clause merely to shorten the record.
+    # Content and earlier trigger observations have different frozen snapshots; neither proves stable routing.
+
+  - id: agentic-coding.planning.organize-work-around-the-solution
+    positive_trigger: Autosave must keep later edits pending when an older save completes, but the agent offers a risk list and proposes disabling editing instead of deciding how acknowledgments relate to revisions.
+    paraphrase: Notes must still open when a derived preview is unavailable; the agent recites the outcome but has not used the real viewer contract to form and carry through a workable recovery approach.
+    near_miss: The user's intended outcome is still unknown (ground-user-goal). Two designs already satisfy the complete behavior and differ only in extra machinery (choose-smallest-sufficient-design). Whether a proposed scan adds protection is a narrower justify-added-checks decision.
+    nearest_neighbor: agentic-coding.implementation.choose-smallest-sufficient-design
+    expected_behavior: With the goal understood, form and advance a concrete feasible approach from the facts that change the choice. Obtain only missing decision-critical facts, make technical judgments within the assigned responsibility, and let actual results determine continuation. Solve the difficulty at its cause while preserving other required behavior, safety, authorization, compatibility, and the receiver's assigned judgment. Complete exact small edits directly, deliver the needed judgment for analysis-only work, and leave necessary exploration open.
+    forbidden_behavior: Substitute goal repetition, warnings, process, or a convenient passing subset for the decisive work. Escape a hard mechanism by cancelling ordinary capability, silently dropping valid objects, imposing unaccepted design choices on a delegate, or returning false success. Turn every task into a mandatory extra checklist, require complete materials before a targeted decision, or delegate technical choices back to the user without a substantive user tradeoff.
+    # A decision-point hypothesis, not a new mandatory workflow or proof of comparative benefit.

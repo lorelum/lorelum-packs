@@ -12,6 +12,8 @@ This Pack generalizes public Lorelum research and sanitized engineering retrospe
 - **Defensive-complexity synthesis** means the Practice was generalized from sanitized maintainer feedback about agents adding repeated validation, normalization, authorization, or fallback behavior through ordinary development.
 - **Proportionality synthesis** means the Practice was generalized from sanitized maintainer experience with scheme formation on both sides of agent work — plans and protections proposed by agents, and evaluation standards authored with agent assistance — where locally reasonable additions composed into blocking or brittle wholes. Private evaluation material and tool-specific procedures are not published.
 - **Lifecycle-check maintainer synthesis** means the current maintainer explicitly requested an independent decision about whether to add or strengthen checks, including checks an agent proposes during ordinary tasks, after an earlier refinement of the ownership and acceptance-path Practices. The independent entry and its procedure are author synthesis; they are not new rules quoted from public PR #288 or #281.
+- **Session-handoff maintainer synthesis** means the Practice was generalized from repeated maintainer observations about low-value history and continuation records, then refined through the current handoff-content work. Public issue #32 is an early motivation for context continuity, not the source of the current fresh-session and clause-preservation procedure.
+- **Working-solution maintainer synthesis** means the Practice distills repeated maintainer work observations and the current synthesis about choosing and advancing an approach that actually accomplishes a known goal. The four-part method is author synthesis, not an independent scientific finding or a procedure quoted from an issue or external Skill.
 
 Public issue sources:
 
@@ -30,6 +32,7 @@ Public issue sources:
 | `agentic-coding.planning.decide-scope-and-stop-conditions`            | Issue-explicit: #35; Issue-derived synthesis: #35; Registry/install synthesis | The issue explicitly separates required, optional, and out-of-scope work and rejects future value as sufficient current justification; the finish, defer, and replan boundary generalizes preventing implementation opportunities from extending accepted work. Merges the former `admit-only-currently-justified-work` and `define-stop-condition` rows (0.5.0). |
 | `agentic-coding.planning.scale-work-to-risk-and-cost`                 | Issue-explicit: #35                                          | The issue compares simple, ordinary, and high-risk work and requires engineering effort to follow actual complexity and risk.                                                   |
 | `agentic-coding.planning.map-plan-to-user-capability`                 | Issue-explicit: #28                                          | The issue directly contrasts a list of technical tasks with coverage of the complete user capability.                                                                           |
+| `agentic-coding.planning.organize-work-around-the-solution`           | Working-solution maintainer synthesis; Issue-derived background: #28, #35 | Repeated maintainer observations motivate the distinction between actual problem solving and goal/process substitution. The current four-part method is the October 30 generalization; the sanitized TPM allowlist example illustrates the reported failure, not a recovered execution trace or controlled incident test. See the dated source boundary and public content record below. |
 | `agentic-coding.planning.plan-sufficient-evidence`                    | Issue-derived synthesis: #28, #35; review-workflow synthesis | The issues require verification of real outcomes; the minimum-sufficient and escalation framing generalizes the redacted workflow's risk-sensitive evidence planning.           |
 | `agentic-coding.planning.derive-committed-set-from-concerns`         | Proportionality synthesis                                    | Generalized from sanitized maintainer experience with decision-bearing sets — evaluation gates, review standards, plan task lists — that grew one locally reasonable entry at a time until size itself failed; see synthesis boundary. |
 | `agentic-coding.planning.keep-acceptance-path-completable`            | Issue-derived synthesis: #35; Proportionality synthesis; Lifecycle-check maintainer synthesis | The issue's over-engineering cases inform the original subject matter; the acceptance-path walk and failure-composition procedure are synthesis. The current maintainer request distinguishes combined-path blocking levels and reachable recovery from the independent decision about whether to add a check. |
@@ -56,6 +59,7 @@ Public issue sources:
 | `agentic-coding.delivery.report-material-residuals`                   | Issue-explicit: #28                                          | The issue explicitly requires delivery to preserve remaining work, risk, evidence limits, and handoff information.                                                              |
 | `agentic-coding.correction.restore-authoritative-baseline`            | Issue-explicit: #28, #35                                     | Both issues require a correction to return to authoritative requirements without converting a rejected agent choice into a new rule.                                            |
 | `agentic-coding.context.write-decision-dense-checkpoint`              | Issue-explicit: #32                                          | The issue directly identifies what compaction should preserve, summarize, mark uncertain, or stop carrying forward.                                                             |
+| `agentic-coding.context.recommend-session-handoff`                    | Session-handoff maintainer synthesis; Issue-derived early motivation: #32 | #32 motivates preserving useful context across boundaries. Maintainer observations and the accepted fifteenth revision supply the fresh-session recommendation, compact action record, clause mapping, and path/status preservation guidance. Early trigger observations concern earlier bodies; current content observations are recorded separately below. |
 | `agentic-coding.context.give-delegated-agents-decision-context`       | Delegation/Pack-authoring synthesis                          | A sanitized authoring retrospective showed that a file path and generic quality rule were insufficient when accepted and rejected interpretations existed only in conversation. |
 | `agentic-coding.recovery.reground-after-context-loss`                 | Issue-explicit: #28, #32                                     | Both issues require post-compaction work to treat the summary as an index and re-establish facts, scope, and evidence from durable sources.                                     |
 | `agentic-coding.recovery.validate-handoff-before-continuation`        | Issue-explicit: #28, #32                                     | Multi-agent handoffs are explicitly identified as a boundary where conclusions must be checked against current authoritative state.                                             |
@@ -221,3 +225,57 @@ existing IDs plus the new entry, full-body readback, and the installed keyword g
 returned success while semantic index sync reported `embedding.not-configured` in the intentionally
 model-free environment. Availability and finite keyword observations do not establish semantic
 quality, repeated automatic triggering, or causal decision improvement.
+
+## October 30, 2026: session continuity and working solutions
+
+The two additions are experience-derived Practices. The maintainer's adopted release objective is
+to distill recurring work observations into actionable guidance with reasonable boundaries and
+finite usability evidence. It does not require superiority to an external Skill. Neither the
+observations nor the publication establish that recent models make these errors more frequently.
+
+### Session handoff: current content versus early triggering
+
+`agentic-coding.context.recommend-session-handoff` retains the accepted **fifteenth revision**.
+Its source is the maintainer's repeated experience with histories that add little continuation
+value, followed by the current handoff-content synthesis. [Issue #32](https://github.com/lorelum/lorelum/issues/32)
+provides early context-continuity motivation; it does not state the current procedure for suggesting
+a fresh conversation or preserving the smallest complete controlling clauses.
+
+The [October 30 public content record](../../fixtures/agentic-coding/baselines/agentic-coding-0.7.0-content-2026-10-30.md)
+separates early retrieval/trigger observations from current-body evidence. Earlier routing work
+used earlier guidance and is not evidence that the fifteenth revision triggers autonomously or
+stably. The fifteenth-revision observations concern two reused sources, one generation per source,
+with reading and focused source-clause comparisons. They support a bounded content-usability
+judgment, not zero omissions, zero irrelevant history, independent full-source completeness,
+lower token cost, or better downstream execution. Private source conversations are not published;
+the public record preserves sanitized methods, observations, and limitations.
+
+### Working solution: observation, synthesis, and limited transfer checks
+
+`agentic-coding.planning.organize-work-around-the-solution` takes its current method from the
+October 30 four-paragraph generalization, not from the earlier use-path or consumer-pipeline
+drafts. Its experiential source is the maintainer's repeated observation that agents can restate
+the goal, arrange process, or restrict normal capabilities without making the judgment that lets
+the task work. [Issue #28](https://github.com/lorelum/lorelum/issues/28) and
+[issue #35](https://github.com/lorelum/lorelum/issues/35) supply related goal-substitution and
+over-engineering background, not the four-part method or proof of its effectiveness.
+
+The TPM example is a sanitized, self-contained rendering of the maintainer-reported text-allowlist
+undercounting of normal thinking and tool-call content. The original full execution chain was not
+recovered; this is an experience source, not a replayed or independently measured incident.
+The final method generalizes beyond input/output pipelines: facts that change a choice may be
+behavior, state, materials, domain rules, or accepted decisions. Exact small edits remain direct;
+analysis and exploration retain their appropriate scope. Required safety, authorization,
+compatibility, and normal capabilities remain constraints.
+
+The same [public content record](../../fixtures/agentic-coding/baselines/agentic-coding-0.7.0-content-2026-10-30.md)
+documents finite constructed state, performance, and exact-edit checks of the Chinese candidate.
+One session per condition handled those tasks in a fixed sequence under a shared host; later
+tasks within a condition were not independent samples. The previous draft, generalized candidate,
+and full external `karpathy-guidelines` body all completed the observed tasks, with identical core
+code in the two coding tasks. The external body was a comparison condition, not the source or a
+demonstrated inferior alternative. These observations support limited usability, not additional
+benefit, stable generalization, autonomous retrieval, or superiority over an external Skill.
+The canonical English and Chinese Practices organize that method into the Pack's six-section
+format with applicability, stop, neighbor boundaries, and an illustrative example; they are not
+byte-identical to the evaluated candidate, and its results are not a fresh test of the final bodies.
