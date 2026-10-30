@@ -10,16 +10,14 @@ This repository is the official public catalog for installable Lorelum Knowledge
   - [简体中文本地化](./packs/pack-creator/i18n/zh-CN/README.md) is available as non-runtime companion content.
 - `react-web-craft@0.1.0` — 24 Practices for React web application design and performance across component state, async data flow, code loading, rendering, and component composition.
   - [简体中文本地化](./packs/react-web-craft/i18n/zh-CN/README.md) is available as non-runtime companion content.
-- `agentic-coding@0.6.0` — current published release with 35 decision-focused Practices. The working-tree **`0.7.0` candidate** has 37, adding [useful session handoffs](./packs/agentic-coding/practices/context/recommend-session-handoff.md) and [solution-oriented work](./packs/agentic-coding/practices/planning/organize-work-around-the-solution.md).
-  - [Content adoption, candidate installation, and retrieval observations](./fixtures/agentic-coding/baselines/agentic-coding-0.7.0-content-2026-10-30.md) include known misses. The proposed `agentic-coding-v0.7.0` tag and Registry promotion are not part of this content PR.
+- `agentic-coding@0.7.0` — 37 decision-focused Practices, adding [useful session handoffs](./packs/agentic-coding/practices/context/recommend-session-handoff.md) and [solution-oriented work](./packs/agentic-coding/practices/planning/organize-work-around-the-solution.md). Immutable release ref: `agentic-coding-v0.7.0`; the older `0.6.0` artifact retains 35.
+  - [Content adoption and retrieval observations](./fixtures/agentic-coding/baselines/agentic-coding-0.7.0-content-2026-10-30.md) include known misses and distinguish finite evidence from stable triggering or comparative superiority.
   - [简体中文本地化](./packs/agentic-coding/i18n/zh-CN/README.md) is available as non-runtime companion content.
 
 ## Use Packs
 
-`agentic-coding@0.7.0` commands below describe the candidate's future Registry installation after
-release promotion; the currently published version is `0.6.0`. To review the local candidate,
-install `--path ./packs/agentic-coding` into an isolated `--store-root`, then run evaluation
-against that Store without `--ensure-install`. Do not modify an existing installed Pack's files.
+For local authoring, install `--path ./packs/agentic-coding` into an isolated `--store-root`,
+then evaluate that Store without `--ensure-install`. Do not modify an existing installed Pack's files.
 
 Pack commands use the user-level LocalStore by default. Use `--store-root <path>` only when a
 worktree, test, or other isolated environment needs its own Pack and derived-index data; it does not

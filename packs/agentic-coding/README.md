@@ -1,10 +1,10 @@
 # Agentic Coding
 
-The `agentic-coding@0.7.0` candidate is a tool-neutral Knowledge Pack of 37 decision-focused Practices for AI agents doing software engineering. It adds experience-derived guidance for recommending useful session handoffs and organizing work around a working solution instead of a controllable proxy.
+`agentic-coding@0.7.0` is a tool-neutral Knowledge Pack of 37 decision-focused Practices for AI agents doing software engineering. It adds experience-derived guidance for recommending useful session handoffs and organizing work around a working solution instead of a controllable proxy.
 
 Canonical English · [简体中文](./i18n/zh-CN/README.md)
 
-The proposed release ref is `agentic-coding-v0.7.0`; this content PR does not create it or promote the Registry. Its two additions are
+The immutable release ref is `agentic-coding-v0.7.0`. Its two additions are
 `agentic-coding.context.recommend-session-handoff` and
 `agentic-coding.planning.organize-work-around-the-solution`. The immutable `0.6.0` release
 retains its original 35 Practices; no older artifact is replaced.
@@ -16,9 +16,9 @@ the additions. Registry installation is a separate check; the
 belongs to `0.6.0` and is not installation evidence for `0.7.0`.
 
 ```sh
-# After release promotion; the currently published version is 0.6.0:
+# New installation:
 lore pack install agentic-coding@0.7.0
-# Existing installation; update after the new version is promoted in the Registry:
+# Existing installation; the Registry selects the latest stable release:
 lore pack update agentic-coding
 ```
 
