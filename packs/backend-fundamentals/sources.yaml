@@ -141,7 +141,8 @@ categories:
         safety decision and does not justify replacing established action protocols.
     - candidate: Version every API from day one
       reason: No present compatibility change establishes a need for a versioning
-        mechanism; not part of the three accepted API decisions.
+        mechanism; not one of the three API decisions derived from the
+        wshobson API Design Principles Skill.
     - candidate: Cursor pagination everywhere
       reason: The upstream details include valid offset pagination and an encoded-offset
         cursor; navigation, size, and change behavior determine the strategy rather
@@ -156,9 +157,6 @@ categories:
         versioning frameworks
       reason: Useful in particular architectures but not required for the accepted
         HTTP fundamentals; they introduce separate mechanisms and decisions.
-    verification_status: No tests, builds, linters, formatters, or retrieval evaluations
-      run by this category author; catalog entries are unmeasured hypotheses for integration
-      verification.
   security:
     category: security
     language: en
@@ -333,9 +331,9 @@ categories:
         storage decisions.
     screened_out_candidates:
     - candidate: JWT and refresh-token implementation recipes
-      reason: Not one of the three approved security decisions; source examples do
-        not justify a universal token format, lifetime, storage location, or refresh
-        design.
+      reason: Not one of the three security decisions derived from the
+        wshobson Auth Implementation Patterns Skill; its examples do not justify a
+        universal token format, lifetime, storage location, or refresh design.
     - candidate: Mandatory ownership-only authorization or unconditional administrator
         bypass
       reason: Conflicts with application-specific actions, tenant boundaries, shared
@@ -358,8 +356,9 @@ categories:
       discovery_note: Discovered the actual supabase-postgres-best-practices directory
         from the pinned GitHub skills directory and read the matching rule files at
         this commit; did not infer filenames from another revision.
-      scope: Five approved basic data decisions, including separate connection cleanup
-        and deployment budgeting; not wholesale adoption of the skill's prioritization or performance claims.
+      scope: Five basic data decisions derived from this Supabase Skill, including
+        separate connection cleanup and deployment budgeting; not wholesale adoption
+        of the skill's prioritization or performance claims.
     entries:
     - id: backend-fundamentals.data.enforce-uniqueness-in-database
       candidate_rationale: A persisted business-key invariant with a concrete concurrency
@@ -472,7 +471,7 @@ categories:
         technical_support: Return checked-out clients on both success and query failure; use pool.query for independent work.
       - url: https://node-postgres.com/apis/pool
         technical_support: Release or destroy semantics, transaction client affinity, and pool closure.
-      synthesis_boundaries: Cleanup after cancellation, rollback before reuse, discarding broken clients, and keeping dependencies alive until their work ends are independently authored lifecycle guidance. The previous combined connection Practice was replaced, not retained as an alias.
+      synthesis_boundaries: Cleanup after cancellation, rollback before reuse, discarding broken clients, and keeping dependencies alive until their work ends are independently authored lifecycle guidance.
     - id: backend-fundamentals.data.budget-deployment-connections
       candidate_rationale: Size pool demand across simultaneous processes and deployment topology, independently of acquisition cleanup.
       skill_sources:

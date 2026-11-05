@@ -1,7 +1,7 @@
 fixture_set: backend-fundamentals-practice-catalog
 evaluation_only: true
-description: Atomic decision and contrast hypotheses for 30 English Practices. Secondary neighbors retain
-  distinct and historical boundary cases. Not measured behavior.
+description: Atomic decision and contrast hypotheses for 30 English Practices. Secondary neighbors distinguish
+  current contrasting boundaries. Not measured behavior.
 entries:
 - id: backend-fundamentals.api.preserve-safe-read-semantics
   positive_trigger: Opening an email link marks an invoice paid before anyone confirms the action; mail

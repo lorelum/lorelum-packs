@@ -1,9 +1,8 @@
 fixture_set: backend-fundamentals-queries
 evaluation_only: true
 target_pack: backend-fundamentals
-description: 'Frozen English retrieval hypotheses for 30 decisions: three positives and two boundary contrasts
-  per Practice. Original query texts are retained; the removed connection target is explicitly migrated.
-  Not runtime input or proof of behavior.'
+description: '150 frozen English retrieval hypotheses for 30 decisions: three positives and two boundary
+  contrasts per Practice. Not runtime input or proof of behavior.'
 queries:
 - id: api-safe-read
   kind: positive
@@ -89,24 +88,6 @@ queries:
   text: A SELECT before INSERT passes in two workers racing to claim the same booking reference. Where
     must the invariant be enforced?
   expect: backend-fundamentals.data.enforce-uniqueness-in-database
-- id: data-atomicity
-  kind: positive
-  status: retired
-  retired_reason: Pre-retrieval discipline check found a four-word overlap with Practice applicability.
-  replacement_queries:
-  - data-atomicity-v2
-  text: Creating an order inserts its header but a later line-item write fails, leaving an incomplete
-    purchase in the same database.
-  expect: backend-fundamentals.data.group-atomic-database-writes
-- id: data-atomicity-paraphrase
-  kind: positive
-  status: retired
-  retired_reason: Pre-retrieval discipline check found a four-word overlap with Practice applicability.
-  replacement_queries:
-  - data-atomicity-paraphrase-v2
-  text: A balance transfer commits the debit before the credit throws. How can related SQL changes succeed
-    or fail together?
-  expect: backend-fundamentals.data.group-atomic-database-writes
 - id: data-index
   kind: positive
   status: frozen
@@ -125,20 +106,12 @@ queries:
   text: After failed requests, PostgreSQL sessions remain checked out and incoming traffic waits forever
     for a client.
   expect: backend-fundamentals.data.return-acquired-connections
-  previous_expect: backend-fundamentals.data.bound-and-release-database-connections
-  migration_kind: replace
-  migration_reason: Split the combined connection Practice into acquisition cleanup and deployment capacity
-    decisions.
 - id: data-connections-paraphrase
   kind: positive
   status: frozen
   text: Each replica creates a new database client per request, and increasing server replicas exhausts
     the database session budget.
   expect: backend-fundamentals.data.budget-deployment-connections
-  previous_expect: backend-fundamentals.data.bound-and-release-database-connections
-  migration_kind: replace
-  migration_reason: Split the combined connection Practice into acquisition cleanup and deployment capacity
-    decisions.
 - id: neighbor-safe-read
   kind: neighbor
   status: frozen
@@ -195,10 +168,6 @@ queries:
     checked-out client and eventually exhausts the pool.
   resembles: backend-fundamentals.data.group-atomic-database-writes
   expect: backend-fundamentals.data.return-acquired-connections
-  previous_expect: backend-fundamentals.data.bound-and-release-database-connections
-  migration_kind: replace
-  migration_reason: Split the combined connection Practice into acquisition cleanup and deployment capacity
-    decisions.
 - id: neighbor-index
   kind: neighbor
   status: frozen
@@ -1021,17 +990,3 @@ queries:
   expect: backend-fundamentals.lifecycle.drain-work-before-closing-resources
 top_k: 3
 min_top3: 0.9
-practice_migrations:
-- old_practice: backend-fundamentals.data.bound-and-release-database-connections
-  new_practice: backend-fundamentals.data.return-acquired-connections
-  kind: replace
-  reason: Separate independently triggered connection cleanup and deployment budgeting.
-  query_ids:
-  - data-connections
-  - neighbor-atomicity
-- old_practice: backend-fundamentals.data.bound-and-release-database-connections
-  new_practice: backend-fundamentals.data.budget-deployment-connections
-  kind: replace
-  reason: Separate independently triggered connection cleanup and deployment budgeting.
-  query_ids:
-  - data-connections-paraphrase

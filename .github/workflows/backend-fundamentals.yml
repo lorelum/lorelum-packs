@@ -18,9 +18,11 @@ jobs:
     timeout-minutes: 10
     env:
       LORE_VERSION: "0.1.0-alpha.3"
-      PROJECT_ROOT: ${{ runner.temp }}/backend-project
-      STORE_ROOT: ${{ runner.temp }}/backend-store
     steps:
+      - name: Select isolated temporary roots
+        run: |
+          echo "PROJECT_ROOT=$RUNNER_TEMP/backend-project" >> "$GITHUB_ENV"
+          echo "STORE_ROOT=$RUNNER_TEMP/backend-store" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:

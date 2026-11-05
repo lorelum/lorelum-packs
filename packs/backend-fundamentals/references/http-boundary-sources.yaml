@@ -140,7 +140,3 @@ practices:
       This decides which requesting browser scripts may access responses. Cookie-write
       intent checks and resource authorization remain independent even when CORS is
       correct. Nonbrowser requests may omit or forge Origin.
-validation_scope: >-
-  Sources were read for technical support. No retrieval, model calls, test, build,
-  lint, formatter, or runtime verification was performed by this slice author;
-  integrated verification belongs to the main agent.

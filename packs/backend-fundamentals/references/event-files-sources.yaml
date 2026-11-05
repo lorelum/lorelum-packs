@@ -327,7 +327,3 @@ practices:
       - hookdeck-handler-mit
       - hookdeck-idempotency-mit
       - primary-reference-use
-verification_status: >-
-  No tests, builds, linters, formatters, smoke runs, or retrieval evaluations were
-  run by this slice author. Integrated schema/count validation and actual CLI reads
-  are left to the parent assignment.

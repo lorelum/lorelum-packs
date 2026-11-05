@@ -2,33 +2,16 @@
 
 The Pack contains 30 English agent-facing Practices. Each keeps one decision, a short procedure and stop, a concrete failure, and only the constraints needed when retrieved alone. Detailed technical evidence belongs in the source maps, not repeated tutorials.
 
-## Deliberate separations
+## Decision boundaries
 
-- Entry access establishes an enforced caller boundary; resource authorization decides the action on a particular target, including public visibility. CSRF addresses ambient browser credentials; webhook verification authenticates the provider's signed message.
-- HTTP failures define outward status and representation. Logging chooses safe diagnostic content. Both retain the minimum secret-exclusion rule needed on their own.
-- Pagination bounds retrieval and continuation. Relation batching controls repeated lookups while preserving child predicates. Index evaluation concerns a concrete access path and can end without an index.
-- Database uniqueness enforces a key; local transactions couple required writes; event deduplication couples the durable event claim to its local effect. None promises exactly-once remote effects.
-- Acquired-client cleanup and deployment pool budgeting have independent triggers. Process shutdown orders intake, in-flight work and dependency release; it is not another connection-acquisition procedure.
-- Upload storage keys keep destination selection server-owned, not automatically authorized or content-safe. Schema retirement gates destructive changes on actual deployed callers and live data transition.
-
-## Nine additional decisions
-
-| Decision | Separate boundary, not a renamed existing Practice |
-| --- | --- |
-| Current-state write protection | Coordinates competing updates and transition predicates; committing several writes together does not by itself prevent a lost update. |
-| Related-row integrity | Enforces persisted parent/child identity and deletion rules; uniqueness and caller permission do not prevent orphaned relationships. |
-| Exact monetary values | Preserves representation, currency, denomination, and rounding; atomic writes do not correct an already inexact amount. |
-| Personalized HTTP cache isolation | Governs storage and reuse before origin authorization can run; target permission alone cannot protect a shared cache hit. |
-| Writable-field binding | Chooses the properties eligible for assignment in an authorized operation; record permission and valid input types do not authorize every model field. |
-| Browser-origin response access | Controls which browser scripts may read responses; it neither authorizes mutations nor substitutes for cookie-write protection. |
-| Outbound fetch destinations | Restricts where the backend may connect, including DNS and redirects; authenticated entry does not authorize every destination. |
-| Upload content admission | Decides which actual bytes may be processed and served; server-owned keys do not establish content safety. |
-| Startup/recovery readiness | Decides whether an instance can admit its advertised traffic; shutdown handles already accepted work and dependency release. |
-
-
-## Connection migration
-
-`backend-fundamentals.data.bound-and-release-database-connections` is removed, without an alias. Its two decisions are now `data.return-acquired-connections` and `data.budget-deployment-connections` under the same Pack prefix. Existing query text and IDs are retained with explicit target migration; history is not relabeled to improve scores.
+- Entry access establishes an enforced caller boundary; resource authorization decides the action on a particular target, including public visibility. Writable-field binding limits assignment within an authorized operation: record permission and valid types do not authorize every model field.
+- CSRF protects writes made with ambient browser credentials. Browser-origin response access controls which scripts may read responses, not mutation authority. Webhook verification authenticates the provider's signed message; authenticated entry does not authorize arbitrary outbound destinations, which need controls covering DNS and redirects.
+- HTTP failures define outward status and representation; logging chooses safe diagnostic content. Both retain their own minimum secret-exclusion rules. Personalized cache isolation governs storage and reuse before origin authorization can run, so target permission alone cannot protect a shared cache hit.
+- Pagination bounds retrieval and continuation; relation batching controls repeated lookups while preserving child predicates. Index evaluation concerns a concrete access path and can end without an index.
+- Database uniqueness enforces a key; related-row integrity enforces parent/child identity and deletion rules, which neither uniqueness nor caller permission guarantees. Current-state write protection coordinates competing updates and transition predicates; a transaction alone does not prevent lost updates.
+- Local transactions couple required writes; event deduplication couples the durable event claim to its local effect. Neither promises exactly-once remote effects. Exact monetary values require representation, currency, denomination and rounding decisions; atomic writes cannot correct an already inexact amount.
+- Acquired-client cleanup and deployment pool budgeting have independent triggers. Startup and recovery readiness govern admission of advertised traffic; shutdown orders intake, in-flight work and dependency release, not connection acquisition.
+- Upload storage keys keep destination selection server-owned, not automatically authorized or content-safe. Content admission decides which actual bytes may be processed and served. Schema retirement gates destructive changes on actual deployed callers and live data transition.
 
 ## Excluded scope
 
@@ -36,4 +19,4 @@ Generic validation ownership and caller-side retry/fallback policy stay with `ag
 
 ## Evaluation
 
-`practice-catalog.yaml` records direct, paraphrase and near-miss behavior hypotheses. Primary and secondary neighbors distinguish separate applicable decisions and preserve historical contrasts. Frozen English `queries.yaml` expectations precede retrieval; `workflows.yaml` composes distinct guarantees. A positive query is not evidence that neighbors are distinguishable, and retrieval is not evidence of backend behavior.
+`practice-catalog.yaml` records direct, paraphrase and near-miss behavior hypotheses. Primary and secondary neighbors distinguish current applicable decisions and contrasting boundaries. The 150 frozen English `queries.yaml` expectations precede retrieval; `workflows.yaml` composes distinct guarantees. A positive query is not evidence that neighbors are distinguishable, and retrieval is not evidence of backend behavior.

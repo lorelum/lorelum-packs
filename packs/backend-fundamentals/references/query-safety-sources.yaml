@@ -228,6 +228,3 @@ practices:
       lockout, mandatory new store, or strict billing claim. Process-local best-effort
       limits and enforced existing gateways remain valid within their stated scope;
       concurrency, payload cost, and financial accounting are distinct constraints.
-verification_status: >-
-  No tests, builds, linters, formatters, smoke runs, or retrieval evaluations were run
-  by this slice author. The parent owns integrated validation and actual CLI reading.

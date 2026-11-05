@@ -1,6 +1,6 @@
 # Sources and synthesis boundaries
 
-Original research snapshot: 2026-11-01. The API, original security and core database source maps are in [sources.yaml](sources.yaml); connection cleanup and deployment budgeting have separate entries. Further inputs are in [lifecycle sources](references/lifecycle-sources.yaml), [query and request safety sources](references/query-safety-sources.yaml), and [event and file sources](references/event-files-sources.yaml). The nine-decision expansion uses the additional primary-source maps below. These files record provenance, not runtime instructions or a license grant.
+Research snapshot for the fixed Skill inputs: 2026-11-01. The 30 Practices draw on the source groups below; each source map records its research dates and provenance. [sources.yaml](sources.yaml) covers safe reads, bounded collections, HTTP failures, protected ingress, resource authorization, password verifiers, database uniqueness, local transactions, query-plan evidence, connection cleanup, and deployment connection budgeting. These files record provenance, not runtime instructions or a license grant.
 
 ## Fixed Skill inputs
 
@@ -12,13 +12,16 @@ Original research snapshot: 2026-11-01. The API, original security and core data
 
 The wshobson revisions are path-specific commit-feed snapshots, not claims about the latest repository-wide revision. The Supabase input declares MIT in its Skill metadata. Source prose and code are not reproduced: the Pack's guidance and examples are independently authored. This file does not assert that the Pack license relicenses upstream materials.
 
-## Additional primary inputs for the 30-Practice source
+## Source groups for the 30 Practices
 
+- [Lifecycle and sensitive diagnostics](references/lifecycle-sources.yaml): excluding secrets from logs, draining work before resource closure, and retiring deployed schema only after its callers.
+- [Query and request safety](references/query-safety-sources.yaml): query-value parameters, required-relation batching, cookie-authenticated write protection, and scoped rate limits.
+- [Event and file boundaries](references/event-files-sources.yaml): application-owned upload storage keys, webhook message-signature verification, and transactional event deduplication with local effects.
 - [Integrity and exact values](references/integrity-and-values-sources.yaml): PostgreSQL concurrency, relationship constraints, exact numeric representation, and explicit transport/currency boundaries.
 - [HTTP request and response boundaries](references/http-boundary-sources.yaml): shared-cache semantics, writable-field projection, and browser-origin response access.
 - [Runtime admission](references/runtime-admission-sources.yaml): outbound destination enforcement, file-content admission, and readiness versus liveness and shutdown.
 
-These additions are independently authored from primary technical references rather than copied Skill prose. Each map records supporting claims, limitations, and author synthesis; an unversioned documentation URL is not an immutable research pin.
+The Practice guidance is independently authored from the cited research inputs rather than copied Skill prose. Each map records supporting claims, limitations, and author synthesis; an unversioned documentation URL is not an immutable research pin.
 
 
 ## Primary technical support
@@ -32,6 +35,6 @@ These additions are independently authored from primary technical references rat
 
 ## Independent boundaries
 
-The Pack does not inherit blanket indexing, universal speedup factors, fixed pool formulas, universal token lifetimes, owner-only authorization, or framework mandates from discovery material. Local atomicity does not promise remote-effect atomicity or arbitrary concurrent-update isolation. Password costs and connection counts are deployment decisions, not copied constants. Primary web documentation was read at the research snapshot; unversioned OWASP and library pages can subsequently change.
+The Pack does not inherit blanket indexing, universal speedup factors, fixed pool formulas, universal token lifetimes, owner-only authorization, or framework mandates from discovery material. Local atomicity does not promise remote-effect atomicity or arbitrary concurrent-update isolation. Password costs and connection counts are deployment decisions, not copied constants. Primary web documentation was read on the research dates recorded in the corresponding source maps; unversioned OWASP and library pages can subsequently change.
 
-Examples are constructed illustrations, not observed incidents or backend benchmarks. The evaluation-only catalog, queries, and workflows under `fixtures/backend-fundamentals/` cover the 30 current decisions. The source-check workflow observes format validity, local activation and full readback, plus one keyword query; it is not a full retrieval benchmark or Agent-effectiveness experiment. Larger authoring records and historical baselines are retained locally outside this source submission. Structural validity, retrieval selection and downstream behavior remain separate claims.
+Examples are constructed illustrations, not observed incidents or backend benchmarks. The evaluation-only catalog, queries, and workflows under `fixtures/backend-fundamentals/` cover the 30 current decisions. The source-check workflow observes format validity, local activation and full readback, plus one keyword query; it is not a full retrieval benchmark or Agent-effectiveness experiment. Structural validity, retrieval selection and downstream behavior remain separate claims.

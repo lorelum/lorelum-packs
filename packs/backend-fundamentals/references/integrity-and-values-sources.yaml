@@ -199,7 +199,3 @@ practices:
       their error is accepted and does not silently become payment authority.
     license_evidence:
       - primary-reference-use
-verification_status: >-
-  No tests, builds, linters, formatters, retrieval runs, or external model calls were
-  executed by this slice author. Frozen query hypotheses are integration inputs,
-  not measured retrieval evidence or demonstrated backend behavior.
