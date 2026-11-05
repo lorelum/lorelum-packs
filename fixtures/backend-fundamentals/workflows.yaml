@@ -1,0 +1,250 @@
+fixture_set: backend-fundamentals-workflows
+evaluation_only: true
+description: Cross-Practice contracts for the 30-decision source; hypotheses only, not executed backend
+  tests.
+workflows:
+- id: protected-invoice-update
+  scenario: A hidden administration button calls an endpoint that accepts a caller-supplied invoice ID;
+    ordinary authenticated users can invoke it directly and change another tenant's invoice.
+  authoritative_facts:
+  - The endpoint is reachable without the UI and has no enforced upstream access control.
+  - Organization membership alone does not grant edit permission on another tenant's invoice.
+  - Public product browsing remains intentionally unauthenticated.
+  distractors:
+  - Hiding the button is enough because the URL is not documented.
+  - Adding a login check automatically authorizes every invoice ID.
+  expected_practices:
+  - backend-fundamentals.security.enforce-protected-entry-access
+  - backend-fundamentals.security.authorize-target-resource
+  - backend-fundamentals.api.express-http-failures
+  correctness_assertions:
+  - Enforce a trusted caller context on the protected route and evaluate the requested action against
+    the actual invoice and tenant policy.
+  - Reject unauthorized mutation without changing invoice state and express denial according to the established
+    HTTP contract without exposing internals.
+  - Leave intentionally public browsing public; do not create authentication systems in every private
+    helper.
+  forbidden_behavior:
+  - Trust a client-provided role or tenant header as authoritative.
+  - Apply ownership-only rules that remove legitimate organization sharing.
+- id: concurrent-order-creation
+  scenario: Two workers accept the same external purchase reference while each inserts an order header
+    and lines; a line insertion can fail midway.
+  authoritative_facts:
+  - A purchase reference must identify at most one committed order within its tenant.
+  - Header and line records reside in one relational database and must become visible together.
+  - The external payment provider cannot be rolled back by a local SQL transaction.
+  distractors:
+  - Checking for an existing order before writing prevents the race.
+  - One transaction automatically makes the external payment atomic with SQL.
+  expected_practices:
+  - backend-fundamentals.data.enforce-uniqueness-in-database
+  - backend-fundamentals.data.group-atomic-database-writes
+  correctness_assertions:
+  - Use a database-enforced tenant and reference uniqueness invariant with a defined conflict outcome.
+  - Commit header and lines together, or roll back the failed local unit; do not claim atomicity over
+    the remote payment.
+  - Observe competing inserts and a mid-write failure rather than only checking a single successful request.
+  forbidden_behavior:
+  - Remove the constraint because a preflight query exists.
+  - Commit the header independently and treat incomplete order state as success.
+- id: growing-customer-list
+  scenario: A customer list accepts arbitrarily large page sizes, runs a slow filtered query, and leaks
+    checked-out clients after query exceptions.
+  authoritative_facts:
+  - The list is interactive browsing, not a bulk export contract.
+  - A small response does not by itself make the query efficient.
+  - Every service replica shares the database's finite connection capacity.
+  distractors:
+  - Pagination alone fixes the execution plan and leaked sessions.
+  - Increase every replica's pool size without a deployment-wide calculation.
+  expected_practices:
+  - backend-fundamentals.api.bound-collection-results
+  - backend-fundamentals.data.justify-indexes-with-query-plans
+  - backend-fundamentals.data.return-acquired-connections
+  - backend-fundamentals.data.budget-deployment-connections
+  correctness_assertions:
+  - Enforce a server-side page-size cap and a stable ordering suitable for the established browsing contract.
+  - Assess representative query plans before choosing an index, preserving the write-cost tradeoff.
+  - Bound aggregate connection demand and ensure clients return on both successful and failed operations.
+  forbidden_behavior:
+  - Fetch all rows and slice them only after loading them into application memory.
+  - Force an index for every sequential scan or create unlimited connections to hide wait time.
+- id: bounded-visible-relations
+  scenario: A paged public-project feed fetches comments per project; replacing it with prefetch risks
+    returning private comments.
+  authoritative_facts:
+  - Viewers may read public comments and their own private comments, not all comments of a visible project.
+  - The parent page is already bounded and ordered.
+  expected_practices:
+  - backend-fundamentals.data.batch-required-relations
+  - backend-fundamentals.security.authorize-target-resource
+  - backend-fundamentals.api.bound-collection-results
+  correctness_assertions:
+  - Retain the same child visibility predicate in the bulk query and return the same authorized set for
+    each viewer.
+  - Remove per-parent SQL growth without loading unbounded parents or children.
+  forbidden_behavior:
+  - Drop a privacy filter to use the prefetch cache or treat parent visibility as permission on every
+    child.
+- id: safe-http-and-diagnostic-output
+  scenario: A database-client exception includes a connection secret; the error handler must return the
+    existing generic failure while logging useful context.
+  authoritative_facts:
+  - The public JSON error envelope is already established.
+  - A restricted log destination does not permit secret values.
+  expected_practices:
+  - backend-fundamentals.api.express-http-failures
+  - backend-fundamentals.security.exclude-secrets-from-logs
+  correctness_assertions:
+  - Keep outward status, required headers and the existing error shape; emit only reviewed secret-free
+    diagnostic fields with correlation.
+  - Synthetic credentials in nested exception and request data appear in neither public responses nor
+    logs.
+  forbidden_behavior:
+  - Serialize a raw exception into protected logs or suppress all diagnostic events.
+- id: anonymous-download-and-server-upload-key
+  scenario: A support portal offers public attachment downloads and direct uploads to server-allocated
+    pending records.
+  authoritative_facts:
+  - Some attachments are public and others require a case-specific grant.
+  - The client supplies a display filename and can submit arbitrary completion identifiers.
+  expected_practices:
+  - backend-fundamentals.security.authorize-target-resource
+  - backend-fundamentals.security.generate-upload-storage-keys
+  correctness_assertions:
+  - Serve anonymous public downloads without forcing login while denying private attachment IDs without
+    a grant.
+  - Resolve an authorized pending record and its server-selected destination; path-like filenames or echoed
+    keys cannot replace unrelated objects.
+  forbidden_behavior:
+  - Use opaque storage names as authorization or accept an arbitrary client key at completion.
+- id: signed-repeat-event-local-commit
+  scenario: Concurrent copies of a signed reward event add points; a worker can crash before acknowledgement.
+  authoritative_facts:
+  - The provider signs its original request bytes and supplies a stable event ID within an account and
+    environment.
+  - Completion markers and reward balances share one PostgreSQL database.
+  - Remote notifications are not part of that local transaction.
+  expected_practices:
+  - backend-fundamentals.security.verify-webhook-message-signatures
+  - backend-fundamentals.data.commit-event-deduplication-with-effects
+  - backend-fundamentals.data.group-atomic-database-writes
+  correctness_assertions:
+  - Verify the required message before using event claims or creating the completion marker.
+  - The scoped unique claim and points mutation share one commit; rollback leaves no completion marker.
+  - Concurrent duplicates, restart and lost acknowledgement do not repeat a retained local effect.
+  forbidden_behavior:
+  - Verify reserialized bytes, commit a marker before the effect, or claim local transactions make email
+    exactly-once.
+- id: shutdown-with-late-database-write
+  scenario: An accepted invoice request performs its final SQL write after shutdown begins.
+  authoritative_facts:
+  - The process owns one shared pool and has a fixed deployment termination allowance.
+  - The process has no queue or background consumer.
+  expected_practices:
+  - backend-fundamentals.lifecycle.drain-work-before-closing-resources
+  - backend-fundamentals.data.return-acquired-connections
+  correctness_assertions:
+  - Stop admission, keep dependencies available while accepted work settles within the budget, and close
+    the pool afterward.
+  - A failed transaction returns or discards its client appropriately; stuck work reaches the defined
+    deadline outcome without false success.
+  forbidden_behavior:
+  - Close the pool concurrently with a live handler, treat a sleep as completion, or introduce a queue
+    to perform shutdown.
+- id: cookie-write-admission
+  scenario: A cookie-authenticated settings endpoint has correct object permissions, but cross-site requests
+    and counter-store outages need defined handling.
+  authoritative_facts:
+  - Browsers automatically attach the accepted session credential.
+  - The existing admission policy distinguishes over-quota from infrastructure failure.
+  expected_practices:
+  - backend-fundamentals.security.protect-cookie-authenticated-writes
+  - backend-fundamentals.security.enforce-scoped-rate-limits
+  - backend-fundamentals.api.express-http-failures
+  correctness_assertions:
+  - Use maintained CSRF enforcement before mutation while preserving legitimate same-origin requests.
+  - Use trusted principal budgets or distinct unverified target-account counters as appropriate, without
+    treating submitted identity as authenticated.
+  - Exercise the agreed bounded outage or fail-safe policy; a failed counter read is not proof for HTTP429.
+  forbidden_behavior:
+  - Remove CSRF for all JSON routes, silently allow unlimited work on store failure, or permanently lock
+    a victim solely by a submitted account name.
+- id: schema-transition-with-live-writers
+  scenario: A field replacement overlaps old workers and new API replicas while rows are backfilled.
+  authoritative_facts:
+  - Both deployed caller types can update the old value.
+  - The deployment supports staged migration or an explicitly coordinated maintenance window.
+  expected_practices:
+  - backend-fundamentals.data.retire-old-schema-after-callers
+  - backend-fundamentals.data.group-atomic-database-writes
+  correctness_assertions:
+  - Establish the actual readers, writers and rollback versions before contraction, and preserve edits
+    made during backfill.
+  - Where both representations must update together, use the existing local transaction boundary; remove
+    temporary paths after their users exit.
+  forbidden_behavior:
+  - Drop from a current-code search alone, overwrite live edits with stale backfill values, or keep obsolete
+    dual writes forever.
+- id: exact-related-concurrent-settlement
+  scenario: Two workers settle the last available reservation while recording an invoice line and its required ledger change; a parent invoice can be removed concurrently and amounts arrive as decimal text with currency.
+  authoritative_facts:
+  - Available quantity must not become negative and a stale edit must not overwrite a newer settlement.
+  - Every retained line must identify an existing invoice in its own tenant; invoice removal must reject while those retained lines exist.
+  - Required balance and ledger writes share one database; accepted monetary values must retain exact declared units through parsing and output.
+  expected_practices:
+  - backend-fundamentals.data.guard-state-dependent-writes
+  - backend-fundamentals.data.enforce-related-row-integrity
+  - backend-fundamentals.data.represent-money-exactly
+  - backend-fundamentals.data.group-atomic-database-writes
+  correctness_assertions:
+  - Enforce the quantity or expected-version condition when the mutation takes effect and inspect whether it matched.
+  - Enforce the complete tenant/invoice relationship and its declared removal action across every writer.
+  - Parse and carry exact currency values without an intermediate binary float or universal hundredths assumption.
+  - Commit required local effects together; grouping them does not by itself protect the earlier state observation.
+  forbidden_behavior:
+  - Remove a quantity predicate after a conflict or assume an ordinary read-committed transaction prevents lost updates.
+  - Use a preliminary parent lookup as the only relationship guarantee or cascade retained invoice lines without the declared policy.
+  - Treat an exact database type as repairing precision already lost during parsing or JSON serialization.
+- id: authorized-fields-origin-and-cache
+  scenario: An authenticated account editor uses a separate trusted browser console; a body spread accepts role changes and the CDN caches the personalized reply by URL while CORS reflects arbitrary origins.
+  authoritative_facts:
+  - Ordinary edits may change display fields but not roles, balances, tenant ownership, or protected nested attributes.
+  - A separately authorized transfer command legitimately changes its declared ownership field.
+  - Only the configured console may read credentialed account responses; a separate anonymous catalog remains publicly cacheable.
+  expected_practices:
+  - backend-fundamentals.api.bind-only-declared-write-fields
+  - backend-fundamentals.api.allow-only-intended-browser-origins
+  - backend-fundamentals.api.isolate-personalized-cache-responses
+  - backend-fundamentals.security.authorize-target-resource
+  - backend-fundamentals.security.protect-cookie-authenticated-writes
+  correctness_assertions:
+  - Authorize the actual target and project only the operation's permitted assignments at every writable depth.
+  - Keep the privileged transfer contract separate without letting ordinary editing assign all model properties.
+  - Align intended-origin preflight and actual response grants without treating CORS as mutation authorization or CSRF defense.
+  - Keep personalized bodies out of inappropriate shared reuse, handle unsafe existing entries, and preserve genuinely public catalog caching.
+  forbidden_behavior:
+  - Infer permission for every field from permission to edit the record.
+  - Reflect arbitrary credentialed origins or assume origin permission alone isolates cached response bodies.
+  - Disable legitimate public access or privileged transfers to avoid defining their actual boundaries.
+- id: usable-service-and-untrusted-import
+  scenario: A new attachment importer advertises readiness before required configuration loads, accepts a customer URL that can redirect to metadata, and immediately serves the downloaded bytes under a generated key.
+  authoritative_facts:
+  - Customer imports may contact public HTTPS destinations only; a different configured integration may intentionally reach one private service.
+  - Uploaded or fetched attachments remain unavailable until required actual-content checks and finite intake and processing budgets pass.
+  - Required initialization must complete before admission; an optional metrics exporter does not decide whether imports can be served.
+  expected_practices:
+  - backend-fundamentals.lifecycle.check-readiness-before-admitting-traffic
+  - backend-fundamentals.security.constrain-server-fetch-destinations
+  - backend-fundamentals.security.admit-only-supported-upload-content
+  - backend-fundamentals.security.generate-upload-storage-keys
+  correctness_assertions:
+  - Base traffic admission on required usable capabilities, keeping dependency availability distinct from process liveness.
+  - Apply destination policy to actual resolved connections and every followed redirect without widening the separate internal exception.
+  - Quarantine unchecked bytes, enforce actual size and processor budgets, and release only the exact accepted object or approved derivative.
+  - Preserve server-owned destinations while recognizing that generated keys do not prove content safety.
+  forbidden_behavior:
+  - Announce readiness from an open socket or restart all healthy instances because optional metrics are unavailable.
+  - Follow an unchecked redirect or perform a second unchecked DNS lookup after address approval.
+  - Publish failed originals, trust MIME labels alone, or treat a random storage key as successful inspection.

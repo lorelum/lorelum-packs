@@ -1,0 +1,215 @@
+pack: backend-fundamentals
+slice: lifecycle
+researched_on: '2026-11-01'
+language: en
+policy: >-
+  Retained provenance for three independently authored Practices. Pinned Skills are
+  candidate and mechanism research, not normative instructions. Primary documentation
+  supports technical claims; decision gates, severity, boundaries, and composite
+  examples are author synthesis. No upstream example code is reproduced.
+licenses:
+  - repository: https://github.com/mcollina/skills
+    pinned_sha: 58b3eeb398d10c007988e80f73d30ebadab64754
+    license: MIT
+    evidence_url: https://raw.githubusercontent.com/mcollina/skills/58b3eeb398d10c007988e80f73d30ebadab64754/LICENSE
+    verification: Read the pinned license; MIT grant and notice condition are present.
+    copyright: Copyright (c) 2026 Matteo Collina
+    use: Research input only; independently written prose and examples, not copied code.
+  - repository: https://github.com/affaan-m/everything-claude-code
+    pinned_sha: 0765f7a2ca2bd5df214d3aa7ba7e7ac19db8b189
+    license: MIT
+    evidence_url: https://raw.githubusercontent.com/affaan-m/everything-claude-code/0765f7a2ca2bd5df214d3aa7ba7e7ac19db8b189/LICENSE
+    verification: Read the pinned license; MIT grant and notice condition are present.
+    copyright: Copyright (c) 2026 Affaan Mustafa
+    use: Research input only; independently written prose and examples, not copied code.
+practices:
+  - id: backend-fundamentals.security.exclude-secrets-from-logs
+    path: practices/security/exclude-secrets-from-logs.md
+    severity: critical
+    decision: >-
+      Emit useful allowlisted event context without credentials, including on
+      automatic request and exception-serialization paths.
+    skill_evidence:
+      - url: https://raw.githubusercontent.com/mcollina/skills/58b3eeb398d10c007988e80f73d30ebadab64754/skills/fastify/rules/logging.md
+        role: Pinned candidate and mechanism input
+        sections:
+          - Structured Logging
+          - Custom Serializers
+          - Redacting Sensitive Data
+          - Logging Errors
+        supports: >-
+          Structured events, request-scoped context, serializer customization,
+          and logger field-path redaction are existing Fastify/Pino mechanisms.
+        limitations: >-
+          The upstream Logging Errors example includes raw errors, bodies, queries,
+          and URLs. That example is not adopted. A serializer's support for error
+          objects does not establish that messages, causes, or attached request
+          configurations exclude secrets. Example redaction paths are not complete
+          coverage of arbitrary nesting or secrets embedded in strings.
+      - url: https://raw.githubusercontent.com/mcollina/skills/58b3eeb398d10c007988e80f73d30ebadab64754/skills/fastify/rules/deployment.md
+        role: Additional pinned mechanism input
+        sections:
+          - Production Logger Configuration
+        supports: Production logger configuration can redact known sensitive field paths.
+        limitations: >-
+          Production configuration is not proof that free-text messages or other
+          serializers are safe; unrelated deployment prescriptions are not adopted.
+    primary_evidence:
+      - url: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#data-to-exclude
+        related_urls:
+          - https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#event-attributes
+          - https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#event-collection
+          - https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#verification
+        role: Primary security guidance
+        supports: >-
+          Passwords, access tokens, session identifiers, connection strings, and
+          primary secrets should not be directly recorded. Event purpose determines
+          sufficient context. Log encoding, sanitization, and verification are needed,
+          while necessary security events must not disappear with excluded fields.
+        limitations: >-
+          OWASP describes multiple data-handling treatments and application contexts;
+          the Practice independently selects exclusion for usable credentials and
+          allowlisted context for ordinary application logs. It does not reproduce
+          an OWASP example or claim OWASP mandates one logger schema.
+    author_synthesis: >-
+      The allowlist-first procedure, tracing of child bindings and nested dependency
+      exceptions, safe-category fallback for unreviewed errors, synthetic-marker
+      acceptance gate, severity, and account-link scenario are independently authored.
+      A private destination and debug level are not accepted as credential exceptions.
+    boundaries: >-
+      Keep authentication and failure events with safe context. Do not redesign
+      public errors or password storage. Log access and retention remain separate;
+      stopping future disclosure does not revoke an already exposed credential.
+
+  - id: backend-fundamentals.lifecycle.drain-work-before-closing-resources
+    path: practices/lifecycle/drain-work-before-closing-resources.md
+    severity: warn
+    decision: >-
+      Stop intake, handle accepted work within the termination budget, then release
+      dependencies only after their users finish or stop.
+    skill_evidence:
+      - url: https://raw.githubusercontent.com/mcollina/skills/58b3eeb398d10c007988e80f73d30ebadab64754/skills/fastify/rules/deployment.md
+        role: Pinned candidate and mechanism input
+        sections:
+          - Graceful Shutdown with close-with-grace
+          - Health Check Endpoints
+          - Zero-Downtime Deployments
+        supports: >-
+          Connect a process shutdown trigger to Fastify close and consider readiness
+          during deployment. The existing framework can own HTTP draining.
+        limitations: >-
+          The skill's delay comments are not treated as proof of in-flight completion.
+          A fixed sleep, requestTimeout, or signal wrapper is not by itself a bounded
+          application-work drain. No close-with-grace dependency, Kubernetes platform,
+          queue, health subsystem, or universal timeout is required by this Practice.
+    primary_evidence:
+      - url: https://fastify.dev/docs/latest/Reference/Server/#close
+        related_urls:
+          - https://fastify.dev/docs/latest/Reference/Server/#forcecloseconnections
+          - https://fastify.dev/docs/latest/Reference/Server/#return503onclosing
+        role: Primary framework lifecycle semantics
+        observed_version: Fastify latest identified itself as v5.12.7 when read.
+        supports: >-
+          Closing rejects new requests by default, drains HTTP requests, and resolves
+          after close hooks. Force-closing persistent connections can interrupt active
+          requests; non-HTTP upgraded connections require explicit handling.
+        limitations: >-
+          Latest is a moving documentation URL, not an immutable source pin. Apply the
+          installed framework/runtime version's behavior. Server close does not prove
+          completion of detached application tasks or termination of a database query.
+      - url: https://fastify.dev/docs/latest/Reference/Hooks/#onclose
+        related_urls:
+          - https://fastify.dev/docs/latest/Reference/Hooks/#preclose
+        role: Primary resource-release hook semantics
+        observed_version: Fastify latest identified itself as v5.12.7 when read.
+        supports: >-
+          preClose occurs while HTTP work may still be active; onClose occurs after
+          HTTP draining and is the normal location for request-dependent pool cleanup.
+          Child plugin close hooks execute before parent hooks, so real ownership and
+          hook order matter for background users too.
+        limitations: >-
+          Framework hook ordering alone does not join background tasks. An external
+          hard kill can bypass hooks, and cancellation remains dependent on actual
+          operations cooperating or stopping.
+    author_synthesis: >-
+      The process-specific ownership inventory, one shared shutdown operation,
+      cleanup reserve, explicit deadline outcome, requirement to establish that work
+      actually stopped, lifecycle acceptance cases, severity, and invoice API scenario
+      are independently authored. Deadlines and cleanup reserves are deployment-relative;
+      the Practice prescribes no numeric values.
+    boundaries: >-
+      No task registry, consumer, queue, or readiness mechanism is mandated where none
+      exists. Forced termination is not called graceful completion and proves nothing
+      about replay safety or mutation outcome. Routine connection allocation and retry
+      policy are outside the Practice.
+
+  - id: backend-fundamentals.data.retire-old-schema-after-callers
+    path: practices/data/retire-old-schema-after-callers.md
+    severity: critical
+    decision: >-
+      Gate destructive schema retirement on actual deployed caller compatibility and
+      a replacement that preserves historical data and ongoing writes.
+    skill_evidence:
+      - url: https://raw.githubusercontent.com/affaan-m/everything-claude-code/0765f7a2ca2bd5df214d3aa7ba7e7ac19db8b189/skills/database-migrations/SKILL.md
+        role: Pinned candidate and transition-mechanism input
+        sections:
+          - Renaming a Column (Zero-Downtime)
+          - Removing a Column Safely
+          - Zero-Downtime Migration Strategy
+          - Anti-Patterns
+        supports: >-
+          Expand before contract, migrate callers before dropping fields, preserve
+          migration history, and treat data migration as work distinct from a model edit.
+        limitations: >-
+          Do not adopt the skill's nullable-column/no-lock claim: PostgreSQL DDL still
+          takes locks. The short rename sequence does not prove concurrent writes stay
+          synchronized, nor that every deployed caller or rollback image has moved.
+          Universal forward-only, separate-DDL/DML, and never-direct-rename prescriptions
+          are not adopted as rules for all repositories.
+    primary_evidence:
+      - url: https://www.postgresql.org/docs/18/sql-altertable.html
+        role: Primary versioned database semantics
+        supports: >-
+          ALTER TABLE defaults to ACCESS EXCLUSIVE unless a subform says otherwise.
+          RENAME changes an object name without replacing its stored data. DROP COLUMN
+          removes associated indexes and table constraints and requires CASCADE for
+          relevant external dependencies; successful DDL does not assess application
+          callers or supply a data recovery plan.
+        limitations: >-
+          PostgreSQL 18 semantics, not an assertion that every backend database has
+          identical locking, rename, or drop behavior. A fast metadata operation may
+          still wait for or block conflicting activity.
+      - url: https://www.prisma.io/docs/orm/v7/prisma-migrate/workflows/customizing-migrations
+        role: Primary versioned migration workflow support
+        supports: >-
+          Inspect and customize draft migration SQL before application. A model-field
+          rename can generate drop-and-add rather than a data-preserving physical
+          rename. Expand-contract coordinates application reads and writes with
+          schema expansion, data migration, and final field removal.
+        limitations: >-
+          This is the versioned Prisma ORM v7 workflow, not a universal CLI prescription.
+          The old unversioned customizing-migrations URL now redirects to ORM 8 editing
+          documentation; no ORM 8 command migration is required by this Practice.
+          The tutorial alone does not establish all deployed writers are upgraded.
+      - url: https://www.prisma.io/docs/guides/v7/database/data-migration
+        role: Additional primary migration context
+        supports: >-
+          Replacement fields need explicit data conversion, verification, and eventual
+          contraction, not only a schema declaration change.
+        limitations: >-
+          The tutorial's materialize-all-records example is not copied or prescribed
+          for production-sized tables, and it does not establish concurrent-write
+          safety for an overlapping deployment.
+    author_synthesis: >-
+      Deployment inventory including generated selections and infrequent jobs,
+      rollback eligibility, all-writer compatibility, transactional dual-write
+      conditions, row-locked current-value backfill, contraction gates, lock planning,
+      severity, and shipment-note scenario are independently authored. Backfill
+      concurrency is explained for an identical-value replacement, not generalized
+      to arbitrary transformations or cross-database writes.
+    boundaries: >-
+      Direct rename is permitted when all actual callers are stopped and deployed
+      coherently; verified-unused objects need no expansion. An ORM name mapped to an
+      unchanged physical column may need no DDL. No triggers, queue, migration platform,
+      permanent aliases, or generic index tutorial are introduced. Recreating a dropped
+      column does not restore its values.

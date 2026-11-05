@@ -1,0 +1,109 @@
+name: backend-fundamentals source checks
+
+on:
+  pull_request:
+    paths:
+      - "packs/backend-fundamentals/**"
+      - "fixtures/backend-fundamentals/**"
+      - "scripts/eval-project-layer"
+      - ".github/workflows/backend-fundamentals.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      LORE_VERSION: "0.1.0-alpha.3"
+      PROJECT_ROOT: ${{ runner.temp }}/backend-project
+      STORE_ROOT: ${{ runner.temp }}/backend-store
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install source-check dependency
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Install pinned lore CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/lorelum/lorelum/main/install.sh \
+            | sh -s -- --version "$LORE_VERSION"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Validate Pack format
+        run: lore validate packs/backend-fundamentals --json
+      - name: Prepare isolated layer with the existing helper
+        run: |
+          python scripts/eval-project-layer --pack backend-fundamentals \
+            --dir "$PROJECT_ROOT" --lore "$HOME/.local/bin/lore"
+      - name: Check fixtures, full readback and one keyword activation query
+        run: |
+          python - <<'PY'
+          from collections import Counter
+          import json
+          import os
+          from pathlib import Path
+          import shutil
+          import subprocess
+          import yaml
+
+          pack = Path("packs/backend-fundamentals")
+          fixtures = Path("fixtures/backend-fundamentals")
+          expected = {}
+          for path in sorted((pack / "practices").rglob("*.md")):
+              _, front, body = path.read_text(encoding="utf-8").split("---", 2)
+              practice_id = yaml.safe_load(front)["id"]
+              assert practice_id not in expected, practice_id
+              expected[practice_id] = (path.relative_to(pack).as_posix(), body.strip())
+          assert expected, "Pack has no Practices"
+
+          catalog = yaml.safe_load((fixtures / "practice-catalog.yaml").read_text(encoding="utf-8"))
+          entries = catalog["entries"]
+          assert len(entries) == len(expected) and {e["id"] for e in entries} == set(expected)
+          for entry in entries:
+              assert entry["nearest_neighbor"] in expected
+              assert set(entry.get("secondary_neighbors", [])) <= set(expected)
+          query_set = yaml.safe_load((fixtures / "queries.yaml").read_text(encoding="utf-8"))
+          active = [q for q in query_set["queries"] if q.get("status") != "retired"]
+          assert len({q["id"] for q in query_set["queries"]}) == len(query_set["queries"])
+          positives, neighbors = Counter(), Counter()
+          for query in active:
+              assert query.get("status") == "frozen" and query["expect"] in expected
+              assert query["text"].strip() and query["kind"] in ("positive", "neighbor")
+              if query["kind"] == "positive":
+                  positives[query["expect"]] += 1
+              else:
+                  assert query["resembles"] in expected
+                  neighbors[query["resembles"]] += 1
+          assert all(positives[p] >= 3 and neighbors[p] >= 2 for p in expected)
+          workflows = yaml.safe_load((fixtures / "workflows.yaml").read_text(encoding="utf-8"))
+          assert all(set(w["expected_practices"]) <= set(expected) for w in workflows["workflows"])
+
+          lore = os.environ.get("LORE") or shutil.which("lore")
+          assert lore, "lore executable missing"
+          Path(os.environ["STORE_ROOT"]).mkdir(parents=True, exist_ok=True)
+          def invoke(*args):
+              result = subprocess.run([lore, "--json", "--store-root", os.environ["STORE_ROOT"], *args],
+                                      capture_output=True, text=True, encoding="utf-8", check=True, timeout=120)
+              envelope = json.loads(result.stdout)
+              assert envelope["ok"], envelope.get("error")
+              return envelope["data"]
+
+          project = os.environ["PROJECT_ROOT"]
+          context = invoke("context", "status", "--project-root", project)
+          assert context["state"] == "ready" and context["base"] == "none" and not context["warnings"]
+          assert context["practiceCount"] == len(expected)
+          for practice_id, (source_path, body) in expected.items():
+              data = invoke("get", practice_id, "--project-root", project)
+              assert data["practice"]["id"] == practice_id and data["practice"]["body"].strip() == body
+              assert any(s.get("packName") == "backend-fundamentals"
+                         and str(s.get("packRoot", "")).startswith("project-layer-")
+                         and s.get("sourcePath") == source_path for s in data["sources"])
+          smoke = next(q for q in active if q["kind"] == "positive")
+          hits = invoke("query", smoke["text"], "--mode", "keyword", "--top-k", "3", "--project-root", project)
+          assert smoke["expect"] in {hit["practiceId"] for hit in hits["results"]}
+          print(f"Validated {len(expected)} full Practice reads, {len(active)} frozen query hypotheses, "
+                f"{len(workflows['workflows'])} workflows and one keyword activation query.")
+          PY

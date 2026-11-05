@@ -1,0 +1,415 @@
+fixture_set: backend-fundamentals-practice-catalog
+evaluation_only: true
+description: Atomic decision and contrast hypotheses for 30 English Practices. Secondary neighbors retain
+  distinct and historical boundary cases. Not measured behavior.
+entries:
+- id: backend-fundamentals.api.preserve-safe-read-semantics
+  positive_trigger: Opening an email link marks an invoice paid before anyone confirms the action; mail
+    scanners also fetch that URL.
+  paraphrase: A HEAD probe consumes the same approval token as GET because both reach the mutation helper.
+  near_miss: GET only reads data, but an expired session is serialized as 200 and an empty object. How
+    should that rejection reach clients?
+  nearest_neighbor: backend-fundamentals.api.express-http-failures
+  secondary_neighbors:
+  - backend-fundamentals.security.protect-cookie-authenticated-writes
+  expected_behavior: Keep requested mutations off safe methods, retain incidental diagnostics, and migrate
+    the action and callers without a mutating read alias.
+  forbidden_behavior: Treat idempotent as safe, disable logging as a forbidden write, or leave a mutating
+    GET alias.
+- id: backend-fundamentals.api.bound-collection-results
+  positive_trigger: An activity listing transfers all historical records before slicing the response to
+    twenty items.
+  paraphrase: The API page has a default size but clients can override it with any integer as history
+    grows.
+  near_miss: The result page contains twenty tickets, but its serializer issues another SQL lookup for
+    each assignee. How do we remove that growth?
+  nearest_neighbor: backend-fundamentals.data.batch-required-relations
+  secondary_neighbors:
+  - backend-fundamentals.api.express-http-failures
+  expected_behavior: Bound the fetch before materialization and preserve an appropriate order and continuation
+    contract, including independently growing children.
+  forbidden_behavior: Slice after unlimited loading, mandate cursors universally, or promise a snapshot
+    from a cursor alone.
+- id: backend-fundamentals.api.express-http-failures
+  positive_trigger: An API wrapper turns a storage outage into a successful empty history and exposes
+    the exception message.
+  paraphrase: Authentication and conflict failures need outward status and headers without replacing the
+    existing JSON protocol.
+  near_miss: Response codes and bodies are correct, but merely following the GET cancellation link performs
+    the business action.
+  nearest_neighbor: backend-fundamentals.api.preserve-safe-read-semantics
+  secondary_neighbors:
+  - backend-fundamentals.security.exclude-secrets-from-logs
+  expected_behavior: Express known and unexpected failures through the existing status, headers and safe
+    representation; retain only reviewed secret-free diagnostics.
+  forbidden_behavior: Flatten failure into empty success, leak internals into responses or logs, invent
+    a new envelope, or add retries in the serializer.
+- id: backend-fundamentals.security.enforce-protected-entry-access
+  positive_trigger: A hidden admin control has an endpoint that still works when called directly without
+    a valid session.
+  paraphrase: The origin trusts a claimed role header although clients can reach it without the gateway.
+  near_miss: Every request has a verified session, yet changing a record ID exposes another organization
+    document.
+  nearest_neighbor: backend-fundamentals.security.authorize-target-resource
+  secondary_neighbors:
+  - backend-fundamentals.security.verify-webhook-message-signatures
+  expected_behavior: Enforce the declared entry permission on all real ingress paths with trusted identity
+    before protected effects; reuse a non-bypassable existing owner.
+  forbidden_behavior: Rely on hidden UI, forged headers or network location, or recreate authentication
+    in every private helper.
+- id: backend-fundamentals.security.authorize-target-resource
+  positive_trigger: A valid member changes the URL identifier and downloads an invoice belonging to another
+    customer.
+  paraphrase: The bulk-edit path checks session validity but not the individual records or delegated grants.
+  near_miss: The resource policy is correct, but an alternate origin route bypasses credential verification
+    and accepts a caller-provided identity header.
+  nearest_neighbor: backend-fundamentals.security.enforce-protected-entry-access
+  secondary_neighbors:
+  - backend-fundamentals.security.protect-cookie-authenticated-writes
+  expected_behavior: Apply the actual subject or public-context, action, resource and tenant visibility
+    rule to selection and mutation, preserving permitted sharing.
+  forbidden_behavior: Equate login or opaque IDs with permission, force all public reads to authenticate,
+    or replace sharing policy with owner-only checks.
+- id: backend-fundamentals.security.hash-passwords-for-storage
+  positive_trigger: Registration saves a fast SHA digest of the password and reset saves encrypted text
+    so support can recover it.
+  paraphrase: The login handler salts and hashes the candidate again, then compares encoded strings and
+    rejects valid passwords.
+  near_miss: The stored password verifier is correct, but failed registration logs the submitted password
+    inside the validation object.
+  nearest_neighbor: backend-fundamentals.security.exclude-secrets-from-logs
+  secondary_neighbors:
+  - backend-fundamentals.security.authorize-target-resource
+  expected_behavior: Use supported dedicated salted verifiers and library verification with justified
+    costs across local password paths; avoid duplicating IdP-owned passwords.
+  forbidden_behavior: Store plaintext or reversible login secrets, use fast digests or fixed salts, compare
+    fresh salted strings, or copy unexplained cost constants.
+- id: backend-fundamentals.data.enforce-uniqueness-in-database
+  positive_trigger: Two workers both find a workspace slug unused and each persist a row with that slug.
+  paraphrase: A migration adds a tenant-local reference rule but has not checked existing duplicates or
+    null semantics.
+  near_miss: The reference constraint already works. The order header still commits even when a required
+    line insert later fails.
+  nearest_neighbor: backend-fundamentals.data.group-atomic-database-writes
+  secondary_neighbors:
+  - backend-fundamentals.data.commit-event-deduplication-with-effects
+  expected_behavior: Enforce the agreed key in the database for concurrent writers, resolve existing violations
+    explicitly, and handle the exact conflict with valid transaction state.
+  forbidden_behavior: Rely on preflight lookup, delete arbitrary duplicates, assume nullable UNIQUE implies
+    required, or continue SQL in an aborted transaction.
+- id: backend-fundamentals.data.group-atomic-database-writes
+  positive_trigger: An order row remains committed when inserting its mandatory lines fails halfway through.
+  paraphrase: A stock change and its required audit record use independent pool calls and can persist
+    separately.
+  near_miss: The debit and credit already share one transaction, but its error path never gives the checked-out
+    client back to the pool.
+  nearest_neighbor: backend-fundamentals.data.return-acquired-connections
+  secondary_neighbors:
+  - backend-fundamentals.data.enforce-uniqueness-in-database
+  expected_behavior: Commit the required local writes on one transaction-bound client or roll them all
+    back; distinguish concurrency and external effects.
+  forbidden_behavior: Dispatch transaction statements through unrelated pool clients, swallow failed required
+    writes, or claim SQL rollback undoes remote effects.
+- id: backend-fundamentals.data.justify-indexes-with-query-plans
+  positive_trigger: A customer lookup is slow and the proposed response is adding indexes to every filter
+    column without examining execution work.
+  paraphrase: A report reads most rows and someone wants to disable sequential scans because the plan
+    must say Index Scan.
+  near_miss: The table has no performance complaint. Two writers must be prevented from committing the
+    same tenant membership key.
+  nearest_neighbor: backend-fundamentals.data.enforce-uniqueness-in-database
+  secondary_neighbors:
+  - backend-fundamentals.data.batch-required-relations
+  expected_behavior: Evaluate a concrete index using representative plan evidence and costs, or stop with
+    a no-index conclusion and the actual bottleneck.
+  forbidden_behavior: Force a scan label, index by checklist, execute mutating ANALYZE unsafely, or invent
+    an index when the bottleneck is elsewhere.
+- id: backend-fundamentals.data.return-acquired-connections
+  positive_trigger: A handler checks out a database client and an early validation return skips the cleanup.
+  paraphrase: Rollback itself fails after an insert error. Should that broken client be put back into
+    circulation?
+  near_miss: All checked-out clients return correctly. Increasing the autoscaler ceiling would nevertheless
+    triple total database sessions.
+  nearest_neighbor: backend-fundamentals.data.budget-deployment-connections
+  secondary_neighbors:
+  - backend-fundamentals.lifecycle.drain-work-before-closing-resources
+  expected_behavior: Return or discard every acquired client on all paths, recover transaction state before
+    reuse, and let owned pools outlive their users.
+  forbidden_behavior: Release only on success, recycle aborted or broken state, close the shared pool
+    per request, or confuse abandoned waiting with cancellation.
+- id: backend-fundamentals.data.budget-deployment-connections
+  positive_trigger: Every worker releases its database clients, but raising the maximum replica count
+    exceeds the shared server session allocation.
+  paraphrase: A rolling update doubles simultaneous processes; copying the same per-process pool maximum
+    no longer fits the database ceiling.
+  near_miss: Replica counts and pool maxima fit the allocation. A query exception exits before release
+    and slowly exhausts one process.
+  nearest_neighbor: backend-fundamentals.data.return-acquired-connections
+  secondary_neighbors:
+  - backend-fundamentals.data.group-atomic-database-writes
+  expected_behavior: Budget peak process and service demand including rollout and proxy topology; keep
+    pool maxima and waits inside the justified capacity policy.
+  forbidden_behavior: Use a universal pool size, ignore replica multiplication or reserved users, or treat
+    max_connections as healthy query concurrency.
+- id: backend-fundamentals.security.exclude-secrets-from-logs
+  positive_trigger: A failed upstream request records its Authorization token inside an exception cause
+    even though the normal request logger redacts headers.
+  paraphrase: Debug logging dumps the full runtime configuration, including the production database connection
+    password.
+  near_miss: Logs already contain safe fields. The HTTP exception wrapper still sends raw SQL text and
+    stack details to clients.
+  nearest_neighbor: backend-fundamentals.api.express-http-failures
+  secondary_neighbors:
+  - backend-fundamentals.security.hash-passwords-for-storage
+  expected_behavior: Emit only necessary structured safe context and review automatic and exception serialization;
+    preserve useful events without secret values.
+  forbidden_behavior: Dump arbitrary objects or exception strings, assume internal/debug logs are exempt,
+    or suppress all security events instead of selecting fields.
+- id: backend-fundamentals.lifecycle.drain-work-before-closing-resources
+  positive_trigger: SIGTERM calls pool.end and server.close together while an accepted invoice request
+    still needs a database write.
+  paraphrase: A deployment waits a fixed sleep before exit and sometimes interrupts handlers despite having
+    a termination grace period.
+  near_miss: Shutdown ordering is correct. During normal traffic a checked-out SQL client is lost on an
+    early return.
+  nearest_neighbor: backend-fundamentals.data.return-acquired-connections
+  secondary_neighbors:
+  - backend-fundamentals.data.budget-deployment-connections
+  expected_behavior: Stop intake, bound completion of owned work, and release dependencies after their
+    users settle; define deadline behavior without claiming guaranteed completion.
+  forbidden_behavior: Close dependencies before their users, equate socket close or sleep with drain completion,
+    or add a queue to a process that has none.
+- id: backend-fundamentals.data.retire-old-schema-after-callers
+  positive_trigger: A release drops an old column before the older API replicas and nightly report have
+    stopped querying it.
+  paraphrase: A field rename generated DROP plus ADD and loses stored values while rolling instances still
+    use the previous name.
+  near_miss: No columns are being removed. A new tenant reference constraint must reject concurrent duplicate
+    inserts and handle existing duplicates.
+  nearest_neighbor: backend-fundamentals.data.enforce-uniqueness-in-database
+  secondary_neighbors:
+  - backend-fundamentals.data.group-atomic-database-writes
+  expected_behavior: Gate destructive schema change on deployed readers, writers, live data transition
+    and supported rollback versions; remove temporary paths after cutover.
+  forbidden_behavior: Rely only on current source search or an idle migration, lose concurrent writes,
+    assume DDL reversal restores data, or mandate dual writes for a stopped-world cutover.
+- id: backend-fundamentals.data.parameterize-query-values
+  positive_trigger: A report inserts a customer reference containing apostrophes into an SQL string after
+    checking its length.
+  paraphrase: An ORM raw expression interpolates text previously stored in the database, treating it as
+    trusted query syntax.
+  near_miss: The SQL is correctly bound, but its WHERE clause omits the requesting tenant and returns
+    another customer record.
+  nearest_neighbor: backend-fundamentals.security.authorize-target-resource
+  secondary_neighbors:
+  - backend-fundamentals.data.justify-indexes-with-query-plans
+  expected_behavior: Bind data values separately at execution and map structural choices to fixed permitted
+    fragments while preserving access filters.
+  forbidden_behavior: Interpolate validated or stored input, confuse quoting with authorization, or use
+    manual escaping as the main SQL defense.
+- id: backend-fundamentals.data.batch-required-relations
+  positive_trigger: Serializing a paged ticket list fetches the owner again for every ticket, although
+    the page itself is limited.
+  paraphrase: A bulk prefetch removes dozens of SQL calls but accidentally drops the viewer-specific filter
+    on private comments.
+  near_miss: The serializer already uses fixed batches. The endpoint loads the full history before slicing
+    to a requested page.
+  nearest_neighbor: backend-fundamentals.api.bound-collection-results
+  secondary_neighbors:
+  - backend-fundamentals.data.justify-indexes-with-query-plans
+  expected_behavior: Fetch the relations needed by the bounded result in suitable batches, preserving
+    every replaced child predicate and observable result.
+  forbidden_behavior: Drop privacy filters for a cache hit, preload the entire object graph, force one
+    SQL statement, or change the returned related rows.
+- id: backend-fundamentals.security.protect-cookie-authenticated-writes
+  positive_trigger: A JSON address-change endpoint still accepts the session cookie but has been exempted
+    from the framework antiforgery check.
+  paraphrase: A browser sends its existing login cookie when another site submits a form to our settings
+    route.
+  near_miss: A callback accepts no browser sessions and is authenticated by a sender signature, but JSON
+    middleware changed the signed bytes.
+  nearest_neighbor: backend-fundamentals.security.verify-webhook-message-signatures
+  secondary_neighbors:
+  - backend-fundamentals.security.authorize-target-resource
+  expected_behavior: Use the maintained platform CSRF defense for ambient-credential writes and their
+    legitimate client flow, with narrow justified machine exemptions.
+  forbidden_behavior: Treat POST/JSON/CORS/cookie flags as universal proof, accept mere token presence,
+    or apply browser tokens to bearer-only machine routes.
+- id: backend-fundamentals.security.enforce-scoped-rate-limits
+  positive_trigger: A multi-worker export API keeps a separate in-memory request counter in each process,
+    multiplying the promised allowance.
+  paraphrase: Distributed password guessing targets one submitted account from many source addresses;
+    that account is a budget target, not an authenticated identity.
+  near_miss: Incoming request frequency is within policy, but too many service processes reserve SQL sessions
+    even while idle.
+  nearest_neighbor: backend-fundamentals.data.budget-deployment-connections
+  secondary_neighbors:
+  - backend-fundamentals.api.express-http-failures
+  expected_behavior: Choose an operation-specific identity or target budget, trustworthy source keys and
+    shared scope, then enforce admission and explicit outage policy.
+  forbidden_behavior: Trust arbitrary headers, silently multiply counters across workers, authenticate
+    a submitted account by its name, or turn a store outage into quota proof.
+- id: backend-fundamentals.security.generate-upload-storage-keys
+  positive_trigger: An attachment handler joins the submitted filename to the upload directory, allowing
+    paths and same-name replacement.
+  paraphrase: The direct-upload endpoint signs any object key supplied by the browser, including an existing
+    attachment destination.
+  near_miss: Every upload destination is server-owned, but an authenticated user can download another
+    case attachment by guessing its record ID.
+  nearest_neighbor: backend-fundamentals.security.authorize-target-resource
+  secondary_neighbors:
+  - backend-fundamentals.security.exclude-secrets-from-logs
+  expected_behavior: Choose destinations from server-owned configuration and records, separate display
+    names, and preserve the authorized mapping through upload handoffs.
+  forbidden_behavior: Trust a submitted filename or key, allow unrelated replacement, or mistake random
+    keys for permission or complete content safety.
+- id: backend-fundamentals.security.verify-webhook-message-signatures
+  positive_trigger: A payment callback activates a subscription before checking whether the sender signature
+    is valid.
+  paraphrase: Common JSON middleware parses the event, then the handler verifies a newly serialized body
+    and rejects legitimate whitespace variations.
+  near_miss: The callback signature is valid. Repeated concurrent delivery of that event still grants
+    the same reward twice.
+  nearest_neighbor: backend-fundamentals.data.commit-event-deduplication-with-effects
+  secondary_neighbors:
+  - backend-fundamentals.security.protect-cookie-authenticated-writes
+  expected_behavior: Verify the configured provider message using its required original representation
+    and supported verifier before trusting fields or performing effects.
+  forbidden_behavior: Accept a header by presence, verify altered bytes, transplant protocols, or use
+    signature validity as proof that delivery is new.
+- id: backend-fundamentals.data.commit-event-deduplication-with-effects
+  positive_trigger: A reward handler commits a processed-event ID before incrementing points, then crashes
+    and skips the credit on redelivery.
+  paraphrase: Two workers process the same authenticated event together and each increments the balance
+    before either inserts its completion row.
+  near_miss: The same external event ID is not repeated. Two account registrations race for one username
+    and lack a database uniqueness rule.
+  nearest_neighbor: backend-fundamentals.data.enforce-uniqueness-in-database
+  secondary_neighbors:
+  - backend-fundamentals.security.verify-webhook-message-signatures
+  expected_behavior: Claim a correctly scoped durable event key and commit its local effect together;
+    failures roll both back and retained evidence protects accepted replay.
+  forbidden_behavior: Commit markers separately, lock nonexistent rows as dedup proof, merge distinct
+    events by payload, or claim exactly-once remote effects.
+- id: backend-fundamentals.data.guard-state-dependent-writes
+  positive_trigger: Two checkouts read the last available item and each saves a computed zero, so both
+    orders are accepted despite separate transactions.
+  paraphrase: A cancellation read pending status before another worker shipped the order; its later update
+    overwrites shipped without checking the earlier state.
+  near_miss: Reservation predicates already stop overselling, but a required audit insert can fail after
+    the inventory decrement has committed.
+  nearest_neighbor: backend-fundamentals.data.group-atomic-database-writes
+  expected_behavior: Enforce the current quantity, status, or expected version at mutation time with a
+    suitable conditional statement, lock, or isolation strategy; inspect results and return the agreed
+    conflict without blind overwrite or unconditional retry.
+  forbidden_behavior: Assume ordinary transaction grouping protects an earlier observation, ignore zero
+    affected rows, lock an absent row as a reservation, discard the guard after conflict, or reuse stale
+    replacement values during a restart.
+- id: backend-fundamentals.data.enforce-related-row-integrity
+  positive_trigger: A task insert passes its project lookup, but a concurrent maintenance deletion leaves
+    the inserted task referring to nothing.
+  paraphrase: Separate tenant and project references each exist, yet imports can combine a tenant with
+    another tenant's project; optional references also need deliberate null semantics.
+  near_miss: Every membership points to a valid organization and user, but simultaneous requests still
+    create duplicate memberships for the same pair.
+  nearest_neighbor: backend-fundamentals.data.enforce-uniqueness-in-database
+  expected_behavior: Enforce complete parent identity with database foreign keys across writers, choose
+    required or optional null behavior and deliberate deletion actions, and safely resolve existing orphans
+    or tenant mismatches.
+  forbidden_behavior: Rely on preflight parent lookup, treat unrelated foreign keys as a same-tenant relationship,
+    cascade every deletion, accidentally null a required tenant key, or claim valid references authorize
+    callers.
+- id: backend-fundamentals.data.represent-money-exactly
+  positive_trigger: Refund values pass through binary floats before exact storage, while an adapter assumes
+    every supported currency uses hundredths.
+  paraphrase: The database preserves decimal amounts, but a consumer silently approximates large integer
+    units received as JSON numbers and rounds at a different stage.
+  near_miss: Currency units, exact arithmetic, and rounding are correct; a refund balance change still
+    commits without its mandatory ledger entry when the second write fails.
+  nearest_neighbor: backend-fundamentals.data.group-atomic-database-writes
+  expected_behavior: Keep currency and denomination explicit, parse into exact decimal or checked integer
+    units, apply agreed rounding only at its business boundary, and preserve precision through drivers
+    and JSON consumers.
+  forbidden_behavior: Use binary floats for authoritative amounts, assume a two-digit currency scale,
+    silently accept overflow or extra precision, let database coercion choose policy, or serialize beyond
+    consumer precision without an exact wire contract.
+- id: backend-fundamentals.api.isolate-personalized-cache-responses
+  positive_trigger: A CDN saves the first signed-in customer's billing response under a URL-only key and
+    returns it to the next customer without contacting the origin.
+  paraphrase: A team proposes no-cache for sensitive account pages because it assumes that directive prevents
+    both browser and proxy storage; public catalog caching should remain intact.
+  near_miss: Edge reuse is disabled and every request reaches the handler, but changing the invoice identifier
+    still returns a different organization's private bill.
+  nearest_neighbor: backend-fundamentals.security.authorize-target-resource
+  expected_behavior: Choose public, private, or no-store response eligibility deliberately; preserve genuinely
+    public caching; align Vary and deployed keys with representation inputs, and require trusted partitioning
+    plus pre-hit access enforcement for intentional protected shared reuse.
+  forbidden_behavior: Treat no-cache as no-store, assume cookies prevent storage, rely on origin authorization
+    for bypassing cache hits, or enable public shared reuse of personalized bodies under a URL-only key.
+- id: backend-fundamentals.api.bind-only-declared-write-fields
+  positive_trigger: An authorized profile editor submits a hidden role property and the handler spreads
+    the full JSON body into the persistent account model.
+  paraphrase: A patch contract permits address edits but nested replacement or copy operations can also
+    assign ownership and lifecycle metadata.
+  near_miss: The update projection accepts only the intended display fields, but the route permits a member
+    to select another tenant's profile by changing its identifier.
+  nearest_neighbor: backend-fundamentals.security.authorize-target-resource
+  expected_behavior: Project operation- and capability-specific writable properties before binding, enforce
+    the contract through nested and patch paths, derive server-owned attributes from trusted state, and
+    retain explicitly authorized administrative or delegated commands.
+  forbidden_behavior: Spread the original request into a domain model, rely solely on a denylist or value
+    types, treat target edit permission as blanket assignment permission, or accidentally prohibit an
+    intentional privileged field change.
+- id: backend-fundamentals.api.allow-only-intended-browser-origins
+  positive_trigger: CORS middleware reflects every requesting site and enables credentials, allowing hostile
+    JavaScript to read signed-in account responses.
+  paraphrase: A portal needs credentialed cross-site reads, but only OPTIONS carries the allow headers
+    and the CDN ignores Origin when reusing responses.
+  near_miss: Only the trusted portal receives readable responses, yet an unrelated site's HTML form can
+    still submit an account change using an automatically attached login cookie.
+  nearest_neighbor: backend-fundamentals.security.protect-cookie-authenticated-writes
+  expected_behavior: Select exact intended origins and credential mode, align preflight and actual response
+    headers, preserve Origin variation, and retain anonymous wildcard access for intentionally public
+    noncredentialed resources.
+  forbidden_behavior: Reflect arbitrary origins with credentials, use wildcard credentialed access, fix
+    only preflight, or present CORS as server authorization, nonbrowser admission control, or CSRF protection.
+- id: backend-fundamentals.security.constrain-server-fetch-destinations
+  positive_trigger: A URL preview checks HTTPS syntax, then follows a redirect to a cloud metadata endpoint
+    or resolves the hostname again before connecting.
+  paraphrase: A remote document importer must reach public locations while one separately configured integration
+    intentionally accesses a private service.
+  near_miss: The outbound destination is fixed and enforced; an anonymous caller can directly invoke the
+    administrative import endpoint.
+  nearest_neighbor: backend-fundamentals.security.enforce-protected-entry-access
+  expected_behavior: Constrain parsed scheme, host, port and resolved addresses at the actual connection,
+    recheck required redirects, and retain only declared internal integration exceptions.
+  forbidden_behavior: Treat caller login, CORS, HTTPS syntax, a substring host match or a preliminary
+    DNS lookup as sufficient destination enforcement; silently permit unchecked redirect or proxy resolution.
+- id: backend-fundamentals.security.admit-only-supported-upload-content
+  positive_trigger: An avatar receives a generated object key but becomes public immediately because the
+    client declares image/png, before size or decode checks.
+  paraphrase: A small compressed upload expands beyond the processor's memory limit, and failed validation
+    currently releases its original bytes to users.
+  near_miss: The file bytes already pass the established admission checks, but a submitted filename or
+    object key can overwrite another attachment.
+  nearest_neighbor: backend-fundamentals.security.generate-upload-storage-keys
+  expected_behavior: Verify supported actual content and enforced intake/processing budgets, keep unchecked
+    or failed objects unavailable, and release the exact accepted object through an appropriate serving
+    policy.
+  forbidden_behavior: Trust client labels or random names as content proof, buffer unbounded input, judge
+    archive cost only by compressed size, publish failed originals, or require a particular scanner or
+    private downloads for every legitimate artifact.
+- id: backend-fundamentals.lifecycle.check-readiness-before-admitting-traffic
+  positive_trigger: The listener reports ready while required rules and database initialization are still
+    pending, so routing sends business requests to an unusable instance.
+  paraphrase: A healthy process loses an essential backing service; copied dependency checks in liveness
+    repeatedly restart it, while an optional metrics outage also blocks all traffic.
+  near_miss: The instance has served requests correctly; termination now closes its database pool before
+    already accepted handlers finish.
+  nearest_neighbor: backend-fundamentals.lifecycle.drain-work-before-closing-resources
+  expected_behavior: Advertise only completed required serving capabilities, use bounded side-effect-free
+    readiness observation, distinguish restart/liveness from routing admission, and preserve the contract
+    for optional features.
+  forbidden_behavior: Equate an open port or fixed delay with completed initialization, perform business
+    writes in probes, restart healthy processes on every dependency outage, or drain all accepted work
+    as a startup prerequisite.

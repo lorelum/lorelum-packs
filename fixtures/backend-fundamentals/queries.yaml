@@ -1,0 +1,1037 @@
+fixture_set: backend-fundamentals-queries
+evaluation_only: true
+target_pack: backend-fundamentals
+description: 'Frozen English retrieval hypotheses for 30 decisions: three positives and two boundary contrasts
+  per Practice. Original query texts are retained; the removed connection target is explicitly migrated.
+  Not runtime input or proof of behavior.'
+queries:
+- id: api-safe-read
+  kind: positive
+  status: frozen
+  text: A link preview fetches our GET confirmation URL and accidentally submits the purchase. Where should
+    confirmation happen?
+  expect: backend-fundamentals.api.preserve-safe-read-semantics
+- id: api-safe-read-paraphrase
+  kind: positive
+  status: frozen
+  text: Crawlers visit a download page that also cancels an order. Is the HTTP handler safe for automated
+    fetching?
+  expect: backend-fundamentals.api.preserve-safe-read-semantics
+- id: api-bounded-list
+  kind: positive
+  status: frozen
+  text: The customer listing loads every matching record into memory as the table grows. How should we
+    cap the response?
+  expect: backend-fundamentals.api.bound-collection-results
+- id: api-bounded-list-paraphrase
+  kind: positive
+  status: frozen
+  text: Clients can request a million items by changing page_size, despite our default of twenty. What
+    limit belongs on this endpoint?
+  expect: backend-fundamentals.api.bound-collection-results
+- id: api-failure-contract
+  kind: positive
+  status: frozen
+  text: Our REST endpoint catches a database outage and sends status 200 with an empty array, making callers
+    think there are no orders.
+  expect: backend-fundamentals.api.express-http-failures
+- id: api-failure-contract-paraphrase
+  kind: positive
+  status: frozen
+  text: Invalid input and a server crash both become HTTP 500. How should consumers distinguish these
+    failures without seeing stack traces?
+  expect: backend-fundamentals.api.express-http-failures
+- id: security-entry
+  kind: positive
+  status: frozen
+  text: The admin button is hidden for regular users but curl can still invoke its HTTP operation without
+    credentials.
+  expect: backend-fundamentals.security.enforce-protected-entry-access
+- id: security-entry-paraphrase
+  kind: positive
+  status: frozen
+  text: An internal admin route trusts a user ID header even though clients can bypass the identity gateway
+    and send the header themselves.
+  expect: backend-fundamentals.security.enforce-protected-entry-access
+- id: security-resource
+  kind: positive
+  status: frozen
+  text: Alice has a valid session and changes the invoice ID in the URL to read Bob's bill. Which permission
+    is missing?
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: security-resource-paraphrase
+  kind: positive
+  status: frozen
+  text: A logged-in organization member updates a document in another tenant because the API checks only
+    that the session exists.
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: security-password
+  kind: positive
+  status: frozen
+  text: Registration stores SHA256 of each password so login can compare it later. Is this suitable if
+    the user table leaks?
+  expect: backend-fundamentals.security.hash-passwords-for-storage
+- id: security-password-paraphrase
+  kind: positive
+  status: frozen
+  text: We plan to encrypt account secrets with a reversible key to verify future logins. What should
+    be stored instead?
+  expect: backend-fundamentals.security.hash-passwords-for-storage
+- id: data-uniqueness
+  kind: positive
+  status: frozen
+  text: Two simultaneous signups both find the email unused and both insert an account. How do we prevent
+    duplicate committed rows?
+  expect: backend-fundamentals.data.enforce-uniqueness-in-database
+- id: data-uniqueness-paraphrase
+  kind: positive
+  status: frozen
+  text: A SELECT before INSERT passes in two workers racing to claim the same booking reference. Where
+    must the invariant be enforced?
+  expect: backend-fundamentals.data.enforce-uniqueness-in-database
+- id: data-atomicity
+  kind: positive
+  status: retired
+  retired_reason: Pre-retrieval discipline check found a four-word overlap with Practice applicability.
+  replacement_queries:
+  - data-atomicity-v2
+  text: Creating an order inserts its header but a later line-item write fails, leaving an incomplete
+    purchase in the same database.
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: data-atomicity-paraphrase
+  kind: positive
+  status: retired
+  retired_reason: Pre-retrieval discipline check found a four-word overlap with Practice applicability.
+  replacement_queries:
+  - data-atomicity-paraphrase-v2
+  text: A balance transfer commits the debit before the credit throws. How can related SQL changes succeed
+    or fail together?
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: data-index
+  kind: positive
+  status: frozen
+  text: A slow customer lookup is prompting us to index every column. Which execution evidence should
+    decide the useful index?
+  expect: backend-fundamentals.data.justify-indexes-with-query-plans
+- id: data-index-paraphrase
+  kind: positive
+  status: frozen
+  text: EXPLAIN shows a sequential scan on a tiny table; should we force an index before measuring actual
+    rows and timing?
+  expect: backend-fundamentals.data.justify-indexes-with-query-plans
+- id: data-connections
+  kind: positive
+  status: frozen
+  text: After failed requests, PostgreSQL sessions remain checked out and incoming traffic waits forever
+    for a client.
+  expect: backend-fundamentals.data.return-acquired-connections
+  previous_expect: backend-fundamentals.data.bound-and-release-database-connections
+  migration_kind: replace
+  migration_reason: Split the combined connection Practice into acquisition cleanup and deployment capacity
+    decisions.
+- id: data-connections-paraphrase
+  kind: positive
+  status: frozen
+  text: Each replica creates a new database client per request, and increasing server replicas exhausts
+    the database session budget.
+  expect: backend-fundamentals.data.budget-deployment-connections
+  previous_expect: backend-fundamentals.data.bound-and-release-database-connections
+  migration_kind: replace
+  migration_reason: Split the combined connection Practice into acquisition cleanup and deployment capacity
+    decisions.
+- id: neighbor-safe-read
+  kind: neighbor
+  status: frozen
+  text: A GET handler never changes business state, but denied credentials produce status 200 and an empty
+    object. Only the failure representation needs repair.
+  resembles: backend-fundamentals.api.preserve-safe-read-semantics
+  expect: backend-fundamentals.api.express-http-failures
+- id: neighbor-list
+  kind: neighbor
+  status: frozen
+  text: Page bounds and sorting already work. We only need the HTTP response for a rejected invalid page
+    size without inventing a new error envelope.
+  resembles: backend-fundamentals.api.bound-collection-results
+  expect: backend-fundamentals.api.express-http-failures
+- id: neighbor-failures
+  kind: neighbor
+  status: frozen
+  text: Error status and bodies are correct, but a GET URL confirms a destructive action as soon as an
+    email scanner visits it.
+  resembles: backend-fundamentals.api.express-http-failures
+  expect: backend-fundamentals.api.preserve-safe-read-semantics
+- id: neighbor-entry
+  kind: neighbor
+  status: frozen
+  text: Authentication and route-level permission are enforced on every path. A member can still substitute
+    another tenant's document ID to edit that document.
+  resembles: backend-fundamentals.security.enforce-protected-entry-access
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: neighbor-resource
+  kind: neighbor
+  status: frozen
+  text: The object policy works for verified users, but an exposed origin accepts anonymous requests and
+    trusts a forged identity header outside the gateway.
+  resembles: backend-fundamentals.security.authorize-target-resource
+  expect: backend-fundamentals.security.enforce-protected-entry-access
+- id: neighbor-password
+  kind: neighbor
+  status: frozen
+  text: Password hashing and verification are correct. The remaining bug lets a valid user download another
+    tenant's invoice merely by changing its ID.
+  resembles: backend-fundamentals.security.hash-passwords-for-storage
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: neighbor-uniqueness
+  kind: neighbor
+  status: frozen
+  text: Product keys are already unique. A stock change and its required audit insert commit separately
+    and can leave half the operation persisted.
+  resembles: backend-fundamentals.data.enforce-uniqueness-in-database
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: neighbor-atomicity
+  kind: neighbor
+  status: frozen
+  text: All required SQL writes use one transaction correctly, but its exception path never releases the
+    checked-out client and eventually exhausts the pool.
+  resembles: backend-fundamentals.data.group-atomic-database-writes
+  expect: backend-fundamentals.data.return-acquired-connections
+  previous_expect: backend-fundamentals.data.bound-and-release-database-connections
+  migration_kind: replace
+  migration_reason: Split the combined connection Practice into acquisition cleanup and deployment capacity
+    decisions.
+- id: neighbor-index
+  kind: neighbor
+  status: frozen
+  text: No lookup performance issue exists. Two writers may persist the same business identifier and we
+    need a correctness guarantee, not faster reads.
+  resembles: backend-fundamentals.data.justify-indexes-with-query-plans
+  expect: backend-fundamentals.data.enforce-uniqueness-in-database
+- id: neighbor-connections
+  kind: neighbor
+  status: frozen
+  text: Pool cleanup and deployment capacity are correct. The balance update and its mandatory audit row
+    still have separate commits and can diverge after a failure.
+  resembles: backend-fundamentals.data.budget-deployment-connections
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: data-atomicity-v2
+  kind: positive
+  status: frozen
+  text: Creating an order persists its header but inserting a required line later throws, leaving an incomplete
+    purchase. Both tables reside in PostgreSQL.
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: data-atomicity-paraphrase-v2
+  kind: positive
+  status: frozen
+  text: A balance transfer commits the debit before the credit throws. How do we prevent a partially persisted
+    transfer across these SQL statements?
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: api.preserve-safe-read-semantics.p3
+  kind: positive
+  status: frozen
+  text: The preview URL changes a subscription even when a crawler fetches it. Which HTTP operation should
+    own that effect?
+  expect: backend-fundamentals.api.preserve-safe-read-semantics
+- id: api.preserve-safe-read-semantics.n2
+  kind: neighbor
+  status: frozen
+  text: The settings mutation already uses POST. A malicious site can submit it with the victim browser
+    cookie; what request protection is missing?
+  resembles: backend-fundamentals.api.preserve-safe-read-semantics
+  expect: backend-fundamentals.security.protect-cookie-authenticated-writes
+- id: api.bound-collection-results.p3
+  kind: positive
+  status: frozen
+  text: Records with identical timestamps move unpredictably between pages, and callers cannot tell whether
+    a full response has more items.
+  expect: backend-fundamentals.api.bound-collection-results
+- id: api.bound-collection-results.n2
+  kind: neighbor
+  status: frozen
+  text: The result page contains twenty tickets, but its serializer issues another SQL lookup for each
+    assignee. How do we remove that growth?
+  resembles: backend-fundamentals.api.bound-collection-results
+  expect: backend-fundamentals.data.batch-required-relations
+- id: api.express-http-failures.p3
+  kind: positive
+  status: frozen
+  text: The database error contains a connection password. We need a safe 500 response and usable restricted
+    diagnostics without copying the exception verbatim.
+  expect: backend-fundamentals.api.express-http-failures
+- id: api.express-http-failures.n2
+  kind: neighbor
+  status: frozen
+  text: Clients already receive a generic safe failure, but the internal logger dumps request credentials
+    from the nested client error.
+  resembles: backend-fundamentals.api.express-http-failures
+  expect: backend-fundamentals.security.exclude-secrets-from-logs
+- id: security.enforce-protected-entry-access.p3
+  kind: positive
+  status: frozen
+  text: A new export route accidentally skips the existing login middleware while its browser screen remains
+    restricted.
+  expect: backend-fundamentals.security.enforce-protected-entry-access
+- id: security.enforce-protected-entry-access.n2
+  kind: neighbor
+  status: frozen
+  text: A machine callback has a public route, but its signed payload was decoded and changed before the
+    sender verification helper sees it.
+  resembles: backend-fundamentals.security.enforce-protected-entry-access
+  expect: backend-fundamentals.security.verify-webhook-message-signatures
+- id: security.authorize-target-resource.p3
+  kind: positive
+  status: frozen
+  text: An anonymous attachment route must serve published files while keeping private files hidden, even
+    when someone guesses their IDs.
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: security.authorize-target-resource.n2
+  kind: neighbor
+  status: frozen
+  text: The legitimate account owner can edit the record, but a third-party page can trigger that edit
+    using the browser session automatically.
+  resembles: backend-fundamentals.security.authorize-target-resource
+  expect: backend-fundamentals.security.protect-cookie-authenticated-writes
+- id: security.hash-passwords-for-storage.p3
+  kind: positive
+  status: frozen
+  text: An SSO-only service plans a local password column even though its identity provider owns password
+    verification.
+  expect: backend-fundamentals.security.hash-passwords-for-storage
+- id: security.hash-passwords-for-storage.n2
+  kind: neighbor
+  status: frozen
+  text: The stored password verifier is correct, but failed registration logs the submitted password inside
+    the validation object.
+  resembles: backend-fundamentals.security.hash-passwords-for-storage
+  expect: backend-fundamentals.security.exclude-secrets-from-logs
+- id: data.enforce-uniqueness-in-database.p3
+  kind: positive
+  status: frozen
+  text: A PostgreSQL insert raises a duplicate-key error inside a transaction; the catch block immediately
+    queries the existing record without recovering the transaction.
+  expect: backend-fundamentals.data.enforce-uniqueness-in-database
+- id: data.enforce-uniqueness-in-database.n2
+  kind: neighbor
+  status: frozen
+  text: Each reward event has a distinct ID constraint, but retries can credit points again because the
+    completion record and credit have separate commits.
+  resembles: backend-fundamentals.data.enforce-uniqueness-in-database
+  expect: backend-fundamentals.data.commit-event-deduplication-with-effects
+- id: data.group-atomic-database-writes.p3
+  kind: positive
+  status: frozen
+  text: A local transfer debits one balance before the matching credit throws; how do we prevent a half-persisted
+    operation?
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: data.group-atomic-database-writes.n2
+  kind: neighbor
+  status: frozen
+  text: Every order write is atomic, but two concurrent requests can still create the same tenant reference
+    because no database key enforces it.
+  resembles: backend-fundamentals.data.group-atomic-database-writes
+  expect: backend-fundamentals.data.enforce-uniqueness-in-database
+- id: data.justify-indexes-with-query-plans.p3
+  kind: positive
+  status: frozen
+  text: An index was suggested for slow requests, but profiling locates the delay in waiting for a free
+    database client rather than statement execution.
+  expect: backend-fundamentals.data.justify-indexes-with-query-plans
+- id: data.justify-indexes-with-query-plans.n2
+  kind: neighbor
+  status: frozen
+  text: Each SQL statement is fast, but serializing fifty parents sends fifty more relation queries.
+  resembles: backend-fundamentals.data.justify-indexes-with-query-plans
+  expect: backend-fundamentals.data.batch-required-relations
+- id: data.return-acquired-connections.p2
+  kind: positive
+  status: frozen
+  text: Rollback itself fails after an insert error. Should that broken client be put back into circulation?
+  expect: backend-fundamentals.data.return-acquired-connections
+- id: data.return-acquired-connections.p3
+  kind: positive
+  status: frozen
+  text: A successful query returns its client, but cancellation and exception paths gradually consume
+    all pooled slots.
+  expect: backend-fundamentals.data.return-acquired-connections
+- id: data.return-acquired-connections.n1
+  kind: neighbor
+  status: frozen
+  text: All checked-out clients return correctly. Increasing the autoscaler ceiling would nevertheless
+    triple total database sessions.
+  resembles: backend-fundamentals.data.return-acquired-connections
+  expect: backend-fundamentals.data.budget-deployment-connections
+- id: data.return-acquired-connections.n2
+  kind: neighbor
+  status: frozen
+  text: Connection cleanup works during ordinary requests, but SIGTERM closes the shared pool before an
+    accepted handler reaches its final SQL write.
+  resembles: backend-fundamentals.data.return-acquired-connections
+  expect: backend-fundamentals.lifecycle.drain-work-before-closing-resources
+- id: data.budget-deployment-connections.p2
+  kind: positive
+  status: frozen
+  text: A rolling update doubles simultaneous processes; copying the same per-process pool maximum no
+    longer fits the database ceiling.
+  expect: backend-fundamentals.data.budget-deployment-connections
+- id: data.budget-deployment-connections.p3
+  kind: positive
+  status: frozen
+  text: The application moves behind a transaction pooler. How should client limits and backend connections
+    be accounted for without assuming they are identical?
+  expect: backend-fundamentals.data.budget-deployment-connections
+- id: data.budget-deployment-connections.n2
+  kind: neighbor
+  status: frozen
+  text: Replica counts and pool maxima fit the allocation. A query exception exits before release and
+    slowly exhausts one process.
+  resembles: backend-fundamentals.data.budget-deployment-connections
+  expect: backend-fundamentals.data.return-acquired-connections
+- id: security.exclude-secrets-from-logs.p1
+  kind: positive
+  status: frozen
+  text: A failed upstream request records its Authorization token inside an exception cause even though
+    the normal request logger redacts headers.
+  expect: backend-fundamentals.security.exclude-secrets-from-logs
+- id: security.exclude-secrets-from-logs.p2
+  kind: positive
+  status: frozen
+  text: Debug logging dumps the full runtime configuration, including the production database connection
+    password.
+  expect: backend-fundamentals.security.exclude-secrets-from-logs
+- id: security.exclude-secrets-from-logs.p3
+  kind: positive
+  status: frozen
+  text: A request URL contains a recovery token; the application logs the raw URL on both success and
+    failure.
+  expect: backend-fundamentals.security.exclude-secrets-from-logs
+- id: security.exclude-secrets-from-logs.n1
+  kind: neighbor
+  status: frozen
+  text: Logs already contain safe fields. The HTTP exception wrapper still sends raw SQL text and stack
+    details to clients.
+  resembles: backend-fundamentals.security.exclude-secrets-from-logs
+  expect: backend-fundamentals.api.express-http-failures
+- id: security.exclude-secrets-from-logs.n2
+  kind: neighbor
+  status: frozen
+  text: No credentials are being logged. Registration instead persists recoverable encrypted login passwords.
+  resembles: backend-fundamentals.security.exclude-secrets-from-logs
+  expect: backend-fundamentals.security.hash-passwords-for-storage
+- id: lifecycle.drain-work-before-closing-resources.p1
+  kind: positive
+  status: frozen
+  text: SIGTERM calls pool.end and server.close together while an accepted invoice request still needs
+    a database write.
+  expect: backend-fundamentals.lifecycle.drain-work-before-closing-resources
+- id: lifecycle.drain-work-before-closing-resources.p2
+  kind: positive
+  status: frozen
+  text: A deployment waits a fixed sleep before exit and sometimes interrupts handlers despite having
+    a termination grace period.
+  expect: backend-fundamentals.lifecycle.drain-work-before-closing-resources
+- id: lifecycle.drain-work-before-closing-resources.p3
+  kind: positive
+  status: frozen
+  text: The server stops listening, but an untracked background task keeps using a client that a close
+    hook has already shut down.
+  expect: backend-fundamentals.lifecycle.drain-work-before-closing-resources
+- id: lifecycle.drain-work-before-closing-resources.n1
+  kind: neighbor
+  status: frozen
+  text: Shutdown ordering is correct. During normal traffic a checked-out SQL client is lost on an early
+    return.
+  resembles: backend-fundamentals.lifecycle.drain-work-before-closing-resources
+  expect: backend-fundamentals.data.return-acquired-connections
+- id: lifecycle.drain-work-before-closing-resources.n2
+  kind: neighbor
+  status: frozen
+  text: Every shutdown releases clients safely. A rolling update still doubles the process count beyond
+    the available database session budget.
+  resembles: backend-fundamentals.lifecycle.drain-work-before-closing-resources
+  expect: backend-fundamentals.data.budget-deployment-connections
+- id: data.retire-old-schema-after-callers.p1
+  kind: positive
+  status: frozen
+  text: A release drops an old column before the older API replicas and nightly report have stopped querying
+    it.
+  expect: backend-fundamentals.data.retire-old-schema-after-callers
+- id: data.retire-old-schema-after-callers.p2
+  kind: positive
+  status: frozen
+  text: A field rename generated DROP plus ADD and loses stored values while rolling instances still use
+    the previous name.
+  expect: backend-fundamentals.data.retire-old-schema-after-callers
+- id: data.retire-old-schema-after-callers.p3
+  kind: positive
+  status: frozen
+  text: A backfill copies values once while an older worker continues writing only the retired column,
+    so the replacement can miss live edits.
+  expect: backend-fundamentals.data.retire-old-schema-after-callers
+- id: data.retire-old-schema-after-callers.n1
+  kind: neighbor
+  status: frozen
+  text: No columns are being removed. A new tenant reference constraint must reject concurrent duplicate
+    inserts and handle existing duplicates.
+  resembles: backend-fundamentals.data.retire-old-schema-after-callers
+  expect: backend-fundamentals.data.enforce-uniqueness-in-database
+- id: data.retire-old-schema-after-callers.n2
+  kind: neighbor
+  status: frozen
+  text: The schema remains unchanged. Two required local writes can commit separately after a mid-operation
+    error.
+  resembles: backend-fundamentals.data.retire-old-schema-after-callers
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: data.parameterize-query-values.p1
+  kind: positive
+  status: frozen
+  text: A report inserts a customer reference containing apostrophes into an SQL string after checking
+    its length.
+  expect: backend-fundamentals.data.parameterize-query-values
+- id: data.parameterize-query-values.p2
+  kind: positive
+  status: frozen
+  text: An ORM raw expression interpolates text previously stored in the database, treating it as trusted
+    query syntax.
+  expect: backend-fundamentals.data.parameterize-query-values
+- id: data.parameterize-query-values.p3
+  kind: positive
+  status: frozen
+  text: Clients choose the sort field. The handler accepts identifier-shaped text and appends it to ORDER
+    BY, including internal columns.
+  expect: backend-fundamentals.data.parameterize-query-values
+- id: data.parameterize-query-values.n1
+  kind: neighbor
+  status: frozen
+  text: The SQL is correctly bound, but its WHERE clause omits the requesting tenant and returns another
+    customer record.
+  resembles: backend-fundamentals.data.parameterize-query-values
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: data.parameterize-query-values.n2
+  kind: neighbor
+  status: frozen
+  text: Query values and sort choices are safe. A justified performance change still needs comparison
+    of candidate indexes against representative plans.
+  resembles: backend-fundamentals.data.parameterize-query-values
+  expect: backend-fundamentals.data.justify-indexes-with-query-plans
+- id: data.batch-required-relations.p1
+  kind: positive
+  status: frozen
+  text: Serializing a paged ticket list fetches the owner again for every ticket, although the page itself
+    is limited.
+  expect: backend-fundamentals.data.batch-required-relations
+- id: data.batch-required-relations.p2
+  kind: positive
+  status: frozen
+  text: A bulk prefetch removes dozens of SQL calls but accidentally drops the viewer-specific filter
+    on private comments.
+  expect: backend-fundamentals.data.batch-required-relations
+- id: data.batch-required-relations.p3
+  kind: positive
+  status: frozen
+  text: A serializer applies a relation filter after preloading and still sends one extra SQL lookup per
+    project.
+  expect: backend-fundamentals.data.batch-required-relations
+- id: data.batch-required-relations.n1
+  kind: neighbor
+  status: frozen
+  text: The serializer already uses fixed batches. The endpoint loads the full history before slicing
+    to a requested page.
+  resembles: backend-fundamentals.data.batch-required-relations
+  expect: backend-fundamentals.api.bound-collection-results
+- id: data.batch-required-relations.n2
+  kind: neighbor
+  status: frozen
+  text: Related rows arrive in a few bounded SQL calls. One of those statements is slow and needs a plan-based
+    index decision.
+  resembles: backend-fundamentals.data.batch-required-relations
+  expect: backend-fundamentals.data.justify-indexes-with-query-plans
+- id: security.protect-cookie-authenticated-writes.p1
+  kind: positive
+  status: frozen
+  text: A JSON address-change endpoint still accepts the session cookie but has been exempted from the
+    framework antiforgery check.
+  expect: backend-fundamentals.security.protect-cookie-authenticated-writes
+- id: security.protect-cookie-authenticated-writes.p2
+  kind: positive
+  status: frozen
+  text: A browser sends its existing login cookie when another site submits a form to our settings route.
+  expect: backend-fundamentals.security.protect-cookie-authenticated-writes
+- id: security.protect-cookie-authenticated-writes.p3
+  kind: positive
+  status: frozen
+  text: The API accepts bearer requests and session fallback; removing the browser token check for integrations
+    also exposes cookie-authenticated writes.
+  expect: backend-fundamentals.security.protect-cookie-authenticated-writes
+- id: security.protect-cookie-authenticated-writes.n1
+  kind: neighbor
+  status: frozen
+  text: A callback accepts no browser sessions and is authenticated by a sender signature, but JSON middleware
+    changed the signed bytes.
+  resembles: backend-fundamentals.security.protect-cookie-authenticated-writes
+  expect: backend-fundamentals.security.verify-webhook-message-signatures
+- id: security.protect-cookie-authenticated-writes.n2
+  kind: neighbor
+  status: frozen
+  text: The form includes a valid antiforgery token, but changing its invoice ID lets the caller update
+    a different tenant invoice.
+  resembles: backend-fundamentals.security.protect-cookie-authenticated-writes
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: security.enforce-scoped-rate-limits.p1
+  kind: positive
+  status: frozen
+  text: A multi-worker export API keeps a separate in-memory request counter in each process, multiplying
+    the promised allowance.
+  expect: backend-fundamentals.security.enforce-scoped-rate-limits
+- id: security.enforce-scoped-rate-limits.p2
+  kind: positive
+  status: frozen
+  text: Distributed password guessing targets one submitted account from many source addresses; that account
+    is a budget target, not an authenticated identity.
+  expect: backend-fundamentals.security.enforce-scoped-rate-limits
+- id: security.enforce-scoped-rate-limits.p3
+  kind: positive
+  status: frozen
+  text: The limiter counter store becomes unavailable. The service must distinguish admission failure
+    from a caller actually exceeding quota.
+  expect: backend-fundamentals.security.enforce-scoped-rate-limits
+- id: security.enforce-scoped-rate-limits.n1
+  kind: neighbor
+  status: frozen
+  text: Incoming request frequency is within policy, but too many service processes reserve SQL sessions
+    even while idle.
+  resembles: backend-fundamentals.security.enforce-scoped-rate-limits
+  expect: backend-fundamentals.data.budget-deployment-connections
+- id: security.enforce-scoped-rate-limits.n2
+  kind: neighbor
+  status: frozen
+  text: The quota is already correctly enforced. The remaining task is representing an exceeded allowance
+    in the established HTTP error format.
+  resembles: backend-fundamentals.security.enforce-scoped-rate-limits
+  expect: backend-fundamentals.api.express-http-failures
+- id: security.generate-upload-storage-keys.p1
+  kind: positive
+  status: frozen
+  text: An attachment handler joins the submitted filename to the upload directory, allowing paths and
+    same-name replacement.
+  expect: backend-fundamentals.security.generate-upload-storage-keys
+- id: security.generate-upload-storage-keys.p2
+  kind: positive
+  status: frozen
+  text: The direct-upload endpoint signs any object key supplied by the browser, including an existing
+    attachment destination.
+  expect: backend-fundamentals.security.generate-upload-storage-keys
+- id: security.generate-upload-storage-keys.p3
+  kind: positive
+  status: frozen
+  text: Upload completion accepts an echoed bucket key without resolving the pending file record that
+    the server allocated.
+  expect: backend-fundamentals.security.generate-upload-storage-keys
+- id: security.generate-upload-storage-keys.n1
+  kind: neighbor
+  status: frozen
+  text: Every upload destination is server-owned, but an authenticated user can download another case
+    attachment by guessing its record ID.
+  resembles: backend-fundamentals.security.generate-upload-storage-keys
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: security.generate-upload-storage-keys.n2
+  kind: neighbor
+  status: frozen
+  text: Storage keys cannot be selected by clients. The failure logger still dumps a signed upload URL
+    containing credentials.
+  resembles: backend-fundamentals.security.generate-upload-storage-keys
+  expect: backend-fundamentals.security.exclude-secrets-from-logs
+- id: security.verify-webhook-message-signatures.p1
+  kind: positive
+  status: frozen
+  text: A payment callback activates a subscription before checking whether the sender signature is valid.
+  expect: backend-fundamentals.security.verify-webhook-message-signatures
+- id: security.verify-webhook-message-signatures.p2
+  kind: positive
+  status: frozen
+  text: Common JSON middleware parses the event, then the handler verifies a newly serialized body and
+    rejects legitimate whitespace variations.
+  expect: backend-fundamentals.security.verify-webhook-message-signatures
+- id: security.verify-webhook-message-signatures.p3
+  kind: positive
+  status: frozen
+  text: The production receiver uses an API credential as its callback signing secret and proposes accepting
+    unsigned events when checks fail.
+  expect: backend-fundamentals.security.verify-webhook-message-signatures
+- id: security.verify-webhook-message-signatures.n1
+  kind: neighbor
+  status: frozen
+  text: The callback signature is valid. Repeated concurrent delivery of that event still grants the same
+    reward twice.
+  resembles: backend-fundamentals.security.verify-webhook-message-signatures
+  expect: backend-fundamentals.data.commit-event-deduplication-with-effects
+- id: security.verify-webhook-message-signatures.n2
+  kind: neighbor
+  status: frozen
+  text: This is a browser form endpoint using cookies, not a sender-signed callback, and another site
+    can trigger an account change.
+  resembles: backend-fundamentals.security.verify-webhook-message-signatures
+  expect: backend-fundamentals.security.protect-cookie-authenticated-writes
+- id: data.commit-event-deduplication-with-effects.p1
+  kind: positive
+  status: frozen
+  text: A reward handler commits a processed-event ID before incrementing points, then crashes and skips
+    the credit on redelivery.
+  expect: backend-fundamentals.data.commit-event-deduplication-with-effects
+- id: data.commit-event-deduplication-with-effects.p2
+  kind: positive
+  status: frozen
+  text: Two workers process the same authenticated event together and each increments the balance before
+    either inserts its completion row.
+  expect: backend-fundamentals.data.commit-event-deduplication-with-effects
+- id: data.commit-event-deduplication-with-effects.p3
+  kind: positive
+  status: frozen
+  text: An event commit succeeds but its acknowledgement is lost; after restart the sender delivers it
+    again and the local credit must not repeat.
+  expect: backend-fundamentals.data.commit-event-deduplication-with-effects
+- id: data.commit-event-deduplication-with-effects.n1
+  kind: neighbor
+  status: frozen
+  text: The same external event ID is not repeated. Two account registrations race for one username and
+    lack a database uniqueness rule.
+  resembles: backend-fundamentals.data.commit-event-deduplication-with-effects
+  expect: backend-fundamentals.data.enforce-uniqueness-in-database
+- id: data.commit-event-deduplication-with-effects.n2
+  kind: neighbor
+  status: frozen
+  text: Duplicate delivery is already safe, but the webhook handler accepts an event without verifying
+    its sender or original signed bytes.
+  resembles: backend-fundamentals.data.commit-event-deduplication-with-effects
+  expect: backend-fundamentals.security.verify-webhook-message-signatures
+- id: data-concurrent-transition-p1
+  kind: positive
+  status: frozen
+  text: Two checkouts both observe one unit left, calculate zero, and save it. Each request has its own
+    transaction, yet both purchases succeed. How should the decrement decide who wins?
+  expect: backend-fundamentals.data.guard-state-dependent-writes
+- id: data-concurrent-transition-p2
+  kind: positive
+  status: frozen
+  text: Two editors loaded revision 8. The first saved a change, then the second replaced the document
+    using the old content. We must reject stale edits rather than silently discard the first change.
+  expect: backend-fundamentals.data.guard-state-dependent-writes
+- id: data-concurrent-transition-p3
+  kind: positive
+  status: frozen
+  text: A cancellation handler read pending, but a warehouse worker changed the order to shipped before
+    cancellation saved. How can the database refuse that now-invalid transition instead of retrying until
+    it overwrites shipped?
+  expect: backend-fundamentals.data.guard-state-dependent-writes
+- id: data-concurrent-transition-n1
+  kind: neighbor
+  status: frozen
+  text: Inventory uses a conditional decrement that already prevents overselling. The remaining failure
+    commits that decrement even if its required audit insert fails. How should those two effects persist?
+  resembles: backend-fundamentals.data.guard-state-dependent-writes
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: data-concurrent-transition-n2
+  kind: neighbor
+  status: frozen
+  text: The status predicate already rejects races correctly. An accepted transition then updates its
+    required local history through a separate pool call, leaving the status committed when history fails.
+    Only this partial persistence needs fixing.
+  resembles: backend-fundamentals.data.guard-state-dependent-writes
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: data-related-identity-p1
+  kind: positive
+  status: frozen
+  text: The API checks that a project exists, but a maintenance job can delete it before a task insert
+    completes. Imports bypass that lookup entirely. Where should the no-orphan guarantee live?
+  expect: backend-fundamentals.data.enforce-related-row-integrity
+- id: data-related-identity-p2
+  kind: positive
+  status: frozen
+  text: A task's tenant ID and project ID each point to real rows, yet they may belong to different organizations.
+    We need the stored pair to identify a project inside that tenant across all writers, not another permission
+    check.
+  expect: backend-fundamentals.data.enforce-related-row-integrity
+- id: data-related-identity-p3
+  kind: positive
+  status: frozen
+  text: Some records may omit their assigned parent, while others require it. We are adding database references
+    and must decide how composite nulls behave and whether deleting the parent rejects, clears a reference,
+    or removes dependents.
+  expect: backend-fundamentals.data.enforce-related-row-integrity
+- id: data-related-identity-n1
+  kind: neighbor
+  status: frozen
+  text: Membership references already prevent missing organizations and users. Two simultaneous requests
+    can still create the same organization-user pair twice. How do we enforce one membership for that
+    pair?
+  resembles: backend-fundamentals.data.enforce-related-row-integrity
+  expect: backend-fundamentals.data.enforce-uniqueness-in-database
+- id: data-related-identity-n2
+  kind: neighbor
+  status: frozen
+  text: Every child points to the correct existing parent, and deletion policy works. The new requirement
+    is preventing repeated external references within one tenant, including concurrent imports that both
+    pass a lookup.
+  resembles: backend-fundamentals.data.enforce-related-row-integrity
+  expect: backend-fundamentals.data.enforce-uniqueness-in-database
+- id: data-exact-amount-p1
+  kind: positive
+  status: frozen
+  text: Our billing code parses price text into binary floating point before writing a decimal column.
+    Totals and refunds sometimes disagree by a fraction. Which representation and rounding boundary should
+    carry authoritative values?
+  expect: backend-fundamentals.data.represent-money-exactly
+- id: data-exact-amount-p2
+  kind: positive
+  status: frozen
+  text: A payment adapter multiplies every refund by one hundred. Adding yen exposes that assumption,
+    and another provider has operation-specific denominations. How should currency and units determine
+    conversion without silently rounding input?
+  expect: backend-fundamentals.data.represent-money-exactly
+- id: data-exact-amount-p3
+  kind: positive
+  status: frozen
+  text: PostgreSQL stores our ledger units exactly, but a JavaScript consumer changes a very large integer
+    when decoding its JSON numeric field. How do we preserve the amount across the wire and driver mappings?
+  expect: backend-fundamentals.data.represent-money-exactly
+- id: data-exact-amount-n1
+  kind: neighbor
+  status: frozen
+  text: Refund amounts already retain exact units and currency through serialization. Updating the balance
+    can nevertheless commit before its mandatory ledger insert fails. We need one persistence outcome
+    for the pair, not a numeric redesign.
+  resembles: backend-fundamentals.data.represent-money-exactly
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: data-exact-amount-n2
+  kind: neighbor
+  status: frozen
+  text: Debit and credit values have correct exact arithmetic, rounding, and currency metadata. A local
+    transfer still leaves its debit persisted when the credit write fails. What database boundary prevents
+    that half-transfer?
+  resembles: backend-fundamentals.data.represent-money-exactly
+  expect: backend-fundamentals.data.group-atomic-database-writes
+- id: api-personalized-cache-p1
+  kind: positive
+  status: frozen
+  text: The edge stores the first customer's dashboard under its path, then another signed-in customer
+    receives that body without running our handler. What response reuse policy is missing?
+  expect: backend-fundamentals.api.isolate-personalized-cache-responses
+- id: api-personalized-cache-p2
+  kind: positive
+  status: frozen
+  text: Our account page sends no-cache because we believe it forbids disk retention. We need to decide
+    whether browser storage is acceptable while keeping the anonymous product feed fast through the CDN.
+  expect: backend-fundamentals.api.isolate-personalized-cache-responses
+- id: api-personalized-cache-p3
+  kind: positive
+  status: frozen
+  text: A proxy key includes the URL but ignores a trusted tenant selection and language header. The generated
+    report differs for those inputs; how should eligibility and variant selection be separated?
+  expect: backend-fundamentals.api.isolate-personalized-cache-responses
+- id: api-personalized-cache-n1
+  kind: neighbor
+  status: frozen
+  text: All HTTP reuse is disabled and the origin handles each download. A member can nevertheless fetch
+    a private invoice from a different organization by changing its identifier; what permission decision
+    is absent?
+  resembles: backend-fundamentals.api.isolate-personalized-cache-responses
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: api-personalized-cache-n2
+  kind: neighbor
+  status: frozen
+  text: The CDN serves only public assets and bypasses every document request. Our document lookup still
+    treats any valid login as sufficient, ignoring a private document's sharing grants. What rule must
+    govern the read?
+  resembles: backend-fundamentals.api.isolate-personalized-cache-responses
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: api-write-projection-p1
+  kind: positive
+  status: frozen
+  text: A user is allowed to edit their profile, but adding role=administrator to its JSON succeeds because
+    the handler copies every supplied property into the ORM object. Which assignments should be permitted?
+  expect: backend-fundamentals.api.bind-only-declared-write-fields
+- id: api-write-projection-p2
+  kind: positive
+  status: frozen
+  text: We list editable top-level account attributes, yet replacing the nested address also accepts ownerId.
+    A patch copy operation reaches the same metadata. How should the write projection cover these paths?
+  expect: backend-fundamentals.api.bind-only-declared-write-fields
+- id: api-write-projection-p3
+  kind: positive
+  status: frozen
+  text: Ordinary account edits must not set balances or workflow state, while a delegated transfer command
+    intentionally changes ownership. We need separate assignment contracts without banning the legitimate
+    privileged command.
+  expect: backend-fundamentals.api.bind-only-declared-write-fields
+- id: api-write-projection-n1
+  kind: neighbor
+  status: frozen
+  text: Our update mapper accepts only displayName and rejects all extra properties, but a caller can
+    change the record identifier and update someone else's private profile. Which target check is missing?
+  resembles: backend-fundamentals.api.bind-only-declared-write-fields
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: api-write-projection-n2
+  kind: neighbor
+  status: frozen
+  text: Every imported row uses the approved editable property list. The batch operation still modifies
+    records outside the caller's organization because it checks permission only for the first row. What
+    policy needs applying to the remaining targets?
+  resembles: backend-fundamentals.api.bind-only-declared-write-fields
+  expect: backend-fundamentals.security.authorize-target-resource
+- id: api-browser-origin-p1
+  kind: positive
+  status: frozen
+  text: Our middleware echoes any Origin and sends Allow-Credentials true. A malicious site's JavaScript
+    can read a signed-in user's account JSON; how should we choose the browser sites receiving access?
+  expect: backend-fundamentals.api.allow-only-intended-browser-origins
+- id: api-browser-origin-p2
+  kind: positive
+  status: frozen
+  text: The portal's OPTIONS request succeeds, but its final credentialed GET lacks response access headers.
+    A proxy also reuses the same allow-origin value for different sites. What configuration must agree
+    across these exchanges?
+  expect: backend-fundamentals.api.allow-only-intended-browser-origins
+- id: api-browser-origin-p3
+  kind: positive
+  status: frozen
+  text: We offer an anonymous currency feed to any website and a cookie-backed billing read to one console
+    domain. Can both use a wildcard access header, or do their credential modes require different browser
+    policies?
+  expect: backend-fundamentals.api.allow-only-intended-browser-origins
+- id: api-browser-origin-n1
+  kind: neighbor
+  status: frozen
+  text: Readable cross-site responses are already limited to our trusted console. An attacker's HTML form
+    still changes the victim's delivery address using the browser's login cookie even though it cannot
+    read the reply. What request-intent protection is needed?
+  resembles: backend-fundamentals.api.allow-only-intended-browser-origins
+  expect: backend-fundamentals.security.protect-cookie-authenticated-writes
+- id: api-browser-origin-n2
+  kind: neighbor
+  status: frozen
+  text: Our exact origin grants are correct. A JSON update supports explicit bearer tokens but also silently
+    accepts session cookies, and its antiforgery middleware was removed for machine clients. How should
+    the ambient-credential path be protected?
+  resembles: backend-fundamentals.api.allow-only-intended-browser-origins
+  expect: backend-fundamentals.security.protect-cookie-authenticated-writes
+- id: security-outbound-destination-p1
+  kind: positive
+  status: frozen
+  text: Our image preview accepts a public HTTPS address, but the HTTP client follows its redirect to
+    the instance metadata endpoint. Which destination checks must hold for the connection we actually
+    make?
+  expect: backend-fundamentals.security.constrain-server-fetch-destinations
+- id: security-outbound-destination-p2
+  kind: positive
+  status: frozen
+  text: A document importer approves a hostname after one DNS lookup, then a proxy resolves it again and
+    reaches a private address. How should the approved network destination remain bound to the fetch?
+  expect: backend-fundamentals.security.constrain-server-fetch-destinations
+- id: security-outbound-destination-p3
+  kind: positive
+  status: frozen
+  text: One payroll integration intentionally calls a configured internal host, while customer-provided
+    preview links must reach only public networks. How can their outbound address policies remain distinct
+    through redirects and IPv6 resolution?
+  expect: backend-fundamentals.security.constrain-server-fetch-destinations
+- id: security-outbound-destination-n1
+  kind: neighbor
+  status: frozen
+  text: The importer can contact only its fixed approved service, but anyone can directly invoke the admin
+    import route without a verified session. The missing decision is who may enter that operation.
+  resembles: backend-fundamentals.security.constrain-server-fetch-destinations
+  expect: backend-fundamentals.security.enforce-protected-entry-access
+- id: security-outbound-destination-n2
+  kind: neighbor
+  status: frozen
+  text: All network destinations are server configuration and already enforced. A newly added management
+    transport trusts a role header supplied by arbitrary callers instead of the existing verified principal.
+  resembles: backend-fundamentals.security.constrain-server-fetch-destinations
+  expect: backend-fundamentals.security.enforce-protected-entry-access
+- id: security-upload-content-p1
+  kind: positive
+  status: frozen
+  text: An avatar already receives an opaque server-generated object name, yet anything declaring image/png
+    is immediately available inline. How should actual received bytes become eligible for processing and
+    public delivery?
+  expect: backend-fundamentals.security.admit-only-supported-upload-content
+- id: security-upload-content-p2
+  kind: positive
+  status: frozen
+  text: Our attachment handler trusts Content-Length, buffers the entire body, and later rejects oversized
+    files. A compressed import can also expand far beyond its reported size. Where must intake and processor
+    budgets be enforced?
+  expect: backend-fundamentals.security.admit-only-supported-upload-content
+- id: security-upload-content-p3
+  kind: positive
+  status: frozen
+  text: A direct upload is pending inspection, but a decode timeout currently publishes the original file
+    as a fallback. We need a release rule that keeps unchecked bytes away from consumers without banning
+    legitimate binary downloads.
+  expect: backend-fundamentals.security.admit-only-supported-upload-content
+- id: security-upload-content-n1
+  kind: neighbor
+  status: frozen
+  text: Image decoding and size checks already succeed, but the receiver joins a submitted filename to
+    its disk directory, allowing traversal or same-name replacement. The problem is choosing the destination,
+    not inspecting bytes.
+  resembles: backend-fundamentals.security.admit-only-supported-upload-content
+  expect: backend-fundamentals.security.generate-upload-storage-keys
+- id: security-upload-content-n2
+  kind: neighbor
+  status: frozen
+  text: The attachment has passed its established content checks. Its signed upload grant still accepts
+    any browser-selected object key, so a caller can replace an unrelated existing object.
+  resembles: backend-fundamentals.security.admit-only-supported-upload-content
+  expect: backend-fundamentals.security.generate-upload-storage-keys
+- id: lifecycle-readiness-p1
+  kind: positive
+  status: frozen
+  text: The HTTP listener opens while essential pricing rules and database initialization are pending.
+    Our router already sends quote requests because the health endpoint immediately returns success. What
+    should make an instance eligible for traffic?
+  expect: backend-fundamentals.lifecycle.check-readiness-before-admitting-traffic
+- id: lifecycle-readiness-p2
+  kind: positive
+  status: frozen
+  text: A usable process loses its required store, and checking that dependency in liveness restarts every
+    replica repeatedly. We need to distinguish withdrawing traffic from deciding that the process itself
+    must restart.
+  expect: backend-fundamentals.lifecycle.check-readiness-before-admitting-traffic
+- id: lifecycle-readiness-p3
+  kind: positive
+  status: frozen
+  text: An optional metrics exporter is down, so an otherwise working quote service never joins routing.
+    The probe also runs a schema migration on each request. Which prerequisites should its admission signal
+    actually observe?
+  expect: backend-fundamentals.lifecycle.check-readiness-before-admitting-traffic
+- id: lifecycle-readiness-n1
+  kind: neighbor
+  status: frozen
+  text: Initialization and normal traffic eligibility are correct. On SIGTERM we immediately close the
+    database pool while accepted invoice handlers still need their final writes. How should termination
+    order those users and resources?
+  resembles: backend-fundamentals.lifecycle.check-readiness-before-admitting-traffic
+  expect: backend-fundamentals.lifecycle.drain-work-before-closing-resources
+- id: lifecycle-readiness-n2
+  kind: neighbor
+  status: frozen
+  text: A running worker is being stopped, but it keeps claiming messages while waiting for the whole
+    queue to empty and exceeds its deployment termination deadline. We need to stop intake and settle
+    its owned in-flight work.
+  resembles: backend-fundamentals.lifecycle.check-readiness-before-admitting-traffic
+  expect: backend-fundamentals.lifecycle.drain-work-before-closing-resources
+top_k: 3
+min_top3: 0.9
+practice_migrations:
+- old_practice: backend-fundamentals.data.bound-and-release-database-connections
+  new_practice: backend-fundamentals.data.return-acquired-connections
+  kind: replace
+  reason: Separate independently triggered connection cleanup and deployment budgeting.
+  query_ids:
+  - data-connections
+  - neighbor-atomicity
+- old_practice: backend-fundamentals.data.bound-and-release-database-connections
+  new_practice: backend-fundamentals.data.budget-deployment-connections
+  kind: replace
+  reason: Separate independently triggered connection cleanup and deployment budgeting.
+  query_ids:
+  - data-connections-paraphrase

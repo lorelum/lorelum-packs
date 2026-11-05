@@ -1,0 +1,233 @@
+pack: backend-fundamentals
+slice: query-safety
+researched_on: '2026-11-01'
+language: en
+policy: >-
+  Skills are pinned candidate-research inputs, not instructions or normative authority.
+  Practice procedures, severity, boundaries, scenarios, and examples are independently
+  authored synthesis. Primary documentation supports the technical mechanisms; neither
+  upstream prose nor source code examples are reproduced in the Practices.
+skill_pins:
+  ecc-security-review:
+    repository: https://github.com/affaan-m/ECC
+    requested_repository: https://github.com/affaan-m/everything-claude-code
+    commit_feed: https://github.com/affaan-m/ECC/commits/main/skills/security-review/SKILL.md.atom
+    requested_feed: https://github.com/affaan-m/everything-claude-code/commits/main/skills/security-review/SKILL.md.atom
+    pinned_commit: afa5651e9fcd082ebdc6e8e21189ab491bed7234
+    pin_basis: >-
+      The requested file commit feed redirected to affaan-m/ECC. The first listed
+      file revision was read and used for the immutable raw Skill and license URLs;
+      this is a path-specific pin, not a claim about the latest repository commit.
+    skill_url: https://raw.githubusercontent.com/affaan-m/ECC/afa5651e9fcd082ebdc6e8e21189ab491bed7234/skills/security-review/SKILL.md
+    sections_read:
+      - SQL Injection Prevention
+      - Authentication & Authorization
+      - CSRF Protection
+      - Rate Limiting
+    license: MIT
+    license_evidence: https://raw.githubusercontent.com/affaan-m/ECC/afa5651e9fcd082ebdc6e8e21189ab491bed7234/LICENSE
+    license_observation: Copyright (c) 2026 Affaan Mustafa; MIT grant and notice condition read.
+    limitations: >-
+      Universal token requirements, Strict cookies everywhere, fixed rate numbers,
+      all-endpoint rate limiting, and blanket IP-based policies are not adopted.
+  risco-django:
+    repository: https://github.com/ericrisco/rsc-harness
+    commit_feed: https://github.com/ericrisco/rsc-harness/commits/main/skills/django/SKILL.md.atom
+    pinned_commit: a707f94997e13a3ea29aea8a1755268b4c47c6b8
+    pin_basis: >-
+      First revision listed by the actual SKILL.md file commit feed when read;
+      immutable files were fetched at this path-specific revision.
+    skill_url: https://raw.githubusercontent.com/ericrisco/rsc-harness/a707f94997e13a3ea29aea8a1755268b4c47c6b8/skills/django/SKILL.md
+    related_sections_read:
+      - url: https://raw.githubusercontent.com/ericrisco/rsc-harness/a707f94997e13a3ea29aea8a1755268b4c47c6b8/skills/django/references/orm-performance.md
+        sections: select_related vs prefetch_related vs Prefetch; Proving query counts; Fetch less; Aggregate in the DB
+      - url: https://raw.githubusercontent.com/ericrisco/rsc-harness/a707f94997e13a3ea29aea8a1755268b4c47c6b8/skills/django/references/security.md
+        sections: CSRF & sessions; ORM injection; trusted proxy caveat
+    license: MIT
+    license_evidence: https://raw.githubusercontent.com/ericrisco/rsc-harness/a707f94997e13a3ea29aea8a1755268b4c47c6b8/LICENSE
+    license_observation: Copyright (c) 2026 Eric Risco; MIT grant and notice condition read.
+    limitations: >-
+      The Skill's broad ORM safety wording is narrowed to supported value APIs.
+      Its example-specific query counts, universal existence advice, and claim that
+      an ordinary unprefetched iteration necessarily queries once per row are not
+      adopted. QuerySet.all() alone is not evidence of N+1; consumer relation access is.
+primary_license_evidence:
+  owasp:
+    license: CC-BY-SA-4.0
+    evidence_url: https://github.com/OWASP/CheatSheetSeries
+    observation: Repository license panel and README Creative Commons badge identify CC BY-SA 4.0.
+    use: Technical reference only; no copied prose or examples and no relicensing claim.
+  django:
+    license: BSD-3-Clause
+    evidence_url: https://raw.githubusercontent.com/django/django/stable/5.2.x/LICENSE
+    corroborating_url: https://docs.djangoproject.com/en/5.2/faq/general/#how-is-django-licensed
+    observation: Django Software Foundation and individual contributors; three conditions and disclaimer read.
+    use: Technical reference only; independently constructed prose examples.
+  express-rate-limit:
+    license: MIT
+    evidence_url: https://raw.githubusercontent.com/express-rate-limit/express-rate-limit/main/license
+    observation: Copyright 2023 Nathan Friedly, Vedant K; MIT terms cover software and associated documentation.
+    use: Library semantics reference only; no copied implementation or sample configuration.
+  express-site:
+    license: CC-BY-4.0
+    evidence_url: https://github.com/expressjs/expressjs.com
+    observation: Repository README License section identifies website content as Creative Commons Attribution 4.0 International.
+    use: Proxy-trust semantics reference only; no reproduced text or sample code.
+practices:
+  - id: backend-fundamentals.data.parameterize-query-values
+    path: practices/data/parameterize-query-values.md
+    severity: critical
+    skill_sources:
+      - url: https://raw.githubusercontent.com/affaan-m/ECC/afa5651e9fcd082ebdc6e8e21189ab491bed7234/skills/security-review/SKILL.md
+        role: Candidate support
+        supports: Separate SQL text from data using query parameters; screen raw ORM paths.
+        license_evidence_key: ecc-security-review
+      - url: https://raw.githubusercontent.com/ericrisco/rsc-harness/a707f94997e13a3ea29aea8a1755268b4c47c6b8/skills/django/SKILL.md
+        role: Candidate support
+        supports: Django ORM value parameterization and explicit params for raw SQL.
+        license_evidence_key: risco-django
+      - url: https://raw.githubusercontent.com/ericrisco/rsc-harness/a707f94997e13a3ea29aea8a1755268b4c47c6b8/skills/django/references/security.md
+        role: Mechanism research, screened against primary docs
+        supports: Unquoted Django placeholders with separately passed parameter values.
+        license_evidence_key: risco-django
+    primary_support:
+      - url: https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html
+        sections: Prepared statements; Stored procedures; Allow-list input validation; Detection
+        supports: >-
+          Bound values cannot become SQL syntax; binding does not apply to identifiers
+          or keywords; structural choices belong to fixed application-owned mappings;
+          internal dynamic SQL needs its own binding; validation and quoting do not
+          select authorized identifiers.
+        license_evidence_key: owasp
+      - url: https://docs.djangoproject.com/en/5.2/topics/db/sql/#passing-parameters-into-raw
+        sections: Passing parameters into raw; Executing custom SQL directly
+        supports: Django params API and unquoted percent-s placeholders; interpolation is unsafe.
+        license_evidence_key: django
+    independent_synthesis: >-
+      The value-versus-structure decision procedure, preserving authorization filters,
+      collection-placeholder advice, LIKE semantic boundary, severity, and the invoice
+      report scenario are independently authored. The example uses no copied code.
+    boundaries: >-
+      Static or fixed application-owned fragments are allowed. Parameterization does
+      not authorize rows, select arbitrary identifiers, bound cost, or define wildcard
+      search semantics. No new sanitization framework is proposed.
+  - id: backend-fundamentals.data.batch-required-relations
+    path: practices/data/batch-required-relations.md
+    severity: warn
+    skill_sources:
+      - url: https://raw.githubusercontent.com/ericrisco/rsc-harness/a707f94997e13a3ea29aea8a1755268b4c47c6b8/skills/django/SKILL.md
+        role: Candidate support
+        supports: QuerySet performance and nested serializer relation access as N+1 candidates.
+        license_evidence_key: risco-django
+      - url: https://raw.githubusercontent.com/ericrisco/rsc-harness/a707f94997e13a3ea29aea8a1755268b4c47c6b8/skills/django/references/orm-performance.md
+        role: Mechanism research, screened against primary docs
+        supports: Single-valued joins, batched multi-valued prefetch, filtered Prefetch, and aggregates.
+        license_evidence_key: risco-django
+    primary_support:
+      - url: https://docs.djangoproject.com/en/5.2/topics/db/optimization/
+        sections: Profile first; Understand cached attributes; Retrieve everything at once if you know you will need it; Do not retrieve things you do not need
+        supports: >-
+          Trace hidden template queries; select fetch shape from real use; balance
+          query count, memory, and work; avoid deferred-field pessimization.
+        license_evidence_key: django
+      - url: https://docs.djangoproject.com/en/5.2/ref/models/querysets/#prefetch-related
+        sections: QuerySet evaluation and slicing; select_related; prefetch_related; Prefetch
+        supports: >-
+          Joins for single-valued relations; separate queries for many-valued prefetch;
+          prefetch fully materializes related data; later filtering bypasses the cache;
+          to_attr stores the filtered result as a list; large IN queries have costs;
+          separate queries need not observe one consistent snapshot.
+        license_evidence_key: django
+    independent_synthesis: >-
+      Planning from the database-bounded parent page, separately considering child
+      volume, retaining continuation semantics, exercising the actual serializer,
+      and the owner/reviewer/comment project scenario are independently authored.
+    boundaries: >-
+      No eager-all policy, no one-SQL or universal two-query target, and no requirement
+      to preload unused branches. Detail views and deliberate chunked retrieval remain
+      valid. Pagination, isolation, authorization, and index design are not redefined.
+  - id: backend-fundamentals.security.protect-cookie-authenticated-writes
+    path: practices/security/protect-cookie-authenticated-writes.md
+    severity: critical
+    skill_sources:
+      - url: https://raw.githubusercontent.com/affaan-m/ECC/afa5651e9fcd082ebdc6e8e21189ab491bed7234/skills/security-review/SKILL.md
+        role: Candidate support, not universal policy
+        supports: CSRF and cookie credential handling as review topics.
+        license_evidence_key: ecc-security-review
+      - url: https://raw.githubusercontent.com/ericrisco/rsc-harness/a707f94997e13a3ea29aea8a1755268b4c47c6b8/skills/django/SKILL.md
+        role: Candidate support
+        supports: Keep Django CSRF middleware instead of blanket exemptions.
+        license_evidence_key: risco-django
+      - url: https://raw.githubusercontent.com/ericrisco/rsc-harness/a707f94997e13a3ea29aea8a1755268b4c47c6b8/skills/django/references/security.md
+        role: Supporting research
+        supports: Session authentication differs from explicit token authentication for CSRF.
+        license_evidence_key: risco-django
+    primary_support:
+      - url: https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
+        sections: Built-in implementations; Token-based mitigation; Fetch Metadata; Custom headers and CORS; SameSite; Login forms
+        supports: >-
+          Automatic cookie credentials expose writes to CSRF; prefer maintained built-in
+          defenses; validate token context rather than mere presence; protect tokens from
+          leakage; maintain origin and fallback rules; SameSite is not generally a full
+          defense; login can be susceptible; modern built-in defenses need not all use tokens.
+        license_evidence_key: owasp
+      - url: https://docs.djangoproject.com/en/5.2/howto/csrf/
+        sections: Middleware; Using CSRF protection with AJAX; Handling rejected requests; Testing and CSRF protection
+        supports: >-
+          CsrfViewMiddleware, generated template tokens, X-CSRFToken on same-origin
+          requests, rejection on failed validation, and enforce_csrf_checks for the test client.
+        license_evidence_key: django
+    independent_synthesis: >-
+      The credential-path decision, narrow bearer-only and webhook boundaries, preserving
+      authentication and resource authorization, and the account-address-change versus
+      integration-endpoint scenario are independently authored. No new token algorithm
+      or universal cookie policy is prescribed.
+    boundaries: >-
+      Explicit bearer-only machine APIs without ambient credential fallback do not acquire
+      a mandatory browser CSRF token. A JWT in a cookie remains ambient. Framework origin
+      or Fetch Metadata mechanisms are permitted with their documented boundaries; XSS
+      and authorization remain separate concerns.
+  - id: backend-fundamentals.security.enforce-scoped-rate-limits
+    path: practices/security/enforce-scoped-rate-limits.md
+    severity: warn
+    skill_sources:
+      - url: https://raw.githubusercontent.com/affaan-m/ECC/afa5651e9fcd082ebdc6e8e21189ab491bed7234/skills/security-review/SKILL.md
+        role: Candidate support, sample policy screened out
+        supports: Maintained express-rate-limit middleware and operation-sensitive limits.
+        license_evidence_key: ecc-security-review
+    primary_support:
+      - url: https://express-rate-limit.mintlify.app/reference/configuration
+        sections: windowMs; limit; statusCode; standardHeaders; store; passOnStoreError; keyGenerator; ipv6Subnet
+        supports: >-
+          Bounded windows and allowances, 429, reset-derived retry information, identity
+          key generators, IPv6-aware IP handling, and explicit store-error behavior.
+        license_evidence_key: express-rate-limit
+      - url: https://express-rate-limit.mintlify.app/reference/stores
+        sections: Data Stores
+        supports: >-
+          Default memory state is not shared across workers or servers and changes on
+          restart; supported external stores synchronize counters across deployment instances.
+        license_evidence_key: express-rate-limit
+      - url: https://expressjs.com/en/guide/behind-proxies.html
+        resolved_url: https://expressjs.com/en/guide/behind-proxies/
+        sections: Express behind proxies; trust proxy setting
+        supports: >-
+          Client IP derivation depends on configured trusted proxy addresses or hops;
+          forwarding headers can be spoofed when trust and ingress overwrite behavior
+          are mismatched, including alternate shorter ingress paths.
+        license_evidence_key: express-site
+    independent_synthesis: >-
+      The operation-budget-key-scope decision procedure, principal-versus-credential
+      choice, policy namespacing, shared-IP fairness, expiring-counter retention,
+      admission placement, the replicated per-IP anti-pattern, and the login
+      account-plus-source budget example are independently authored. Limits follow
+      the existing service policy, not upstream sample numbers. Atomicity and
+      concurrent-admission requirements express the desired contract, not a guarantee about every listed store.
+    boundaries: >-
+      No fixed quota, all-route mandate, raw forwarding-header key, permanent target
+      lockout, mandatory new store, or strict billing claim. Process-local best-effort
+      limits and enforced existing gateways remain valid within their stated scope;
+      concurrency, payload cost, and financial accounting are distinct constraints.
+verification_status: >-
+  No tests, builds, linters, formatters, smoke runs, or retrieval evaluations were run
+  by this slice author. The parent owns integrated validation and actual CLI reading.

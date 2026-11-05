@@ -1,0 +1,205 @@
+pack: backend-fundamentals
+slice: integrity-and-values
+researched_on: '2026-11-04'
+policy: >-
+  Primary technical documentation supports mechanisms, not universal business defaults.
+  Practice decisions, severity, procedures, boundaries, and examples are independently
+  authored synthesis. No external model calls or retrieval experiments inform these entries.
+authorship: >-
+  No primary-document prose or example code is reproduced. SQL and monetary examples
+  are independently constructed illustrations, not executed implementations or observed
+  incidents. Links preserve provenance without asserting redistribution rights for
+  upstream material.
+pin_policy: >-
+  PostgreSQL documentation URLs are versioned to 18. Other web pages are research-date
+  snapshots and may change. RFC 8259 is the identified published specification; the
+  Stripe currency page supports its own API contract, not a global currency registry.
+license_evidence:
+  - id: primary-reference-use
+    license: Not asserted
+    observed: >-
+      Sources were read for technical semantics. Public accessibility is not treated
+      as a license grant; no upstream prose or substantial example is incorporated.
+    use: Linked technical support for independently expressed decisions.
+primary_documents:
+  - id: postgresql-18-isolation
+    url: https://www.postgresql.org/docs/18/transaction-iso.html
+    sections:
+      - 13.2.1. Read Committed Isolation Level
+      - 13.2.2. Repeatable Read Isolation Level
+      - 13.2.3. Serializable Isolation Level
+    supports: >-
+      Read Committed takes statement snapshots; an updater waits on a conflicting
+      update and re-evaluates its condition against the updated row. Repeatable Read
+      can still allow serialization anomalies. Serializable rejects combinations
+      that cannot match a serial execution, and serialization failures require a
+      whole-transaction restart with reads and decisions repeated.
+    limitations: >-
+      Predicate re-evaluation on a target row does not make arbitrary multi-row
+      search conditions safe. Serializable is not a promise that every attempt
+      commits or a universal default. These semantics are PostgreSQL-specific.
+    license_evidence: primary-reference-use
+  - id: postgresql-18-explicit-locks
+    url: https://www.postgresql.org/docs/18/explicit-locking.html
+    sections:
+      - 13.3.2. Row-Level Locks
+      - 13.3.4. Deadlocks
+    supports: >-
+      SELECT FOR UPDATE locks returned rows against conflicting writers and lockers
+      until transaction end; after waiting it can return the changed row or no row.
+      Consistent acquisition order reduces deadlocks, and long user-interaction waits
+      are inappropriate while holding transactions. Locking retrieved rows does not
+      establish a reservation for an absent row.
+    limitations: >-
+      The document does not select an application's lock set or prove a particular
+      cross-row invariant. Advisory locks require cooperative use and are not adopted
+      as a new default. No lock-timeout, retry-count, or isolation default is inferred.
+    license_evidence: primary-reference-use
+  - id: postgresql-18-foreign-keys
+    url: https://www.postgresql.org/docs/18/ddl-constraints.html#DDL-CONSTRAINTS-FK
+    sections:
+      - 5.5.2. Not-Null Constraints
+      - 5.5.5. Foreign Keys
+    supports: >-
+      Foreign keys constrain matching single or composite parent identities and
+      reference primary keys, unique constraints, or eligible non-partial unique
+      indexes. Required components need NOT NULL; default matching skips checks for
+      null components, while MATCH FULL permits an absent composite tuple only when
+      all components are null. RESTRICT, NO ACTION, CASCADE, SET NULL, SET DEFAULT,
+      and corresponding key-update actions have distinct semantics. Nulling selected
+      referencing columns can preserve a required tenant key.
+    limitations: >-
+      Foreign keys do not enforce authorization, active status under soft deletion,
+      at least one child, or one child per parent. Referential actions must satisfy
+      other constraints. The document's cascade examples do not justify blanket
+      cascading or an automatic child-side index prescription.
+    license_evidence: primary-reference-use
+  - id: postgresql-18-numeric
+    url: https://www.postgresql.org/docs/18/datatype-numeric.html#DATATYPE-NUMERIC-DECIMAL
+    sections:
+      - 8.1.1. Integer Types
+      - 8.1.2. Arbitrary Precision Numbers
+      - 8.1.3. Floating-Point Types
+    supports: >-
+      Integer types have bounded ranges. Numeric and decimal are equivalent exact
+      types, with exact results where possible; binary floating-point types are
+      inexact. Declared numeric scale rounds on assignment before range enforcement.
+      PostgreSQL numeric rounds ties away from zero and permits special non-finite
+      values under the documented constraints.
+    limitations: >-
+      Exact numeric does not choose currency, allowed amount range, business scale,
+      rounding policy, or cross-language driver behavior. Division and finite type
+      limits mean exact representation is not a promise of infinite precision.
+      No universal numeric precision or minor-unit multiplier is inferred.
+    license_evidence: primary-reference-use
+  - id: rfc8259-json-numbers
+    url: https://www.rfc-editor.org/rfc/rfc8259.html#section-6
+    sections:
+      - 6. Numbers
+    supports: >-
+      JSON implementations may limit accepted numeric range and precision. Binary64
+      is common; interoperable exact integers are limited to the stated safe range
+      when such implementations participate. JSON number grammar excludes Infinity
+      and NaN. Decimal JSON syntax does not guarantee exact consumer arithmetic.
+    limitations: >-
+      The RFC permits implementations with greater precision and does not mandate
+      string fields for every money contract. String-based exact amount fields are
+      an independently selected wire contract, not a JSON-native decimal type.
+    license_evidence: primary-reference-use
+  - id: stripe-currency-units
+    url: https://docs.stripe.com/currencies
+    sections:
+      - Specify amounts in API requests
+      - Zero-decimal currencies
+      - Special cases
+    supports: >-
+      Stripe amount parameters use documented minor-unit rules: USD and JPY have
+      different decimal treatment, and some currencies have operation-specific or
+      backward-compatible representations. Charge and payout rules can differ.
+    limitations: >-
+      This supports checking the actual receiving API, not adopting Stripe,
+      asserting universal ISO minor-unit metadata, or copying provider limits and
+      pricing. The Practice's USD 7.25 and JPY 725 examples are newly constructed.
+    license_evidence: primary-reference-use
+practices:
+  - id: backend-fundamentals.data.guard-state-dependent-writes
+    path: practices/data/guard-state-dependent-writes.md
+    severity: critical
+    primary_support:
+      - source: postgresql-18-isolation
+        url: https://www.postgresql.org/docs/18/transaction-iso.html#XACT-READ-COMMITTED
+        supports: Conditional row updates re-evaluate their guard after conflicting updates.
+      - source: postgresql-18-isolation
+        url: https://www.postgresql.org/docs/18/transaction-iso.html#XACT-SERIALIZABLE
+        supports: Cross-row serialization anomalies and whole-transaction failure handling.
+      - source: postgresql-18-explicit-locks
+        url: https://www.postgresql.org/docs/18/explicit-locking.html#LOCKING-ROWS
+        supports: Lock actual decision rows before reading and retain protection through commit.
+      - source: postgresql-18-explicit-locks
+        url: https://www.postgresql.org/docs/18/explicit-locking.html#LOCKING-DEADLOCKS
+        supports: Consistent lock order and avoiding long interaction while holding locks.
+    author_synthesis: >-
+      Selecting a quantity or status predicate, version comparison for replacement
+      edits, participation by every version-changing writer, checking returned rows,
+      separating a lost business race from restartable transaction failure, and the
+      inventory illustration are independent synthesis. Critical severity reflects
+      accepted invalid transitions, overselling, or discarded intervening edits.
+    boundaries: >-
+      Protect a state-dependent decision only. Uniqueness, commit grouping, and
+      durable event deduplication remain separate. No unconditional retry, distributed
+      locking platform, or universal isolation mandate is introduced. Accepted
+      last-writer-wins operations need not acquire conflict detection.
+    license_evidence:
+      - primary-reference-use
+  - id: backend-fundamentals.data.enforce-related-row-integrity
+    path: practices/data/enforce-related-row-integrity.md
+    severity: critical
+    primary_support:
+      - source: postgresql-18-foreign-keys
+        url: https://www.postgresql.org/docs/18/ddl-constraints.html#DDL-CONSTRAINTS-FK
+        supports: Complete parent keys, null matching, and deliberate referential actions.
+      - source: postgresql-18-foreign-keys
+        url: https://www.postgresql.org/docs/18/ddl-constraints.html#DDL-CONSTRAINTS-NOT-NULL
+        supports: Mandatory relationships require non-null referencing components.
+    author_synthesis: >-
+      Treating tenant and parent identity as one relationship, retaining enforcement
+      across imports and maintenance writers, repairing existing mismatches under an
+      approved decision, and the retained-task RESTRICT illustration are independent
+      synthesis. Critical severity reflects persistent orphaned or wrong-tenant
+      relationships, not a claim that every optional reference must be required.
+    boundaries: >-
+      Referential integrity is neither permission checking nor uniqueness of child
+      occurrences. Cascading depends on object lifetime; soft-delete activity and
+      intentional historical or external references have different contracts. This
+      is not a transaction or migration-tool tutorial.
+    license_evidence:
+      - primary-reference-use
+  - id: backend-fundamentals.data.represent-money-exactly
+    path: practices/data/represent-money-exactly.md
+    severity: critical
+    primary_support:
+      - source: postgresql-18-numeric
+        url: https://www.postgresql.org/docs/18/datatype-numeric.html#DATATYPE-NUMERIC-DECIMAL
+        supports: Exact decimal storage, finite ranges, scale coercion, and rounding semantics.
+      - source: rfc8259-json-numbers
+        url: https://www.rfc-editor.org/rfc/rfc8259.html#section-6
+        supports: Consumer range and precision limits at the JSON boundary.
+      - source: stripe-currency-units
+        url: https://docs.stripe.com/currencies
+        supports: Currency and operation-specific minor-unit rules must be obtained, not assumed.
+    author_synthesis: >-
+      Carrying denomination with currency, parsing original text without a float,
+      checking integer overflow, defining the actual rounding boundary, preserving
+      driver and consumer exactness, and the refund illustration are independent
+      synthesis. Critical severity reflects changed authoritative monetary values.
+    boundaries: >-
+      No universal tax, pricing, allocation, or FX design is selected. No two-digit
+      scale, fixed multiplier, numeric precision, safe business maximum, provider,
+      or language library is mandated. Approximate analytics remain valid where
+      their error is accepted and does not silently become payment authority.
+    license_evidence:
+      - primary-reference-use
+verification_status: >-
+  No tests, builds, linters, formatters, retrieval runs, or external model calls were
+  executed by this slice author. Frozen query hypotheses are integration inputs,
+  not measured retrieval evidence or demonstrated backend behavior.

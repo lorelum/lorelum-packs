@@ -1,0 +1,13 @@
+name: backend-fundamentals
+version: 0.1.0
+description: "English agent-facing backend decisions for HTTP and browser contracts, cache isolation, access and upload safety, relational integrity and concurrency, exact monetary values, readiness and shutdown, schema retirement, and verified idempotent webhook processing."
+author:
+  name: Lorelum
+license: CC-BY-4.0
+applies_to:
+  - backend
+  - http
+  - security
+  - postgresql
+  - webhooks
+  - service-lifecycle

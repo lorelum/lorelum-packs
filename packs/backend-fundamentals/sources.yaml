@@ -1,0 +1,489 @@
+pack: backend-fundamentals
+researched_on: '2026-11-01'
+policy: Skill files are pinned research inputs, not normative authority. Practice
+  prose, scenarios and severity are independent synthesis; primary documentation supports
+  technical semantics.
+categories:
+  api:
+    category: api
+    language: en
+    authorship: Independently authored decision procedures and composite examples;
+      upstream skills identify candidates, while primary specifications support technical
+      claims. No source instructions are adopted as authority.
+    source_screening:
+      repository: https://github.com/wshobson/agents
+      commit_feed: https://github.com/wshobson/agents/commits/main/plugins/backend-development/skills/api-design-principles.atom
+      pinned_sha: 0f73766f80b0b5eb6aa9faaa2fdf90df85a6793f
+      pin_basis: Latest revision listed by the API skill path commit feed when read
+        on 2026-11-01; a path-specific revision pin, not a claim about the latest
+        repository-wide commit.
+      sources_read:
+      - id: api-skill
+        role: Candidate discovery only
+        url: https://raw.githubusercontent.com/wshobson/agents/0f73766f80b0b5eb6aa9faaa2fdf90df85a6793f/plugins/backend-development/skills/api-design-principles/SKILL.md
+        supports: Candidate themes of safe GET, collection pagination, and HTTP status
+          semantics.
+        limitations: The skill contains broad recommendations and shorthand; its universal
+          pagination, method, naming, and versioning claims are not adopted wholesale.
+      - id: api-details
+        role: Candidate mechanisms and counterexamples to screen
+        url: https://raw.githubusercontent.com/wshobson/agents/0f73766f80b0b5eb6aa9faaa2fdf90df85a6793f/plugins/backend-development/skills/api-design-principles/references/details.md
+        supports: REST pagination parameters with default and maximum, query-level
+          limit and offset, structured error examples, and GraphQL continuation examples.
+        limitations: Encoded offsets are not keyset cursors; the GraphQL nested-order
+          example materializes orders before slicing; echoed validation values can
+          disclose secrets. These examples are not copied or treated as production
+          guarantees.
+      - id: http-methods
+        role: Primary normative support
+        url: https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.1
+        related_urls:
+        - https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2
+        - https://www.rfc-editor.org/rfc/rfc9110.html#section-9.3.1
+        - https://www.rfc-editor.org/rfc/rfc9110.html#section-9.3.2
+        supports: Safe means no requested state change, permits incidental side effects,
+          requires disabling unsafe URI actions on safe methods, distinguishes idempotence,
+          defines GET and content-free HEAD, and permits POST for sensitive retrieval
+          input.
+        limitations: Does not select business mutation replay policy, an authentication
+          scheme, or protection against CSRF.
+      - id: http-failures
+        role: Primary normative support
+        url: https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5
+        related_urls:
+        - https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.2
+        - https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.4
+        - https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.5
+        - https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.6
+        - https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.10
+        - https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.21
+        - https://www.rfc-editor.org/rfc/rfc9110.html#section-15.6
+        - https://www.rfc-editor.org/rfc/rfc9110.html#section-15.6.4
+        supports: Client/server error classes and condition-specific status meanings,
+          401 challenge and 405 Allow requirements, permitted 404 non-disclosure,
+          HEAD error content restrictions, and conditional use of 503 Retry-After.
+        limitations: Does not impose a universal JSON envelope or make a possibly
+          committed mutation safe to replay.
+      - id: problem-details
+        role: Primary error disclosure and format-boundary support
+        url: https://www.rfc-editor.org/rfc/rfc9457.html#section-5
+        related_urls:
+        - https://www.rfc-editor.org/rfc/rfc9457.html#section-1
+        - https://www.rfc-editor.org/rfc/rfc9457.html#section-3.1.4
+        - https://www.rfc-editor.org/rfc/rfc9457.html#section-4
+        supports: Client-actionable rather than debugging details, risks of stack
+          and implementation disclosure, and Problem Details as an available format
+          rather than the only valid error representation.
+        limitations: Does not mandate migrating an existing protocol to Problem Details.
+          The Practice's compatibility and existing-diagnostics recommendations are
+          author synthesis.
+      - id: query-limits
+        role: Primary database mechanism support
+        url: https://www.postgresql.org/docs/18/queries-limit.html
+        supports: LIMIT constrains returned rows, page subsets need unique ORDER BY,
+          and skipped OFFSET rows still require computation.
+        limitations: PostgreSQL 18 versioned documentation, not a universal API pagination
+          specification. API default sizes, continuation strategy, child-result limits,
+          and concurrent-change disclosure are author synthesis.
+    practices:
+    - id: backend-fundamentals.api.preserve-safe-read-semantics
+      decision: Keep requested mutations off safe HTTP retrieval paths.
+      candidate_rationale: Accepted because a narrow method-selection decision prevents
+        crawlers and prefetches from performing business actions; it is more discriminating
+        than generic REST naming advice.
+      evidence:
+      - api-skill
+      - api-details
+      - http-methods
+      author_synthesis: The email preview cancellation case, explicit caller migration
+        procedure, and token-consumption example are independently constructed illustrations,
+        not observed incidents.
+      boundaries: Incidental logs and cache writes can remain; idempotent is not safe;
+        POST can carry sensitive search input; retries and mutation security controls
+        remain separate decisions.
+    - id: backend-fundamentals.api.bound-collection-results
+      decision: Bound retrieval before materialization and define ordering and continuation
+        for growing collections.
+      candidate_rationale: Accepted because unbounded fetches and ambiguous truncation
+        are concrete implementation failures; cursor-first and paginate-everything
+        recommendations are intentionally narrowed.
+      evidence:
+      - api-skill
+      - api-details
+      - query-limits
+      author_synthesis: The limit-at-fetch decision sequence, keyset tie-breaker example,
+        concurrent-change disclosure, nested-collection warning, and optional exact
+        totals synthesize supported mechanisms into an API boundary decision.
+      boundaries: Small fixed sets may be whole; offset remains valid for suitable
+        contracts; a cursor is not automatically a snapshot; row count alone does
+        not bound all query or serialization cost; exports have separate contracts.
+    - id: backend-fundamentals.api.express-http-failures
+      decision: Preserve the existing outward protocol while expressing failures with
+        truthful HTTP semantics and safe details.
+      candidate_rationale: Accepted only for outward status, headers, and representation.
+        Retry ownership and fallback eligibility are intentionally excluded because
+        agentic-coding.implementation.make-recovery-behavior-explicit already owns
+        generic recovery judgment.
+      evidence:
+      - api-skill
+      - api-details
+      - http-failures
+      - problem-details
+      author_synthesis: Reusing the existing envelope, stable error identifiers, protected
+        diagnostics, and respecting established application protocols are compatibility-oriented
+        synthesis; the SQL-error scenario is an independently constructed composite.
+      boundaries: Do not impose a new envelope, assume all application protocols map
+        every application error to 4xx, disclose internal diagnostics, or add retries
+        and fallbacks from an error handler.
+    screened_out_candidates:
+    - candidate: Universal resource-noun and plural-URL naming rules
+      reason: Stylistic uniformity is less consequential than the accepted concrete
+        safety decision and does not justify replacing established action protocols.
+    - candidate: Version every API from day one
+      reason: No present compatibility change establishes a need for a versioning
+        mechanism; not part of the three accepted API decisions.
+    - candidate: Cursor pagination everywhere
+      reason: The upstream details include valid offset pagination and an encoded-offset
+        cursor; navigation, size, and change behavior determine the strategy rather
+        than a universal cursor rule.
+    - candidate: Replace all error responses with Problem Details
+      reason: RFC 9457 explicitly allows other formats; an established application
+        protocol is preserved rather than silently migrated.
+    - candidate: General recovery and retry policy
+      reason: Duplicates an existing agentic-coding Practice and is outside outward
+        HTTP failure semantics.
+    - candidate: GraphQL schema design, DataLoader adoption, HATEOAS, and API-wide
+        versioning frameworks
+      reason: Useful in particular architectures but not required for the accepted
+        HTTP fundamentals; they introduce separate mechanisms and decisions.
+    verification_status: No tests, builds, linters, formatters, or retrieval evaluations
+      run by this category author; catalog entries are unmeasured hypotheses for integration
+      verification.
+  security:
+    category: security
+    language: en
+    researched_on: '2026-11-01'
+    authorship: Independently authored decision procedures and composite examples;
+      skill material supplies candidate topics, not copied wording or normative authority.
+    source_screening:
+    - id: wshobson-auth-implementation-patterns
+      role: candidate-research
+      repository: https://github.com/wshobson/agents
+      commit_feed: https://github.com/wshobson/agents/commits/main/plugins/developer-essentials/skills/auth-implementation-patterns/SKILL.md.atom
+      pinned_commit: be57c0b2e3c05c528ca6132b87410b385718775f
+      pinned_source: https://raw.githubusercontent.com/wshobson/agents/be57c0b2e3c05c528ca6132b87410b385718775f/plugins/developer-essentials/skills/auth-implementation-patterns/SKILL.md
+      additional_read_source: https://raw.githubusercontent.com/wshobson/agents/be57c0b2e3c05c528ca6132b87410b385718775f/plugins/developer-essentials/skills/auth-implementation-patterns/references/details.md
+      pin_method: Selected the first commit linked by the file-specific Atom commit
+        feed, then read SKILL.md and its referenced details.md at that immutable SHA.
+      supporting_sections:
+      - Core Concepts distinguishes authentication from authorization and identifies
+        ownership and policy enforcement as authorization concerns.
+      - Common Pitfalls identifies client-side-only checks and trusting client data.
+      - Detailed Authorization Patterns illustrates role, permission, and resource-ownership
+        checks.
+      - Detailed Password Security illustrates library password hashing and verification
+        APIs.
+      accepted_candidates:
+      - Server-enforced protected entry access.
+      - A separate target-resource authorization decision after authentication.
+      - Dedicated library password hashing rather than plaintext storage.
+      boundaries:
+      - The skill is discovery material, not security authority or a production-ready
+        implementation.
+      - The ownership example's unconditional administrator bypass and owner-only
+        rule do not establish a universal resource policy; the authored Practice uses
+        subject, action, resource, tenant, and explicit grants.
+      - Its bcrypt cost example is not adopted as a universal setting; OWASP and library
+        guidance govern algorithm and cost discussion.
+      - Its fixed token lifetimes, password composition rules, OAuth callback token
+        transport, refresh-token examples, and cookie or CSRF examples are not adopted
+        by these Practices.
+    - id: owasp-authorization
+      role: primary-technical-support
+      url: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
+      read_status: Read the actual published cheat sheet.
+      supporting_sections:
+      - Enforce Least Privileges enumerates users, resources, operations, and relevant
+        attributes.
+      - Deny by Default requires an explicit basis for granting access.
+      - Validate the Permissions on Every Request covers alternate request origins
+        and application-wide enforcement.
+      - Prefer Attribute and Relationship Based Access Control over RBAC discusses
+        subject and resource attributes, relationships, and multi-tenancy.
+      - Ensure Lookup IDs are Not Accessible Even When Guessed or Cannot Be Tampered
+        With requires specific-object checks instead of ID obscurity.
+      - Verify that Authorization Checks are Performed in the Right Location permits
+        server, gateway, and serverless enforcement and rejects decisive client-side
+        checks.
+      - Exit Safely when Authorization Checks Fail requires failures not to bypass
+        controls or leak sensitive details.
+      boundaries:
+      - Does not prove that a particular deployment's gateway is non-bypassable; that
+        requires deployment and caller facts.
+      - Does not prescribe one access-control product, ownership-only policy, universal
+        tenant abstraction, or a fresh authentication framework in every internal
+        call.
+    - id: owasp-password-storage
+      role: primary-technical-support
+      url: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+      read_status: Read the actual published cheat sheet.
+      supporting_sections:
+      - Introduction and Hashing vs Encryption distinguish dedicated slow password
+        hashes from plaintext, fast digests, and reversible storage.
+      - Salting describes unique random salts and high-level libraries that generate
+        and manage them.
+      - Using Work Factors and Upgrading the Work Factor support deployment-sensitive
+        cost selection and rehash after successful authentication.
+      - Password Hashing Algorithms provides Argon2id, scrypt, legacy bcrypt, and
+        FIPS-related PBKDF2 guidance and algorithm-specific constraints.
+      - Upgrading Legacy Hashes describes migration and encoded formats carrying algorithms
+        and costs.
+      - International Characters warns against reducing input entropy before hashing.
+      boundaries:
+      - No numeric algorithm costs are embedded in the authored Practice; current
+        source baselines and documented library profiles must be assessed on the actual
+        deployment.
+      - Password hashing does not make weak passwords unguessable and is not the general
+        storage rule for random API tokens or recoverable external secrets.
+      - Peppering is optional defense in depth, not a replacement for a salt or dedicated
+        hash.
+    - id: argon2-cffi-howto
+      role: primary-library-support
+      url: https://argon2-cffi.readthedocs.io/en/stable/howto.html
+      additional_read_source: https://argon2-cffi.readthedocs.io/en/stable/parameters.html
+      read_status: Read both actual library documentation pages.
+      supporting_sections:
+      - How to Hash a Password demonstrates PasswordHasher.hash, verify, VerifyMismatchError,
+        and check_needs_rehash.
+      - Choosing Parameters documents Argon2id selection, RFC 9106 profiles, deployment
+        measurement, and memory and concurrency considerations.
+      boundaries:
+      - The example uses documented high-level APIs, not copied numeric output parameters
+        or timing claims.
+      - Library defaults and stable documentation can evolve; the Practice does not
+        treat an example profile as a permanent universal setting.
+    practices:
+    - id: backend-fundamentals.security.enforce-protected-entry-access
+      candidate_rationale: A basic independently actionable decision about where a
+        protected operation's caller and entry permission are enforced; distinct from
+        target-specific permission and from duplicating checks at every layer.
+      technical_support:
+      - source: wshobson-auth-implementation-patterns
+        relationship: Candidate topic from client-side-only checks, authenticated
+          middleware, and role or permission checks; not authority for the final mechanism.
+      - source: owasp-authorization
+        relationship: Server or gateway placement, permission checks on every request,
+          deny-by-default, and safe failure.
+      author_synthesis:
+      - Explicitly distinguishes an enforced gateway from a bypassable origin and
+        trusted identity context from caller-supplied headers.
+      - Uses an author-constructed report-export and alternate-host scenario; no incident
+        or measurement is claimed.
+      boundaries:
+      - Intentional public routes and machine identities remain valid.
+      - Reuse an established gateway boundary without recreating identity verification
+        in private helpers; preserve independently required protections.
+      - Resource and tenant authorization remains a separate decision.
+    - id: backend-fundamentals.security.authorize-target-resource
+      candidate_rationale: Authentication alone cannot determine permitted objects
+        or actions; this decision covers ID substitution, tenant scope, and explicit
+        sharing without reducing all policies to ownership.
+      technical_support:
+      - source: wshobson-auth-implementation-patterns
+        relationship: Candidate topic from authorization, permission, and ownership
+          examples; its simplified admin and ownership semantics are not adopted.
+      - source: owasp-authorization
+        relationship: Least privilege, subject and object attributes, relationships,
+          multi-tenancy, specific-object authorization, and denial on unmatched rules.
+      author_synthesis:
+      - Connects the allow decision to scoped selection, bulk targets, and mutations
+        whose policy inputs can change; conditional writes or transactions are implementation
+        options rather than a quoted OWASP prescription.
+      - Uses an author-constructed draft-document owner-or-edit-grant policy, not
+        a mandated business rule.
+      boundaries:
+      - Ownership is one possible policy input, not the only valid rule.
+      - Explicitly authorized shared, public, and cross-tenant access is preserved.
+      - A single-tenant system need not add tenant machinery, and a mandatory data
+        policy can own enforcement if its actual caller cannot bypass it.
+    - id: backend-fundamentals.security.hash-passwords-for-storage
+      candidate_rationale: Locally managed login passwords require a dedicated salted
+        verifier and correct library verification; an algorithm name alone does not
+        cover reset paths, salts, costs, or upgrades.
+      technical_support:
+      - source: wshobson-auth-implementation-patterns
+        relationship: Candidate topic from password hash and verify examples; fixed
+          bcrypt parameters and composition rules are not adopted.
+      - source: owasp-password-storage
+        relationship: Dedicated adaptive hashes, per-password salts, deployment-sensitive
+          costs, algorithm constraints, and upgrades.
+      - source: argon2-cffi-howto
+        relationship: The concrete example's high-level hash, verify, mismatch, and
+          rehash API behavior plus documented profile selection and deployment constraints.
+      author_synthesis:
+      - Applies the same verifier policy to registration, reset, and change, and explicitly
+        exempts identity-provider-owned passwords from local duplication.
+      - Uses an author-constructed Python service and SSO account example; no parameter
+        benchmark or production result is claimed.
+      boundaries:
+      - External identity providers may own password storage completely.
+      - Compliance and legacy algorithm constraints require applicable documented
+        alternatives and migration rather than an absolute Argon2id-only rule.
+      - Random tokens and rare recoverable external integration credentials are separate
+        storage decisions.
+    screened_out_candidates:
+    - candidate: JWT and refresh-token implementation recipes
+      reason: Not one of the three approved security decisions; source examples do
+        not justify a universal token format, lifetime, storage location, or refresh
+        design.
+    - candidate: Mandatory ownership-only authorization or unconditional administrator
+        bypass
+      reason: Conflicts with application-specific actions, tenant boundaries, shared
+        grants, and least privilege described by primary authorization guidance.
+    - candidate: Universal bcrypt cost, password composition rules, rate limits, and
+        mandatory MFA
+      reason: These are separate policies or context-sensitive parameters, not necessary
+        to complete the local verifier storage decision; no unexplained constants
+        are promoted from the skill.
+  data:
+    category: data
+    provenance_policy: Independently authored decision Practices; skill rules provide
+      research leads rather than normative authority. PostgreSQL and driver documentation
+      support the mechanisms and limits.
+    skill_screening:
+      repository: https://github.com/supabase/agent-skills
+      pinned_commit: c9be0e931b7930f7d02126d04774d904c381e7d7
+      skill_url: https://github.com/supabase/agent-skills/blob/c9be0e931b7930f7d02126d04774d904c381e7d7/skills/supabase-postgres-best-practices/SKILL.md
+      discovery_url: https://github.com/supabase/agent-skills/tree/c9be0e931b7930f7d02126d04774d904c381e7d7/skills/supabase-postgres-best-practices/references
+      discovery_note: Discovered the actual supabase-postgres-best-practices directory
+        from the pinned GitHub skills directory and read the matching rule files at
+        this commit; did not infer filenames from another revision.
+      scope: Five approved basic data decisions, including separate connection cleanup
+        and deployment budgeting; not wholesale adoption of the skill's prioritization or performance claims.
+    entries:
+    - id: backend-fundamentals.data.enforce-uniqueness-in-database
+      candidate_rationale: A persisted business-key invariant with a concrete concurrency
+        failure, database-owned enforcement, migration decision, and bounded conflict
+        outcome.
+      skill_sources:
+      - url: https://github.com/supabase/agent-skills/blob/c9be0e931b7930f7d02126d04774d904c381e7d7/skills/supabase-postgres-best-practices/references/data-upsert.md
+        support: Separate SELECT-then-write operations race; ON CONFLICT supplies
+          an atomic insert-or-update operation when its behavior is intended.
+        boundary: The source's upsert recommendation is not adopted for operations
+          that must reject duplicates rather than overwrite or ignore them.
+      - url: https://github.com/supabase/agent-skills/blob/c9be0e931b7930f7d02126d04774d904c381e7d7/skills/supabase-postgres-best-practices/references/schema-constraints.md
+        support: PostgreSQL uniqueness constraints and migration syntax are relevant
+          to schema enforcement.
+        boundary: This rule primarily covers constraint-creation syntax; it does not
+          establish the whole uniqueness Practice, and its DO-block existence checks
+          are not copied as a migration convention.
+      primary_sources:
+      - url: https://www.postgresql.org/docs/18/ddl-constraints.html#DDL-CONSTRAINTS-UNIQUE-CONSTRAINTS
+        technical_support: Composite unique keys, automatically created unique B-tree
+          indexes, partial unique indexes, default distinct nulls, and NULLS NOT DISTINCT;
+          NOT NULL is a separate requirement.
+      - url: https://www.postgresql.org/docs/18/index-unique-checks.html
+        technical_support: Unique checks coordinate with conflicting uncommitted transactions
+          during insertion; a separate probe cannot eliminate the race.
+      - url: https://www.postgresql.org/docs/18/sql-createindex.html
+        technical_support: UNIQUE validates existing duplicates and future writes;
+          expression and partial indexes express narrower rules; ordinary and concurrent
+          builds have different locking and restrictions.
+      synthesis_boundaries: Existing-duplicate resolution, correct tenant scope, specific
+        constraint-error handling, and retention of unrelated errors are original
+        operational synthesis grounded in these enforcement semantics. No automatic
+        merge policy or universal upsert rule is introduced.
+    - id: backend-fundamentals.data.group-atomic-database-writes
+      candidate_rationale: A distinct all-or-nothing decision for related local writes,
+        separate from unique-key enforcement, read-modify-write isolation, and remote
+        effect coordination.
+      skill_sources:
+      - url: https://github.com/supabase/agent-skills/blob/c9be0e931b7930f7d02126d04774d904c381e7d7/skills/supabase-postgres-best-practices/references/lock-short-transactions.md
+        support: Open transactions hold locks; remote waits can lengthen contention,
+          so limit the work held within a local transaction.
+        boundary: The source is about transaction length, not the complete atomicity
+          decision. Its payment-before-transaction example is not copied as a complete
+          cross-system payment design, nor are its throughput claims or timeout numbers
+          adopted.
+      primary_sources:
+      - url: https://www.postgresql.org/docs/18/tutorial-transactions.html
+        technical_support: BEGIN and COMMIT group all-or-nothing database changes,
+          ROLLBACK cancels them, statements otherwise have individual implicit transactions,
+          and errors require rollback or appropriate savepoint handling.
+      - url: https://www.postgresql.org/docs/18/transaction-iso.html
+        technical_support: Read Committed snapshots and concurrent update behavior
+          distinguish atomicity from stale read-modify-write safety; atomic update
+          expressions, row locks, and stronger isolation provide different guarantees;
+          serialization failures require whole-transaction handling. Sequence changes
+          are not rolled back.
+      - url: https://node-postgres.com/apis/pool
+        technical_support: PostgreSQL transactions are scoped to one client; individual
+          pool.query calls may dispatch to different clients and must not implement
+          a transaction.
+      synthesis_boundaries: Required affected-row checks and propagating failure are
+        original business-invariant synthesis. Only writes in the same local database
+        transaction are covered; external effects, distributed transactions, retries
+        as a general platform, and outbox adoption are not prescribed.
+    - id: backend-fundamentals.data.justify-indexes-with-query-plans
+      candidate_rationale: A measurable access-path decision rather than a blanket
+        indexing rule, with a clear stop condition and explicit execution safety.
+      skill_sources:
+      - url: https://github.com/supabase/agent-skills/blob/c9be0e931b7930f7d02126d04774d904c381e7d7/skills/supabase-postgres-best-practices/references/monitor-explain-analyze.md
+        support: Actual execution plans expose timing, filtering, loops, and buffer
+          work for slow-query diagnosis.
+        boundary: Reject its shorthand that a sequential scan on a large table necessarily
+          means a missing index, and do not infer more memory is always needed from
+          read-versus-hit counts.
+      - url: https://github.com/supabase/agent-skills/blob/c9be0e931b7930f7d02126d04774d904c381e7d7/skills/supabase-postgres-best-practices/references/query-missing-indexes.md
+        support: Selective indexed lookups are candidate improvements for filtering
+          and joins.
+        boundary: Reject blanket indexing of WHERE or JOIN columns, always indexing
+          every referencing side without workload evidence, claimed universal speedups,
+          and the claim that full scans become exponentially slower with table growth.
+      primary_sources:
+      - url: https://www.postgresql.org/docs/18/using-explain.html
+        technical_support: Plans reflect selectivity, ordering, limits, and joins;
+          costs are not milliseconds; actual figures may be per-loop; EXPLAIN ANALYZE
+          executes queries and adds measurement overhead; tiny-table plans and timings
+          do not extrapolate, and sequential scans may be appropriate.
+      - url: https://www.postgresql.org/docs/18/indexes-intro.html
+        technical_support: Indexes add write-maintenance overhead, the planner may
+          reasonably prefer sequential scans, statistics affect choices, and ordinary
+          builds block writes.
+      - url: https://www.postgresql.org/docs/18/sql-createindex.html
+        technical_support: Index expressions and predicates must match usable operations;
+          indexes can harm performance; ordinary and concurrent builds require different
+          rollout handling.
+      - url: https://www.postgresql.org/docs/18/transaction-iso.html
+        technical_support: Sequence effects are not rolled back, bounding the claim
+          that wrapping mutating plan analysis in ROLLBACK makes it harmless.
+      synthesis_boundaries: Comparable parameter and cache conditions, write-cost
+        accounting, and retaining evidence are original review guidance. No synthetic
+        benchmark or speedup is claimed; the illustrative example is a proposed comparison,
+        not an executed measurement. Integrity indexes remain independently justified.
+    - id: backend-fundamentals.data.return-acquired-connections
+      candidate_rationale: Return or discard each acquired client on every exit path; independent of pool sizing.
+      skill_sources:
+      - url: https://github.com/supabase/agent-skills/blob/c9be0e931b7930f7d02126d04774d904c381e7d7/skills/supabase-postgres-best-practices/references/conn-pooling.md
+        support: Reuse the runtime's connection owner rather than creating a pool for every request.
+        boundary: A direct short-lived connection remains valid when reliably closed.
+      primary_sources:
+      - url: https://node-postgres.com/features/pooling
+        technical_support: Return checked-out clients on both success and query failure; use pool.query for independent work.
+      - url: https://node-postgres.com/apis/pool
+        technical_support: Release or destroy semantics, transaction client affinity, and pool closure.
+      synthesis_boundaries: Cleanup after cancellation, rollback before reuse, discarding broken clients, and keeping dependencies alive until their work ends are independently authored lifecycle guidance. The previous combined connection Practice was replaced, not retained as an alias.
+    - id: backend-fundamentals.data.budget-deployment-connections
+      candidate_rationale: Size pool demand across simultaneous processes and deployment topology, independently of acquisition cleanup.
+      skill_sources:
+      - url: https://github.com/supabase/agent-skills/blob/c9be0e931b7930f7d02126d04774d904c381e7d7/skills/supabase-postgres-best-practices/references/conn-limits.md
+        support: Connections consume finite shared server resources.
+        boundary: No universal CPU formula, memory division, or pool-size number is adopted.
+      primary_sources:
+      - url: https://www.postgresql.org/docs/18/runtime-config-connection.html#GUC-MAX-CONNECTIONS
+        technical_support: Server connection ceilings and reserved slots constrain ordinary clients.
+      - url: https://node-postgres.com/guides/pool-sizing
+        technical_support: Budget pool maximums across services and instances with administrative and scaling headroom.
+      - url: https://node-postgres.com/apis/pool
+        technical_support: Pool maximum and queued acquisition timeout behavior.
+      synthesis_boundaries: Rolling-deployment overlap, separate client and backend proxy budgets, and bounded admission waits are independent deployment guidance. Illustrative numbers are deployment facts, not defaults.

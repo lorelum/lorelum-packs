@@ -1,0 +1,77 @@
+pack: backend-fundamentals
+slice: runtime-admission
+researched_on: '2026-11-04'
+language: en
+policy: >-
+  Primary documentation supports technical mechanisms. Procedures, severity, boundaries,
+  examples and evaluation scenarios are independently authored synthesis, not copied
+  source prose or source code. These references are not a license grant or a claim
+  that upstream material is relicensed under the Pack license.
+practices:
+  - id: backend-fundamentals.security.constrain-server-fetch-destinations
+    path: practices/security/constrain-server-fetch-destinations.md
+    primary_support:
+      - url: https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html
+        sections: Identified trusted applications; URL parsing; DNS rebinding and connection-time enforcement; redirects; network-layer restrictions
+        supports: >-
+          Distinguish known integrations from arbitrary public destinations; compare parsed
+          hosts and addresses using maintained libraries; disable unsafe redirects; validate
+          resolved addresses and connect only to approved results while retaining Host/SNI
+          and certificate verification; network controls complement application enforcement.
+        limitations: >-
+          Living security guidance, not a protocol specification or fixed revision.
+          The integration's actual network policy decides intentional internal access;
+          authenticated input and CORS do not enforce egress destinations.
+    author_synthesis: >-
+      The importer/payroll contrast, rejection when actual connection enforcement cannot
+      be established, bounded redirect handling, and explicit proxy-resolution boundary
+      are standalone operational guidance. No HTTP client or egress platform is mandatory.
+    nearest_boundary: >-
+      Protected entry access determines who may invoke the API; this decision determines
+      where the backend may connect after an allowed invocation. Upload content admission
+      determines whether received bytes may be processed, not their network destination.
+  - id: backend-fundamentals.security.admit-only-supported-upload-content
+    path: practices/security/admit-only-supported-upload-content.md
+    primary_support:
+      - url: https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html
+        sections: File upload protection; content type and signature validation; content validation; storage location; upload and download limits
+        supports: >-
+          Use business-required type allowlists, do not trust client MIME labels or file
+          signatures alone, use maintained safely configured processors, account for
+          malicious content and expansion, limit upload size, and prevent executable
+          handling or unsafe public serving of uploaded material.
+        limitations: >-
+          Living security guidance. No scanner proves all content harmless. Authentication,
+          destination naming and authorization are separate controls; the source's broader
+          checklist is not copied into this single content-admission decision.
+    author_synthesis: >-
+      Streaming enforcement, quarantine-to-accepted ownership, exact checked-object release,
+      fail-closed required checks, and format-specific processing budgets connect the source
+      mechanisms into one admission decision. Scanner/CDR requirements depend on the accepted
+      threat model; no vendor, archive support, or new upload service is mandated.
+    nearest_boundary: >-
+      Upload storage keys stop client selection of destinations and overwrite targets;
+      this Practice decides whether actual bytes and their processing/serving are accepted.
+  - id: backend-fundamentals.lifecycle.check-readiness-before-admitting-traffic
+    path: practices/lifecycle/check-readiness-before-admitting-traffic.md
+    primary_support:
+      - url: https://kubernetes.io/docs/concepts/workloads/pods/probes/
+        requested_url: https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/
+        sections: Types of probe; liveness caution; readiness probe; when to use each probe
+        supports: >-
+          Readiness controls traffic eligibility, liveness controls process restart, startup
+          probes can protect long initialization, and critical dependency health can affect
+          readiness without making a healthy process require restart. Misconfigured probes
+          can cause cascading failures and resource overhead.
+        limitations: >-
+          Kubernetes documents concrete controller behavior, not a requirement to deploy
+          Kubernetes or a guarantee of immediate routing propagation. The requested URL
+          redirected to the workloads/pods/probes page during this research.
+    author_synthesis: >-
+      Define minimum advertised serving capabilities, distinguish optional-feature policy,
+      bound side-effect-free observation, and keep local admission consistent during routing
+      propagation. Startup and recovery use the same serving decision; no universal probe
+      timing or new health framework is prescribed.
+    nearest_boundary: >-
+      Readiness decides whether an instance can admit new traffic; the shutdown Practice
+      orders intake withdrawal, completion of already accepted work, and dependency release.

@@ -15,6 +15,8 @@ This repository is the official public catalog for installable Lorelum Knowledge
   - [Official 0.7.0 release verification](./fixtures/agentic-coding/baselines/agentic-coding-0.7.0-release-2026-10-30.md) records exact-version installation, default update from `0.6.0`, 37-ID readback, and unchanged evidence limits.
   - [简体中文本地化](./packs/agentic-coding/i18n/zh-CN/README.md) is available as non-runtime companion content.
 
+- [`backend-fundamentals@0.1.0`](./packs/backend-fundamentals/README.md) — unreleased source Pack with 30 English Practices for backend HTTP, security, data-integrity and lifecycle decisions. No Registry entry, release tag or installability claim.
+
 ## Use Packs
 
 For local authoring, install `--path ./packs/agentic-coding` into an isolated `--store-root`,

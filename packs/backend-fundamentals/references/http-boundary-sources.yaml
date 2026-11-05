@@ -1,0 +1,146 @@
+pack: backend-fundamentals
+slice: http-boundary
+researched_on: '2026-11-04'
+language: en
+policy: >-
+  Primary technical documentation supports the mechanisms below. RFC 9111 is
+  normative HTTP caching specification text; MDN is explanatory browser documentation
+  and OWASP is security design guidance, not additional protocol requirements.
+  Practice selection, severity, decision procedures, boundaries, and examples are
+  independently authored synthesis. No upstream prose or example code is reproduced.
+authorship: >-
+  Examples are newly constructed illustrations, not observed incidents or executed
+  implementations. Linked sources preserve provenance; no upstream redistribution
+  license or relicensing under the Pack's license is asserted. Mutable MDN and OWASP
+  pages are research-date observations; RFC 9111 identifies the fixed specification.
+practices:
+  - id: backend-fundamentals.api.isolate-personalized-cache-responses
+    path: practices/api/isolate-personalized-cache-responses.md
+    severity: critical
+    primary_support:
+      - url: https://www.rfc-editor.org/rfc/rfc9111.html#section-3
+        authority: Normative HTTP caching specification
+        sections_read:
+          - '1: shared versus private cache definitions'
+          - '2: minimum cache keys and additional selection material'
+          - '3: storage eligibility'
+          - '3.5: responses to Authorization-bearing requests'
+          - '4 and 4.1: reuse and Vary matching'
+          - '4.4: invalidation scope'
+          - '5.2.2.2: must-revalidate'
+          - '5.2.2.4 through 5.2.2.10: response directives'
+          - '6: application caches and browser history'
+          - '7.3: sensitive information and Set-Cookie'
+        supports: >-
+          Unqualified private excludes shared storage while allowing private storage;
+          no-store applies to both private and shared HTTP caches; no-cache requires
+          successful validation rather than prohibiting storage. Authorization-bearing
+          requests have shared-reuse restrictions that public, s-maxage, and
+          must-revalidate can relax. Vary selects matching request-header values;
+          internal principal variables are not request header names. Set-Cookie does
+          not itself inhibit caching. Stored fresh responses can avoid the origin.
+        limits: >-
+          Protocol eligibility does not authorize a recipient. Directives do not assure
+          confidentiality against malicious caches or govern every application store
+          and history mechanism. The RFC does not define this Pack's identity-partition
+          scheme, a universal freshness lifetime, or a global purge API. The Practice
+          uses unqualified private, not field-qualified private exceptions.
+    independent_synthesis: >-
+      Classification by audience before freshness, retaining public caching, requiring
+      trusted identity partitioning plus permission enforcement before protected shared
+      hits, and expiring unsafe previously stored variants are author decisions derived
+      from the reuse model. The billing, preference, and language catalog examples are
+      original; no CDN-specific behavior or universal caching default is promised.
+    boundaries: >-
+      This decides storage and response reuse across principals, tenants, and negotiated
+      variants. It does not replace authorization of the requested resource. Browser
+      private storage is not application-account isolation inside one browser.
+  - id: backend-fundamentals.api.bind-only-declared-write-fields
+    path: practices/api/bind-only-declared-write-fields.md
+    severity: critical
+    primary_support:
+      - url: https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html
+        authority: OWASP security design guidance, not normative HTTP requirements
+        sections_read:
+          - Introduction and exploitability
+          - Solutions
+          - General Solutions
+          - Spring MVC allow-listing and block-listing
+        supports: >-
+          Automatic request binding can expose unintended model attributes such as
+          roles and owners. Dedicated input objects and positive writable-field lists
+          restrict assignment. Denylists are fragile when sensitive fields are missed
+          or added. Binding can expose nested objects, and writable-field restrictions
+          do not replace object and operation authorization.
+        limits: >-
+          Framework examples are illustrative and some linked libraries are historical;
+          no sample implementation, library choice, or framework-specific API is
+          prescribed here. This source is guidance, not a patch-protocol specification
+          and not a complete field policy for any application.
+    independent_synthesis: >-
+      Per-operation and capability-specific projections, preserving omitted fields,
+      distinguishing intentional clearing, inspecting patch source and destination
+      paths and parent replacement, and covering bulk or nested alternatives are
+      author synthesis of assignment eligibility. The account-edit and delegated
+      transfer examples are original, not copied from OWASP examples.
+    boundaries: >-
+      This decides which client properties reach assignment, not where generic value
+      validation belongs or whether the caller may act on the record. Privileged
+      commands may intentionally assign protected fields under explicit policy;
+      isolated arbitrary-key metadata does not permit arbitrary domain properties.
+  - id: backend-fundamentals.api.allow-only-intended-browser-origins
+    path: practices/api/allow-only-intended-browser-origins.md
+    severity: critical
+    primary_support:
+      - url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS
+        authority: Explanatory browser platform documentation, not the normative Fetch specification
+        sections_read:
+          - Functional overview
+          - Simple requests
+          - Preflighted requests
+          - Requests with credentials
+          - Preflight requests and credentials
+          - Credentialed requests and wildcards
+          - Third-party cookies
+          - The HTTP response headers
+          - The HTTP request headers
+        supports: >-
+          CORS controls browser script access to responses. Some requests are sent
+          without preflight, so lack of response access is not proof that effects were
+          prevented. Credentialed access needs a specific accepted origin and
+          Access-Control-Allow-Credentials true; wildcard public noncredentialed access
+          is valid. Preflight normally has no credentials and communicates allowed
+          methods and request headers. Actual responses need their access headers too.
+          Origin-dependent responses need Vary Origin. Origin includes scheme, host,
+          and port and can be null. Cookie policies still constrain allowed clients.
+        limits: >-
+          MDN explains browser behavior and links the Fetch specification; it is not
+          treated as an additional normative security standard. Its TLS-client-certificate
+          preflight interoperability caveat does not justify requiring session cookies
+          on preflight. CORS neither authenticates nonbrowser callers nor substitutes
+          for CSRF or target authorization. No universal preflight cache lifetime is adopted.
+      - url: https://www.rfc-editor.org/rfc/rfc9111.html#section-4.1
+        authority: Normative HTTP cache selection rules
+        sections_read:
+          - '4.1: calculating cache keys with Vary'
+        supports: >-
+          Vary distinguishes request-header values, including absence, before ordinary
+          shared-cache reuse. A cached decision must not be reused across inputs that
+          change its representation.
+        limits: >-
+          These are HTTP cache rules, not the browser's separate preflight-cache
+          algorithm. Vary Origin does not isolate personalized response bodies.
+    independent_synthesis: >-
+      Application-owned exact origin selection, no arbitrary reflection, narrow null
+      policy, consistent error access, denied and absent-origin variation, and accounting
+      for intermediary-cached preflight inputs are independently authored decisions.
+      The portal and public exchange-rate feed examples are original. No broad domain
+      wildcard trust, credential enablement, or replacement CSRF scheme is introduced.
+    boundaries: >-
+      This decides which requesting browser scripts may access responses. Cookie-write
+      intent checks and resource authorization remain independent even when CORS is
+      correct. Nonbrowser requests may omit or forge Origin.
+validation_scope: >-
+  Sources were read for technical support. No retrieval, model calls, test, build,
+  lint, formatter, or runtime verification was performed by this slice author;
+  integrated verification belongs to the main agent.

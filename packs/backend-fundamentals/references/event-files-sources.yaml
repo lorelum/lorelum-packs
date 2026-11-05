@@ -1,0 +1,333 @@
+pack: backend-fundamentals
+slice: event-files
+researched_on: '2026-11-01'
+policy: >-
+  Skills are pinned research and candidate-discovery inputs, not normative authority.
+  Primary documentation supports technical mechanisms. Practice decisions, severity,
+  procedures, boundaries, and examples are independently authored synthesis.
+authorship: >-
+  No upstream Skill or primary-document prose or code is reproduced. All Practice
+  examples are newly constructed illustrations, not observed incidents or executed
+  implementations. Source links preserve provenance and do not relicense upstream
+  material under the Pack's license.
+pin_policy: >-
+  Each Skill or reference is pinned to the first revision returned by its actual
+  file-specific GitHub Atom commit feed when read on the research date. Each exact
+  immutable raw file was then read. These are file-history snapshots, not claims
+  about the latest repository-wide commits. Primary web pages are research-date
+  snapshots; PostgreSQL URLs are versioned to 18, while OWASP and Stripe URLs can change.
+license_evidence:
+  - id: goldenwing-upload-mit
+    license: MIT
+    url: https://raw.githubusercontent.com/GoldenWing-360/claude-security-skills/ab211558ddaa7e0a66a987915e0939f0254c0647/LICENSE
+    observed: >-
+      Repository LICENSE at the upload Skill's pinned revision declares MIT and
+      Copyright (c) 2026 GoldenWing-360. It requires retaining the copyright and
+      permission notice in copies or substantial portions. The Skill frontmatter
+      itself does not contain a license field.
+    use: Research input only; no copied prose or code.
+  - id: hookdeck-stripe-mit
+    license: MIT
+    url: https://raw.githubusercontent.com/hookdeck/webhook-skills/a20090528ce9a502052bc7189362b5e9dac9ba90/LICENSE
+    observed: >-
+      Repository LICENSE at the Stripe Skill's pinned revision declares MIT and
+      Copyright (c) 2026 Hookdeck. The pinned Skill also declares license MIT in
+      its frontmatter. The license's notice-retention condition applies to copies
+      or substantial portions.
+    use: >-
+      Research input only; no copied prose or code. The Skill's request to stamp
+      generated application files is not adopted as an instruction for this
+      independently authored Practice collection.
+  - id: hookdeck-handler-mit
+    license: MIT
+    url: https://raw.githubusercontent.com/hookdeck/webhook-skills/3a0404dc4b877fe8fea504c310e079caaab8268d/LICENSE
+    observed: >-
+      Repository LICENSE at the handler Skill's pinned revision declares MIT and
+      Copyright (c) 2026 Hookdeck. The pinned Skill also declares license MIT in
+      its frontmatter, with the repository license retaining its notice condition.
+    use: Research input only; no copied prose or code.
+  - id: hookdeck-idempotency-mit
+    license: MIT
+    url: https://raw.githubusercontent.com/hookdeck/webhook-skills/d43cfcbbdfe91998d422e9f0849aa060bd6fa241/LICENSE
+    observed: >-
+      Repository LICENSE at the idempotency reference's pinned revision declares
+      MIT and Copyright (c) 2026 Hookdeck, with notice retention for copies or
+      substantial portions. The reference does not have separate license frontmatter.
+    use: Research input only; no copied prose or code.
+  - id: primary-reference-use
+    license: Not asserted
+    observed: >-
+      Primary URLs below were read for technical semantics. No redistribution
+      license for their text or examples is asserted here, and no such text or
+      examples are incorporated into the Practices. Public accessibility is not
+      treated as a license grant.
+    use: Linked technical support for independently expressed decisions.
+skill_inputs:
+  - id: file-upload-security
+    repository: https://github.com/GoldenWing-360/claude-security-skills
+    path: file-upload-security/SKILL.md
+    commit_feed: https://github.com/GoldenWing-360/claude-security-skills/commits/main/file-upload-security/SKILL.md.atom
+    pinned_sha: ab211558ddaa7e0a66a987915e0939f0254c0647
+    url: https://raw.githubusercontent.com/GoldenWing-360/claude-security-skills/ab211558ddaa7e0a66a987915e0939f0254c0647/file-upload-security/SKILL.md
+    role: Candidate discovery and bounded mechanism support
+    supports: >-
+      Client filenames are untrusted; application-generated storage keys and
+      separately stored display filenames avoid client selection of a destination.
+      Existing direct-upload flows can bind a server-selected key to a pending record.
+    limitations: >-
+      The broad upload checklist is not adopted. Object storage is not mandatory;
+      owner-looking prefixes and random identifiers do not automatically enforce
+      authorization. Image-processing safety claims, PDF commands, scanner choices,
+      fixed limits, and serving prescriptions are outside this Practice and are
+      not promoted into its guidance.
+    license_evidence: goldenwing-upload-mit
+  - id: stripe-webhooks
+    repository: https://github.com/hookdeck/webhook-skills
+    path: skills/stripe-webhooks/SKILL.md
+    commit_feed: https://github.com/hookdeck/webhook-skills/commits/main/skills/stripe-webhooks/SKILL.md.atom
+    pinned_sha: a20090528ce9a502052bc7189362b5e9dac9ba90
+    url: https://raw.githubusercontent.com/hookdeck/webhook-skills/a20090528ce9a502052bc7189362b5e9dac9ba90/skills/stripe-webhooks/SKILL.md
+    role: Candidate discovery and provider-specific mechanism support
+    supports: >-
+      Stripe SDK helpers accept the raw body, signature header, and endpoint signing
+      secret and can combine verification with event construction.
+    limitations: >-
+      Stripe's header and timestamped HMAC protocol are not universal webhook rules.
+      Product recommendations, tunnel setup, generated-file stamping instructions,
+      and adjacent provider Skills are not adopted.
+    license_evidence: hookdeck-stripe-mit
+  - id: webhook-handler-patterns
+    repository: https://github.com/hookdeck/webhook-skills
+    path: skills/webhook-handler-patterns/SKILL.md
+    commit_feed: https://github.com/hookdeck/webhook-skills/commits/main/skills/webhook-handler-patterns/SKILL.md.atom
+    pinned_sha: 3a0404dc4b877fe8fea504c310e079caaab8268d
+    url: https://raw.githubusercontent.com/hookdeck/webhook-skills/3a0404dc4b877fe8fea504c310e079caaab8268d/skills/webhook-handler-patterns/SKILL.md
+    role: Candidate discovery and sequencing concerns to screen
+    supports: >-
+      Verify authenticity before handling an event, preserve raw signed input where
+      required, and account for duplicate event delivery.
+    limitations: >-
+      The verify-then-parse recipe is narrowed to verification before trust and
+      event-driven effects, allowing SDKs to combine the operations. The generic
+      response-code/retry table and check/process/store checklist are not treated
+      as complete provider or concurrency contracts.
+    license_evidence: hookdeck-handler-mit
+  - id: webhook-idempotency
+    repository: https://github.com/hookdeck/webhook-skills
+    path: skills/webhook-handler-patterns/references/idempotency.md
+    commit_feed: https://github.com/hookdeck/webhook-skills/commits/main/skills/webhook-handler-patterns/references/idempotency.md.atom
+    pinned_sha: d43cfcbbdfe91998d422e9f0849aa060bd6fa241
+    url: https://raw.githubusercontent.com/hookdeck/webhook-skills/d43cfcbbdfe91998d422e9f0849aa060bd6fa241/skills/webhook-handler-patterns/references/idempotency.md
+    role: Candidate discovery plus examples screened against database semantics
+    supports: >-
+      Stable event identities, durable processed-event records, database uniqueness,
+      transactions, concurrency, and retention are relevant deduplication concerns.
+    limitations: >-
+      Its preflight check then effect then marker example is not adopted. Selecting
+      an absent row FOR UPDATE does not reserve its key. An independently committed
+      insert before processing can lose work after a crash. The send-then-cache-marker
+      example does not make remote effects exactly once. Distributed-lock leases,
+      universal event-ID claims, fixed seven- or thirty-day retention, and broad
+      exactly-once implications are not promoted.
+    license_evidence: hookdeck-idempotency-mit
+primary_documents:
+  - id: owasp-file-upload
+    url: https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html
+    sections:
+      - Filename Safety
+      - File Upload Threats
+      - User Permissions
+      - File Storage Location
+    supports: >-
+      Application-generated filenames avoid dangerous client-controlled names and
+      overwrite targets; original names, file contents, permissions, and storage
+      placement are distinct concerns. No single upload technique establishes
+      complete safety.
+    license_evidence: primary-reference-use
+  - id: stripe-webhook-contract
+    url: https://docs.stripe.com/webhooks
+    sections:
+      - Create a handler
+      - Handle duplicate events
+      - Verify webhook signatures manually
+      - Preventing replay attacks
+      - Automatic retries
+      - Manual retries
+    supports: >-
+      Stripe requires unmodified raw body input for verification; official SDKs are
+      recommended. Its protocol includes the signed timestamp, versioned signatures,
+      and freshness checks. Retries can have fresh timestamps and signatures while
+      retaining event identity. Duplicate event IDs and separate Event objects
+      describing the same object/type need different reasoning. Automatic live
+      delivery retries and supported manual resends have different horizons.
+    limitations: >-
+      The documentation's observed automatic retry window is up to three days,
+      Dashboard resend up to fifteen days, and CLI resend up to thirty days. These
+      are not copied as a universal retention constant; accepted recovery and replay
+      paths determine the consumer's actual horizon.
+    license_evidence: primary-reference-use
+  - id: stripe-signature-troubleshooting
+    requested_url: https://docs.stripe.com/webhooks/signature
+    url: https://docs.stripe.com/events/manage-webhook-endpoints#signature-errors
+    sections:
+      - Resolve signature verification errors
+      - Check the endpoint secret
+      - Check the request body
+    supports: >-
+      The verifier needs the correct endpoint secret, signature header, and exact
+      raw body. CLI-forwarded and Dashboard-managed endpoint secrets differ.
+      Reordering JSON fields, whitespace changes, encoding changes, and middleware
+      parsing can invalidate verification. constructEvent and parseEventNotification
+      are provider-supported event-format-specific entry points.
+    license_evidence: primary-reference-use
+  - id: postgresql-unique-checks
+    url: https://www.postgresql.org/docs/18/index-unique-checks.html
+    sections:
+      - '63.5. Index Uniqueness Checks'
+    supports: >-
+      Uniqueness checking is integrated with insertion. A conflicting uncommitted
+      inserter must resolve before the waiting insert determines whether a live
+      conflict remains; rollback removes that conflict and commit preserves it.
+    license_evidence: primary-reference-use
+  - id: postgresql-insert
+    url: https://www.postgresql.org/docs/18/sql-insert.html
+    sections:
+      - Description
+      - ON CONFLICT Clause
+    supports: >-
+      ON CONFLICT can target the intended unique key, DO NOTHING skips a conflicting
+      insertion, and RETURNING reports rows actually inserted. Immediate,
+      non-deferrable uniqueness enforcement is required for the selected arbiter.
+    license_evidence: primary-reference-use
+  - id: postgresql-transactions
+    url: https://www.postgresql.org/docs/18/tutorial-transactions.html
+    sections:
+      - '3.4. Transactions'
+    supports: >-
+      A database transaction makes its local changes all-or-nothing. Commit makes
+      them durable together; rollback cancels them. Separate statements otherwise
+      can commit independently, and client-library transaction behavior must be
+      understood rather than inferred from nearby code.
+    license_evidence: primary-reference-use
+  - id: postgresql-row-locks
+    url: https://www.postgresql.org/docs/18/explicit-locking.html#LOCKING-ROWS
+    sections:
+      - '13.3.2. Row-Level Locks'
+    supports: >-
+      FOR UPDATE locks rows retrieved by a SELECT. Finding no marker row is not
+      reservation of an absent event key; the Practice uses unique insertion instead.
+    license_evidence: primary-reference-use
+practices:
+  - id: backend-fundamentals.security.generate-upload-storage-keys
+    path: practices/security/generate-upload-storage-keys.md
+    severity: critical
+    skill_support:
+      - source: file-upload-security
+        url: https://raw.githubusercontent.com/GoldenWing-360/claude-security-skills/ab211558ddaa7e0a66a987915e0939f0254c0647/file-upload-security/SKILL.md
+        supports: Server-selected storage keys and separate display filenames.
+    primary_support:
+      - source: owasp-file-upload
+        url: https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html#filename-safety
+        supports: Generated internal filenames avoid client-controlled path and collision hazards.
+      - source: owasp-file-upload
+        url: https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html#user-permissions
+        supports: File permissions remain distinct from name generation.
+    author_synthesis: >-
+      Destination ownership across upload handlers, exact-key direct-upload grants,
+      pending-record completion, collision handling, authoritative namespace prefixes,
+      deliberate deterministic-key exceptions, and the support-portal example are
+      independently constructed decisions. Critical severity reflects unauthorized
+      storage-target selection, not a copied upstream rating.
+    boundaries: >-
+      Upload destination control only, not a complete upload-security checklist.
+      Randomness is not authorization. No new storage platform or content-processing
+      feature is required. Existing content-addressed or intentionally replaceable
+      server-owned naming contracts may remain.
+    license_evidence:
+      - goldenwing-upload-mit
+      - primary-reference-use
+  - id: backend-fundamentals.security.verify-webhook-message-signatures
+    path: practices/security/verify-webhook-message-signatures.md
+    severity: critical
+    skill_support:
+      - source: stripe-webhooks
+        url: https://raw.githubusercontent.com/hookdeck/webhook-skills/a20090528ce9a502052bc7189362b5e9dac9ba90/skills/stripe-webhooks/SKILL.md
+        supports: Stripe's official SDK helper consumes raw input and constructs a verified event.
+      - source: webhook-handler-patterns
+        url: https://raw.githubusercontent.com/hookdeck/webhook-skills/3a0404dc4b877fe8fea504c310e079caaab8268d/skills/webhook-handler-patterns/SKILL.md
+        supports: Authenticity verification belongs before event-driven handling.
+    primary_support:
+      - source: stripe-webhook-contract
+        url: https://docs.stripe.com/webhooks
+        supports: Raw-body verification with the endpoint's signing material and maintained SDKs.
+      - source: stripe-webhook-contract
+        url: https://docs.stripe.com/webhooks#preventing-replay-attacks
+        supports: Stripe freshness checks and new signatures for legitimate redeliveries.
+      - source: stripe-signature-troubleshooting
+        url: https://docs.stripe.com/events/manage-webhook-endpoints#signature-errors
+        supports: Correct endpoint secret, unmodified body, header, and middleware wiring.
+    author_synthesis: >-
+      Provider-specific protocol discovery, a verified-only dispatch boundary,
+      no unsigned acceptance fallback, preserving raw input without blindly requiring
+      independent parse order, the trusted-intermediary boundary, and the billing
+      example are independent synthesis. Critical severity reflects forged-event
+      business actions, not a claim that every parser invocation is a vulnerability.
+    boundaries: >-
+      Stripe's protocol is an example, not a universal webhook signature format.
+      SDKs may parse and verify together. Signature authenticity does not provide
+      resource authorization, ordering, or durable event deduplication. No intermediary
+      or replacement authentication platform is introduced.
+    license_evidence:
+      - hookdeck-stripe-mit
+      - hookdeck-handler-mit
+      - primary-reference-use
+  - id: backend-fundamentals.data.commit-event-deduplication-with-effects
+    path: practices/data/commit-event-deduplication-with-effects.md
+    severity: critical
+    skill_support:
+      - source: webhook-handler-patterns
+        url: https://raw.githubusercontent.com/hookdeck/webhook-skills/3a0404dc4b877fe8fea504c310e079caaab8268d/skills/webhook-handler-patterns/SKILL.md
+        supports: Duplicate handling and a processed-event record are relevant handler decisions.
+      - source: webhook-idempotency
+        url: https://raw.githubusercontent.com/hookdeck/webhook-skills/d43cfcbbdfe91998d422e9f0849aa060bd6fa241/skills/webhook-handler-patterns/references/idempotency.md
+        supports: Durable event IDs, uniqueness, transactions, races, and retention are candidate mechanisms.
+    primary_support:
+      - source: postgresql-unique-checks
+        url: https://www.postgresql.org/docs/18/index-unique-checks.html
+        supports: Concurrent unique inserts wait for conflicting transactions to resolve.
+      - source: postgresql-insert
+        url: https://www.postgresql.org/docs/18/sql-insert.html#SQL-ON-CONFLICT
+        supports: Exact conflict target, DO NOTHING, and RETURNING distinguish the inserting transaction.
+      - source: postgresql-transactions
+        url: https://www.postgresql.org/docs/18/tutorial-transactions.html
+        supports: Marker and covered local changes commit or roll back together.
+      - source: postgresql-row-locks
+        url: https://www.postgresql.org/docs/18/explicit-locking.html#LOCKING-ROWS
+        supports: An absent marker is not reserved by SELECT FOR UPDATE.
+      - source: stripe-webhook-contract
+        url: https://docs.stripe.com/webhooks#handle-duplicate-events
+        supports: Stable event IDs identify redelivery; different events can require separate business deduplication.
+      - source: stripe-webhook-contract
+        url: https://docs.stripe.com/webhooks#manual-retries
+        supports: Supported manual redelivery can outlast automatic retries and changes required retention reasoning.
+    author_synthesis: >-
+      The scoped non-null source/consumer/event key, unique-insert claim and local
+      effect in one transaction, completion-only marker meaning, duplicate and error
+      branching, required effect success conditions, crash and acknowledgement
+      analysis, actual accepted replay horizon, and rewards-consumer example are
+      independently synthesized from database mechanisms and delivery facts. Critical
+      severity reflects duplicate or permanently lost business mutations.
+    boundaries: >-
+      The guarantee is at most one committed covered local effect per retained event
+      key, not exactly-once event transport or remote effects. Natural idempotency or
+      existing business constraints can already cover an effect. Different event IDs,
+      ordering, and concurrent updates need their actual business rules. No outbox,
+      broker, distributed lock, fixed TTL, or new replay platform is required.
+    license_evidence:
+      - hookdeck-handler-mit
+      - hookdeck-idempotency-mit
+      - primary-reference-use
+verification_status: >-
+  No tests, builds, linters, formatters, smoke runs, or retrieval evaluations were
+  run by this slice author. Integrated schema/count validation and actual CLI reads
+  are left to the parent assignment.
