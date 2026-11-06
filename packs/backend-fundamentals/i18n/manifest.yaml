@@ -1,0 +1,65 @@
+schema_version: 1
+source_locale: en
+locales:
+  zh-CN:
+    entries:
+      - path: practices/api/allow-only-intended-browser-origins.md
+        source_digest: sha256:69f1493b7cabf4cd70a3221f9670e736bd4dcc146bb88dad692325aef5984b5e
+      - path: practices/api/bind-only-declared-write-fields.md
+        source_digest: sha256:8c2cf7043d6f78b52827bcf2ff90cb7028b0647b820a2a9ed61887509904c382
+      - path: practices/api/bound-collection-results.md
+        source_digest: sha256:ddbc29fc6542d5f52c049f9c1dba56f8f125b4f9b5e84d1def64962a15dc4036
+      - path: practices/api/express-http-failures.md
+        source_digest: sha256:5f3345994f86763f985be373ae14506722a171dd965b5cd9fd7d54d8da54e1f8
+      - path: practices/api/isolate-personalized-cache-responses.md
+        source_digest: sha256:83647ea7637dbc8d2f8123cfbbb0cf1a08d16784222529beb11b7668f3385a98
+      - path: practices/api/preserve-safe-read-semantics.md
+        source_digest: sha256:1f85fa36e8272575fdaa5f35a85b4ee7c4906de46ad8f6a2853e4e36caeada5f
+      - path: practices/data/batch-required-relations.md
+        source_digest: sha256:cb9a614a42a44367f771caab6ea8eda8b4bad3319c9e829e3260a372d7142a2b
+      - path: practices/data/budget-deployment-connections.md
+        source_digest: sha256:ef156087b3bbcbea862521514816422b9a0adadf2b8f1c08f5bfb9c4d6983a4c
+      - path: practices/data/commit-event-deduplication-with-effects.md
+        source_digest: sha256:f68b910a59b0182336fa6319e6e832dfeb47797373000633e859075f0f168480
+      - path: practices/data/enforce-related-row-integrity.md
+        source_digest: sha256:4615a09ed5ae0667a859b4c8b7f5a4ab7c8014e34e8e049c35c5dcb712629167
+      - path: practices/data/enforce-uniqueness-in-database.md
+        source_digest: sha256:884a07fc9648978b5e24bb5221e37a3aa62c50d0bbc34c802a9dcbce5efb1da4
+      - path: practices/data/group-atomic-database-writes.md
+        source_digest: sha256:13bbb0cc371bdc1d4e1759783d39c4ca586c25ef15761e081aa99ae63c5d9e11
+      - path: practices/data/guard-state-dependent-writes.md
+        source_digest: sha256:9ed954030575751ee2d372e03909add8620d0ef14860bb3b904ca33685993660
+      - path: practices/data/justify-indexes-with-query-plans.md
+        source_digest: sha256:ee4954c7b68b726ec38122b8c887e3ee5f3a7b4f35ffd4be14aca3dfb2a1cd53
+      - path: practices/data/parameterize-query-values.md
+        source_digest: sha256:cee55d6e57d486a34b7cc286f6279bd735a3936c705fbb10a2c1e6fecefac98d
+      - path: practices/data/represent-money-exactly.md
+        source_digest: sha256:4f479c5063ba32051ee62473e5d1c649ef6cec91bed077086bf00616edf17b1a
+      - path: practices/data/retire-old-schema-after-callers.md
+        source_digest: sha256:2353ad92fa2e7ace5252eb319f4a4912fe555f5bb2d4caa984a0b21f3665b0a2
+      - path: practices/data/return-acquired-connections.md
+        source_digest: sha256:f63052a21c2222c76f1e6c77a36fa2b65f791bd77b74791b060e3337ea90515f
+      - path: practices/lifecycle/check-readiness-before-admitting-traffic.md
+        source_digest: sha256:54e3da97e640a2e12c8ba5919c68033f4d5c6fdf8ea14cb1ef043c59b7b47f7f
+      - path: practices/lifecycle/drain-work-before-closing-resources.md
+        source_digest: sha256:3151d949a8e1afec1485e680af366e09e000545651a89407c51cf5492364a09e
+      - path: practices/security/admit-only-supported-upload-content.md
+        source_digest: sha256:cce71140b78c979364a1c175b9c412087c69c5211f82bc744755ebe83cbe6e58
+      - path: practices/security/authorize-target-resource.md
+        source_digest: sha256:4938199246367b3c3498815d0fdc3661354c28071bd86d4927fe36c7e1ef7ec0
+      - path: practices/security/constrain-server-fetch-destinations.md
+        source_digest: sha256:04e2129d83421837be8f90b9d9a2f8689e93f1d513396edb3353b3de1f8d1642
+      - path: practices/security/enforce-protected-entry-access.md
+        source_digest: sha256:6011e329423d757805e2534e3346a87e59b7f9a21a40a7c4f1c79630cac9063d
+      - path: practices/security/enforce-scoped-rate-limits.md
+        source_digest: sha256:38306b3ffeed52dace05a428ccfecd5cef262648285f93449f4d8d2b13fe0ce2
+      - path: practices/security/exclude-secrets-from-logs.md
+        source_digest: sha256:bc98abd1b7cfe5994a2b037d756a80ae53fbeda714a223bdfa2dc881756caddd
+      - path: practices/security/generate-upload-storage-keys.md
+        source_digest: sha256:aed8a571f6c73a8b7bbc039371baa6d8fc2edf2aa556c7e4424f510d398aa421
+      - path: practices/security/hash-passwords-for-storage.md
+        source_digest: sha256:634fe19f8e7eb3363d27b70deb5949cd2ea4b81849475c7b452038de301f0a7a
+      - path: practices/security/protect-cookie-authenticated-writes.md
+        source_digest: sha256:3f8aadb0fa7af255b638163afdeabd494ca51ddb06136fcd1f1af1f508f5f5d2
+      - path: practices/security/verify-webhook-message-signatures.md
+        source_digest: sha256:67fdbecf96a7cf6c96d0f2c1a0cc30b4e41619b0c02f0c8e37392f3f3a31d086
